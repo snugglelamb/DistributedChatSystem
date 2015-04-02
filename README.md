@@ -100,6 +100,6 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
 
 4) Implementation
   - Multithreading
-    -th1: send
-    -th2: receive, parser
-    -th3: check alive
+    - th1: send
+    - th2: receive, parser
+    - th3: check alive
