@@ -98,7 +98,7 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
   - should be based on functions
 
 
-4) Implementation
+4). Implementation
   - Multithreading
     - th1: send
     - th2: receive, parser
