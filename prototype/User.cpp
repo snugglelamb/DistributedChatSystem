@@ -2,30 +2,58 @@
 
 string User::getIP()
 {
-	return IP;
+	return this->IP;
+}
+
+void User::setIP(string IP)
+{
+	this->IP = IP;
 }
 
 string User::getNickname()
 {
-	return nickname;
+	return this->nickname;
+}
+
+void User::setNickname(string nickname)
+{
+	this->nickname = nickname;
 }
 
 int User::getPort()
 {
-	return port;
+	return this->port;
 }
 
-User::User(string IP, string nickname)
+void User::setPort(int port)
 {
-	this->IP = IP;
-	this->nickname = nickname;
+	this->port = port;
 }
 
-User::User(string IP, string nickname, int port)
+int getID()
+{
+	return this->ID;
+}
+void setID(int ID)
+{
+	this->ID = ID;
+}
+int getTotal()
+{
+	return this->total;
+}
+void setTotal(int total)
+{
+	this->total = total;
+}
+
+User::User(string IP, string nickname, int port, int ID, int total)
 {
 	this->IP = IP;
 	this->nickname = nickname;
 	this->port = port;
+	this->ID = ID;
+	this->total = total;
 }
 
 User::User()

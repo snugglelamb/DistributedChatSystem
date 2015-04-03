@@ -9,14 +9,22 @@ class User
 {
 private:
 	string IP; 
-	string nickname;
+	string nickname; 
 	int port;
+	int ID;
+	int total;
 public:
 	string getIP();
+	void setIP(string IP);
 	string getNickname();
+	void setNickName(string nickname);
 	int getPort();
-	User(string IP, string nickname);
-	User(string IP, string nickname, int port);
+	void setPort(int port);
+	int getID();
+	void setID(int ID);
+	int getTotal();
+	void setTotal(int total);
+	User(string IP, string nickname, int port, int ID, int total);
 	User();
 };
 
