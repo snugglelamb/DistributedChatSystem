@@ -6,9 +6,22 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
 1). Datastructure
 ```C++
   User List (shared by all users within a chat group)
-  int id; //ID=0 as leader
-  string ip_addr;
-  string port;
+  msg priority_queue
+  
+  struct chatter{
+     int id; //ID=0 as leader --> update when elected from a client to a leader?
+     string ip_addr;
+     string port;
+     string status;
+     bool isSequencer;
+  };
+  
+ struct msg{
+    int id;
+    int number;
+    string content;
+ };
+ 
   
   // static boolean value to identify whether the attendent is the sequencer
   static boolean isSequencer = false;
@@ -24,11 +37,13 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
 
 2). Functions
 ```C++
-  create(string name, string ip_addr, string port);
+  create(string name, string ip_addr, string port);  
     /*
       only sequencer
+      initiate a chat, the one who start it aumatically become leader
       1. bind a listener socket with port no.
       2. select as central sequencer, update user list
+      3. printout ip_addr, port, current users
      */
      
   join(string name, string ip_addr, string port);
@@ -38,6 +53,7 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
       2. act on ack msg received
         exit on error
         rejoin if duplicate names or not contacting the sequencer
+        timeout?
       3. send request to update user list
      */
      
@@ -59,7 +75,7 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
       2. ** need to implement 2PC request, commit..
       
       attendent:
-      1. send msg to sequencer
+      1. send msg to sequencer with self-id, proposed msg number
       2. receive ack msg
      */
      
@@ -92,6 +108,15 @@ Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
       2. ** request election for new leader
      */
   
+  heartbeat();
+    /*
+      periodically send status msg
+      leader:
+        to users
+      users:
+        to leader
+    */
+    
 ```
 
 3). Protocol Design (msg format)
