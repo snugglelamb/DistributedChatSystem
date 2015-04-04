@@ -8,44 +8,30 @@ using namespace std;
 class ChatNode
 {
 private:
-	int sequenceNumber;
+	ChatNode(){};
+	static ChatNode* node;
 	vector<User> userlist;
-	User sequencer;
-	User currentUser;
+	User me;
+	int proposedNumber;
+	int receivedNumber;
 public:
-	void addUser(User user);
-	void deleteUser(User user);
-
-	int getSequenceNumber();
-	void setSequenceNumber(int sequenceNumber);
-
+	static ChatNode* getInstance();
 	vector<User> getUserlist();
-	void setUserlist(vector<User> list);
-	User getSequencer();
-	void setSequencer(User sequencer);
-	User getCurrentUser();
-	void setCurrentUser(User currentUser);
+	void setUserlist(Vector<User> vector);
+	User getMe();
+	void setMe(User user);
+	int getProposedNumber();
+	void setProposedNumber(int number);
+	int getReceivedNumber();
+	void setReceivedNumber(int number);
 
-	bool canJoin(string ip, int port);
-	void join(User user, string ip, int port);
-	bool userEquals(User user1, User user2);
+	void createChat(User user);
+	void reqLeader(string Tip, int Tport);
+	void connectLeader(string Tip, int port);
+	void updateUserlist(vector<User> vector);
+	void addUser(string ip, string name, int port);
+	void multicastUserlist();
 
-
-	void electLeader();
-	void getInput();
-	void requestSequenceNumber();
-	void send();
-	void receive();
-
-
-	void controlInitChat(User user);
-	void controlJoin(User user, string ip, int port);
-	void controlUserlist(vector<User> list);
-	void controlNewUser(User user);
-	void controlSequencer(User sequencer);
-	void controlSequenceNumber(int sequenceNumber);
-
-	void showUserlist();
 };
 
 #endif

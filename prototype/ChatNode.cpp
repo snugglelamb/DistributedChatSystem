@@ -5,6 +5,87 @@ extern "C"
 {
 	#include "multicast.h"
 }
+
+ChatNode* ChatNode::node = NULL;
+
+ChatNode* ChatNode::getInstance()
+{
+	if(!node)
+		node = new ChatNode;
+	return node;
+}
+
+vector<User> ChatNode::getUserlist()
+{
+	return this->userlist;
+}
+void ChatNode::setUserlist(Vector<User> vector)
+{
+	this->userlist = vector;
+}
+User ChatNode::getMe()
+{
+	return this->me;
+}
+void ChatNode::setMe(User user)
+{
+	this->me = user;
+}
+int ChatNode::getProposedNumber()
+{
+	return this->proposedNumber;
+}
+void ChatNode::setProposedNumber(int number)
+{
+	this->proposedNumber = number;
+}
+int ChatNode::getReceivedNumber()
+{
+	return this->receivedNumber;
+}
+void ChatNode::setReceivedNumber(int number)
+{
+	this->receivedNumber = number;
+}
+
+void ChatNode::createChat(User user)
+{
+	userlist.push_back(user);
+	setMe(user);
+	proposedNumber = 0;
+	receivedNumber = 0;
+}
+
+void ChatNode::reqLeader(string Tip, int Tport)
+{
+	string msg;
+	msg = "";
+	stub_send(Tip, Tport, msg);
+}
+
+void ChatNode::connectLeader(string Tip, int port)
+{
+
+}
+
+void ChatNode::updateUserlist(vector<User> vector)
+{
+
+}
+
+void ChatNode::addUser(string ip, string name, int port)
+{
+
+}
+
+void ChatNode::multicastUserlist()
+{
+
+}
+
+
+
+/*
 void ChatNode::addUser(User user)
 {
 	this->userlist.push_back(user);
@@ -48,7 +129,7 @@ void ChatNode::setCurrentUser(User currentUser)
 
 bool ChatNode::canJoin(string ip, int port)
 {
-	/*
+
 	for(vector<User>::iterator it=this->userlist.begin();it!= userlist.end();it++)
 	{
 		User curUser = *it;
@@ -59,7 +140,6 @@ bool ChatNode::canJoin(string ip, int port)
 			return true;
 	}
     return false;
-    */
     return true;
 }
 
@@ -83,7 +163,7 @@ void ChatNode::join(User user, string ip, int port)
 		cout<<"Sorry, no chat is active on "<<ip<<":"<<port<<" , try again later."<<endl;
 		cout<<"Bye."<<endl;
 	}
-	*/
+
 
 }
 bool ChatNode::userEquals(User user1, User user2)
@@ -145,7 +225,7 @@ void ChatNode::controlJoin(User user, string ip, int port)
 		{
 			if(userEquals(currentUser,*it)!=true && userEquals(user,*it)!=true)
 			{
-				/*
+
 				string curIp = it->getIP();
 				char* destIP = new char[curIp.length() + 1]; 
 				copy(curIp.begin(), curIp.end(), destIP);
@@ -166,7 +246,6 @@ void ChatNode::controlJoin(User user, string ip, int port)
 				char* destListStr = new char[listStr.length() + 1]; 
 				copy(listStr.begin(), listStr.end(), destListStr);
 				sendUserlist(destIP, curPort, destListStr);		
-				*/
 				string curIp = it->getIP();
 				char* destIP = new char[curIp.length() + 1]; 
 				copy(curIp.begin(), curIp.end(), destIP);
@@ -268,4 +347,4 @@ void ChatNode::showUserlist()
 			cout<<userlist[i].getNickname()<<" "<<userlist[i].getIP()<<":"<<userlist[i].getPort()<<endl;
 	}
 }
-
+*/

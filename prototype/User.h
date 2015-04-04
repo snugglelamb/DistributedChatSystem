@@ -13,6 +13,7 @@ private:
 	int port;
 	int ID;
 	int total;
+	bool isLeader;
 public:
 	string getIP();
 	void setIP(string IP);
@@ -24,7 +25,10 @@ public:
 	void setID(int ID);
 	int getTotal();
 	void setTotal(int total);
-	User(string IP, string nickname, int port, int ID, int total);
+	bool isLeader();
+	void setIsLeader(bool isLeader);
+	User(string IP, string nickname, int port, int ID, int total, bool isLeader);
+	User(string IP, string nickname, int port);
 	User();
 };
 
