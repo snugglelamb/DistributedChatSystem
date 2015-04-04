@@ -25,7 +25,7 @@ public:
 	void setID(int ID);
 	int getTotal();
 	void setTotal(int total);
-	bool isLeader();
+	bool getIsLeader();
 	void setIsLeader(bool isLeader);
 	User(string IP, string nickname, int port, int ID, int total, bool isLeader);
 	User(string IP, string nickname, int port);

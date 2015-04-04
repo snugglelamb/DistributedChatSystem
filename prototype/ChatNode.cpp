@@ -1,6 +1,6 @@
 #include "ChatNode.h"
 #include <iostream>
-using namepace std;
+
 extern "C"
 {
 	#include "multicast.h"
@@ -87,7 +87,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
 	for(int i=0;i<userlist.size();i++)
 	{
 		User user = userlist[i];
-		if(user.getIsleader())
+		if(user.getIsLeader())
 		{
 			leaderIP = user.getIP();
 			leaderPort = user.getPort();
@@ -99,7 +99,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
     sprintf(leaderPortArr,"%d",leaderPort);
     string portStr(leaderPortArr);
 
-    string SIP = me.geIP();
+    string SIP = me.getIP();
     int Sport = me.getPort();
 
     char mePortArr[5];
@@ -137,7 +137,7 @@ void ChatNode::updateUserlist(vector<User> newuserlist)
 {
 	this->userlist = newuserlist;
 	for(User u: this->userlist){
-		if(u.getIP() == me.getIP() && u.getPort() == me.getIP())
+		if(u.getIP() == me.getIP() && u.getPort() == me.getPort())
 			me = u;
 	}
 
@@ -167,12 +167,12 @@ void ChatNode::multicastUserlist()
 	content = me.getIP()+"_"+to_string(me.getPort())+"_";
 	for(User u: this->userlist){
 		content += u.getIP()+"_"+u.getNickname()+"_"+to_string(u.getPort())+"_"+to_string(u.getID())+"_"+to_string(u.getTotal())+"_";
-		if(u.isLeader()) content += "1";
+		if(u.getIsLeader()) content += "1";
 		else content += "0";
 	}
 	msg = requestName+"#"+content;
 	for(User u: this->userlist){
-		if(me.isLeader()) continue;
+		if(me.getIsLeader()) continue;
 		stub_send(u.getIP(), u.getPort(), msg);
 	}
 }
