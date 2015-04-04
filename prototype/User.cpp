@@ -30,30 +30,48 @@ void User::setPort(int port)
 	this->port = port;
 }
 
-int getID()
+int User::getID()
 {
 	return this->ID;
 }
-void setID(int ID)
+void User::setID(int ID)
 {
 	this->ID = ID;
 }
-int getTotal()
+int User::getTotal()
 {
 	return this->total;
 }
-void setTotal(int total)
+void User::setTotal(int total)
 {
 	this->total = total;
 }
 
-User::User(string IP, string nickname, int port, int ID, int total)
+bool User::isLeader()
+{
+	return this->isLeader;
+}
+
+void User::setIsLeader(bool isLeader)
+{
+	this.isLeader = isLeader;
+}
+
+User::User(string IP, string nickname, int port, int ID, int total, isLeader)
 {
 	this->IP = IP;
 	this->nickname = nickname;
 	this->port = port;
 	this->ID = ID;
 	this->total = total;
+	this->isLeader = isLeader;
+}
+
+User::User(string IP, string nickname, int port)
+{
+	this->IP = IP;
+	this->nickname = nickname;
+	this->port = port;
 }
 
 User::User()
