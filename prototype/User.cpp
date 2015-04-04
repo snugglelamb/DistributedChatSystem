@@ -47,7 +47,7 @@ void User::setTotal(int total)
 	this->total = total;
 }
 
-bool User::isLeader()
+bool User::getIsLeader()
 {
 	return this->leader;
 }
