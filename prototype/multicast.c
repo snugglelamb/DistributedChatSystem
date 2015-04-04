@@ -1,190 +1,249 @@
 #include "multicast.h"
+// local ip, port for dchat
+#define MAXBUFLEN 9999;
+static int port;
+static char* ip;
+static int sockfd; //used for listener
 
-char* onReceive(int port)
-{    
-	int sockfd, length;
-	struct sockaddr_in server_addr, client_addr;
-	socklen_t len;
-	//char readline[100];
-	char* readline;
-	char* sendline;
-
-	readline = (char*) malloc(500); 
-
-	char command[10];
-	sockfd = socket(AF_INET,SOCK_DGRAM,0);
-	bzero(&server_addr, sizeof(server_addr));
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	server_addr.sin_port = htons(port);	
-	bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
-	len = sizeof(client_addr);
-	length = recvfrom(sockfd, readline, 1000, 0, (struct sockaddr *)&client_addr, &len);
-	//readline[length]=0;
-	*(readline+length)=0;
-	//printf("%s \n",readline);
-	return readline;
-}
-
-int multiJoin(char* ip, int port, char* userIP, char* userName, int userPort)
+void *get_in_addr(struct sockaddr *sa)
 {
-	printf("ip=%s; port=%d \n", ip, port);
-	int sockfd,n;
-	struct sockaddr_in server_addr,client_addr;
-	char recvline[500];
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
 
-	socklen_t len;
-
-	int portnumber;
-	portnumber= port;
-
-	sockfd=socket(AF_INET, SOCK_DGRAM, 0);
-
-	bzero(&server_addr, sizeof(server_addr));
-	server_addr.sin_family=AF_INET;
-	server_addr.sin_addr.s_addr=inet_addr(ip);
-	server_addr.sin_port=htons(portnumber);
-
-	char portStr[20];
-    sprintf(portStr,"%d",userPort);
-
-	char* send;
-	char* command = "JOIN";
-	send = (char*) malloc(strlen(command)+1+strlen(userIP)+1+strlen(userName)+1+strlen(portStr)); 
-	strcpy(send, command);
-	strcat(send, " ");
- 	strcat(send, userIP);
- 	strcat(send, " ");  
-    strcat(send, userName);
-    strcat(send, " ");  
-    strcat(send, portStr);
-	int ret=sendto(sockfd,send,strlen(send),0,(struct sockaddr *)&server_addr,sizeof(server_addr));	
-	return 1;
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-void sendUserlist(char* ip, int port, char* userlist)
+char* getlocalinfo()
 {
-	printf("ip=%s; userlist=%s \n", ip, userlist);
-	int sockfd,n;
-	struct sockaddr_in server_addr,client_addr;
-	char recvline[500];
-
-	socklen_t len;
-
-	//int portnumber;
-	//portnumber=20000;
-
-	sockfd=socket(AF_INET, SOCK_DGRAM, 0);
-
-	bzero(&server_addr, sizeof(server_addr));
-	server_addr.sin_family=AF_INET;
-	server_addr.sin_addr.s_addr=inet_addr(ip);
-	server_addr.sin_port=htons(port);
-
-	char* send;
-	char* command = "USERLIST";
-	send=(char*) malloc(strlen(command)+1+strlen(userlist)); 
-	strcpy(send, command);
-	strcat(send, " ");
-    strcat(send,userlist);
-	int ret=sendto(sockfd,send,strlen(send),0,(struct sockaddr *)&server_addr,sizeof(server_addr));	
-	//n=recvfrom(sockfd,recvline,500,0,NULL,NULL);
-	printf("ret=%d\n",ret);
+	char* msg, port_s;
+	// get local ip, port info; ip:port	
+	itoa(port,port_s,10);
+	strcat(msg,ip);
+	strcat(msg,":");
+	strcat(msg,port_s);
+	return msg;
 }
 
 
-void sendNewUser(char* ip, int port, char* newUser)
+char* stub_create()
 {
-	//printf("ip=%s; userlist=%s \n", ip, userlist);
-	int sockfd,n;
-	struct sockaddr_in server_addr,client_addr;
-	char recvline[500];
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+	// set timeout val
+	struct timeval tv;
+	tv.tv_sec = 5;  /* 5 Secs Timeout */
+	tv.tv_usec = 0;  // Not init'ing this can cause strange errors
+	
+	// randomly assign a port number
+	port = randomPort();
 
-	socklen_t len;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
+    hints.ai_socktype = SOCK_DGRAM; // use UDP
+    hints.ai_flags = AI_PASSIVE; // use my IP
 
-	//int portnumber;
-	//portnumber=20000;
+    if ((rv = getaddrinfo(NULL, port, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return "ERROR";
+    }
 
-	sockfd=socket(AF_INET, SOCK_DGRAM, 0);
+    // loop through all the results and bind to the first valid one
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("stub: socket");
+            continue;
+        }
+		
+		// set timeout
+		if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval))== -1) {
+		            perror("setsockopt");
+		            return "ERROR";
+		        }
 
-	bzero(&server_addr, sizeof(server_addr));
-	server_addr.sin_family=AF_INET;
-	server_addr.sin_addr.s_addr=inet_addr(ip);
-	server_addr.sin_port=htons(port);
+        if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            perror("stub: bind");
+            continue;
+        }
 
-	char* send;
-	char* command = "NEWUSER";
-	send=(char*) malloc(strlen(command)+1+strlen(newUser)); 
-	strcpy(send, command);
-	strcat(send, " ");
-    strcat(send,newUser);
-	int ret=sendto(sockfd,send,strlen(send),0,(struct sockaddr *)&server_addr,sizeof(server_addr));	
-	//n=recvfrom(sockfd,recvline,500,0,NULL,NULL);
-	printf("ret=%d\n",ret);
+        break;
+    }
+
+    if (p == NULL) {
+        fprintf(stderr, "stub: failed to bind socket\n");
+        return "ERROR";
+    }
+
+    freeaddrinfo(servinfo); // done with servinfo
+	
+	// update current ip
+	struct sockaddr_in localAddress;
+	socklen_t addressLength = sizeof(localAddress);
+	getsockname(sockfd, (struct sockaddr*)&localAddress, &addressLength);
+	printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
+	printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
+	
+	strcpy(ip, inet_ntoa(localAddress.sin_addr));
+	printf("stub: finish binding. ip:port -> %s:%d\n",ip,port);
+    printf("stub: waiting to recvfrom...\n");
+	return getlocalinfo();
+			
 }
 
-void sendSequencer(char* ip, int port, char* sequencer)
+char* stub_connect(char* Tip, char* Tport)
 {
-	printf("ip=%s; sequencer=%s \n", ip, sequencer);
-	int sockfd,n;
-	struct sockaddr_in server_addr,client_addr;
-	char recvline[500];
-	socklen_t len;
+	// used for join, sendto
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+    int numbytes;
+	// set timeout val
+	struct timeval tv;
+	tv.tv_sec = 5;  /* 5 Secs Timeout */
+	tv.tv_usec = 0;  // Not init'ing this can cause strange errors
 
-	//int portnumber;
-	//portnumber=20000;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
 
-	sockfd=socket(AF_INET, SOCK_DGRAM, 0);
+    if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return "ERROR";
+    }
 
-	bzero(&server_addr, sizeof(server_addr));
-	server_addr.sin_family=AF_INET;
-	server_addr.sin_addr.s_addr=inet_addr(ip);
-	server_addr.sin_port=htons(port);
+    // loop through all the results and make a socket
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("stub: socket error");
+            continue;
+        }
+		// set timeout
+		if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval))== -1) {
+		            perror("setsockopt");
+		            return "ERROR";
+		        }
+        break;
+    }
 
-	char* send;
-	char* command = "SEQUENCER";
-	send=(char*) malloc(strlen(command)+1+strlen(sequencer)); 
-	strcpy(send, command);
- 	strcat(send," ");  
-    strcat(send,sequencer);	
-	int ret=sendto(sockfd,send,strlen(send),0,(struct sockaddr *)&server_addr,sizeof(server_addr));	
-	//n=recvfrom(sockfd,recvline,500,0,NULL,NULL);
-	printf("ret=%d\n",ret);
+    if (p == NULL) {
+        fprintf(stderr, "stub: failed to get addr\n");
+        return "ERROR";
+    }
+    freeaddrinfo(servinfo);
+	
+	// send connect msg
+	char *str;
+	strcpy(str,"connect");
+    if ((numbytes = sendto(sockfd, str, strlen(str), 0,
+             p->ai_addr, p->ai_addrlen)) == -1) {
+        perror("stub: connect");
+        return "ERROR";
+    }
+	printf("stub: sent %d bytes to %s\n", numbytes, Tip);
+
+	// update IP, port
+	struct sockaddr_in localAddress;
+	socklen_t addressLength = sizeof(localAddress);
+	getsockname(sockfd, (struct sockaddr*)&localAddress, &addressLength);
+	printf("local address: %s\n", inet_ntoa(localAddress.sin_addr));
+	printf("local port: %d\n", (int) ntohs(localAddress.sin_port));
+	
+	strcpy(ip, inet_ntoa(localAddress.sin_addr));
+	port = (int) ntohs(localAddress.sin_port);
+	
+	printf("stub: finish binding. ip:port -> %s:%d\n",ip,port);
+    printf("stub: waiting to recvfrom...\n");	
+	
+	return getlocalinfo();
 }
 
-void sendSequenceNumber(char* ip, int port, int sequenceNumber)
+char* stub_receive()
 {
-	printf("ip=%s; sequenceNumber=%d \n", ip, sequenceNumber);
-	int sockfd,n;
-	struct sockaddr_in server_addr,client_addr;
-	char recvline[500];
+	struct sockaddr_storage their_addr;
+    int numbytes;
+    char buf[MAXBUFLEN];
+    socklen_t addr_len;
+    char s[INET6_ADDRSTRLEN];
+	char* Sip;
 
-	socklen_t len;
+    addr_len = sizeof their_addr;
+	
+    if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,
+        (struct sockaddr *)&their_addr, &addr_len)) == -1) {
+        perror("recvfrom");
+        return "ERROR";
+    }
+	
+	// store source ip
+	Sip = inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
+    printf("stub: got packet from %s\n", Sip);
+	
+	// printf("from port: %hu\n", *get_in_port((struct sockaddr *)&their_addr));
+    printf("stub: packet is %d bytes long\n", numbytes);
+    buf[numbytes] = '\0';
+    printf("stub: packet contains \"%s\"\n", buf);
 
-	//int portnumber;
-	//portnumber=20000;
-
-	sockfd=socket(AF_INET, SOCK_DGRAM, 0);
-
-	bzero(&server_addr, sizeof(server_addr));
-	server_addr.sin_family=AF_INET;
-	server_addr.sin_addr.s_addr=inet_addr(ip);
-	server_addr.sin_port=htons(port);
-
-	char number[20];
-    //itoa(sequenceNumber,number,10); 
-    sprintf(number,"%d",sequenceNumber);
-
-	char* send;
-	char* command = "SEQUENCENUMBER";
-	send=(char*) malloc(strlen(command)+1+strlen(ip)+1+strlen(number)); 
-	strcpy(send, command);
- 	strcat(send," ");  
-    strcat(send,number);
-	int ret=sendto(sockfd,send,strlen(send),0,(struct sockaddr *)&server_addr,sizeof(server_addr));	
-	//n=recvfrom(sockfd,recvline,500,0,NULL,NULL);
-	printf("ret=%d\n",ret);
+	// parse string received
+	parsePara(&buf);
 }
 
+char* stub_send(char* Tip, char* Tport, char* msg)
+{
+    int sockfd_w;
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+    int numbytes; 
+	
+	// // receive msg from server, for ack
+	//     struct sockaddr_storage their_addr;
+	//     char buf[MAXBUFLEN];
+	//     socklen_t addr_len;
+	//     char s[INET6_ADDRSTRLEN];
+	// set timeout val
+	struct timeval tv;
+	tv.tv_sec = 5;  /* 5 Secs Timeout */
+	tv.tv_usec = 0;  // Not init'ing this can cause strange errors
 
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+
+    if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return "ERROR";
+    }
+
+    // loop through all the results and make a socket
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd_w = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("stub: socket error");
+            continue;
+        }
+		
+		if (setsockopt(sockfd_w, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval))== -1) {
+		            perror("setsockopt");
+		            return "ERROR";
+		        }
+
+        break;
+    }
+
+    if (p == NULL) {
+        fprintf(stderr, "stub: failed to get addr.\n");
+        return "ERROR";
+    }
+
+	// customize request sent
+	printf("stub: msg prepared to send: %s\n",msg);
+    if ((numbytes = sendto(sockfd_w, msg, strlen(msg), 0,
+             p->ai_addr, p->ai_addrlen)) == -1) {
+        perror("stub: sendto");
+        return "ERROR";
+    }
+	printf("stub: sent %d bytes to %s\n", numbytes, Tip);
+	
+}
 
