@@ -20,9 +20,9 @@ vector<User> ChatNode::getUserlist()
 	return this->userlist;
 }
 
-void ChatNode::setUserlist(Vector<User> vector)
+void ChatNode::setUserlist(vector<User> userlist)
 {
-	this->userlist = vector;
+	this->userlist = userlist;
 }
 
 User ChatNode::getMe()
@@ -63,16 +63,19 @@ void ChatNode::createChat(User user)
 	receivedNumber = 0;
 }
 
+
+// request leader information from other client using target IP and port.
 void ChatNode::reqLeader(string Tip, int Tport)
 {
 	string msg;
 	string requestName;
 	string content;
 	requestName = "sendLeader";
-	msg= rquestName + "#" +content;
+	msg= requestName + "#" +content;
 	stub_send(Tip, Tport, msg);
 }
 
+// send leader information back to new added client
 void ChatNode::sendLeader(string Tip, int Tport)
 {
 	string msg;
@@ -108,6 +111,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
 	stub_send(Tip, Tport, msg);
 }
 
+// connect to leader. add new client to userlist
 void ChatNode::connectLeader(string Tip, int Tport)
 {
 	string msg;
@@ -127,6 +131,7 @@ void ChatNode::connectLeader(string Tip, int Tport)
     msg = requestName + "#" + content;
     stub_send(Tip, Tport, msg);
 }
+
 
 void ChatNode::updateUserlist(vector<User> newuserlist)
 {
