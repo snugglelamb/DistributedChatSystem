@@ -27,11 +27,13 @@ public:
 
 	void createChat(User user);
 	void reqLeader(string Tip, int Tport);
-	void connectLeader(string Tip, int port);
+	void sendLeader(string Tip, int Tport);
+	void connectLeader(string Tip, int Tport);
 	void updateUserlist(vector<User> vector);
 	void addUser(string ip, string name, int port);
 	void multicastUserlist();
 
+	
 };
 
 #endif

@@ -19,30 +19,37 @@ vector<User> ChatNode::getUserlist()
 {
 	return this->userlist;
 }
+
 void ChatNode::setUserlist(Vector<User> vector)
 {
 	this->userlist = vector;
 }
+
 User ChatNode::getMe()
 {
 	return this->me;
 }
+
 void ChatNode::setMe(User user)
 {
 	this->me = user;
 }
+
 int ChatNode::getProposedNumber()
 {
 	return this->proposedNumber;
 }
+
 void ChatNode::setProposedNumber(int number)
 {
 	this->proposedNumber = number;
 }
+
 int ChatNode::getReceivedNumber()
 {
 	return this->receivedNumber;
 }
+
 void ChatNode::setReceivedNumber(int number)
 {
 	this->receivedNumber = number;
@@ -59,13 +66,66 @@ void ChatNode::createChat(User user)
 void ChatNode::reqLeader(string Tip, int Tport)
 {
 	string msg;
-	msg = "";
+	string requestName;
+	string content;
+	requestName = "sendLeader";
+	msg= rquestName + "#" +content;
 	stub_send(Tip, Tport, msg);
 }
 
-void ChatNode::connectLeader(string Tip, int port)
+void ChatNode::sendLeader(string Tip, int Tport)
 {
+	string msg;
+	string requestName;
+	string content;
 
+	string leaderIP;
+	int leaderPort;
+	for(int i=0;i<userlist.size();i++)
+	{
+		User user = userlist[i];
+		if(user.getIsleader())
+		{
+			leaderIP = user.getIP();
+			leaderPort = user.getPort();
+		}
+	}
+	requestName = "connectLeader";
+
+	char leaderPortArr[5];
+    sprintf(leaderPortArr,"%d",leaderPort);
+    string portStr(leaderPortArr);
+
+    string SIP = me.geIP();
+    int Sport = me.getPort();
+
+    char mePortArr[5];
+    sprintf(mePortArr,"%d",Sport);
+    string mePortStr(mePortArr);
+
+    content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
+	msg = requestName + "#" + content;
+	stub_send(Tip, Tport, msg);
+}
+
+void ChatNode::connectLeader(string Tip, int Tport)
+{
+	string msg;
+	string requestName;
+	string content;
+
+	string SIP = me.getIP();
+	string Sname = me.getNickname();
+	int Sport = me.getPort();
+
+	char mePortArr[5];
+    sprintf(mePortArr,"%d",Sport);
+    string mePortStr(mePortArr);
+
+    requestName = "addUser";
+    content = SIP + "_" + mePortStr + "_" + SIP + "_" + Sname + "_"+ mePortStr ;
+    msg = requestName + "#" + content;
+    stub_send(Tip, Tport, msg);
 }
 
 void ChatNode::updateUserlist(vector<User> vector)
