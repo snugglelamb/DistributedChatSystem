@@ -1,6 +1,6 @@
 #include "ChatNode.h"
 #include <iostream>
-
+using namepace std;
 extern "C"
 {
 	#include "multicast.h"
@@ -159,9 +159,9 @@ void ChatNode::multicastUserlist()
 	string msg;
 	string content = "";
 	//string IP, string nickname, int port, int ID, int total, bool isleader
-	content = me.getIP() +"_"+ me.getPort()+"_";
+	content = me.getIP()+"_"+to_string(me.getPort())+"_";
 	for(User u: this->userlist){
-		content += u.getIP()+"_"+u.getNickname()+"_"+u.getPort()+"_"+u.getID()+"_"+u.getTotal()+"_";
+		content += u.getIP()+"_"+u.getNickname()+"_"+to_string(u.getPort())+"_"+to_string(u.getID())+"_"+to_string(u.getTotal())+"_";
 		if(u.isLeader()) content += "1";
 		else content += "0";
 	}
