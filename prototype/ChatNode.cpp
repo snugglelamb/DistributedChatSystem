@@ -131,6 +131,10 @@ void ChatNode::connectLeader(string Tip, int Tport)
 void ChatNode::updateUserlist(vector<User> newuserlist)
 {
 	this->userlist = newuserlist;
+	for(User u: this->userlist){
+		if(u.getIP() == me.getIP() && u.getPort() == me.getIP())
+			me = u;
+	}
 
 }
 
