@@ -68,19 +68,44 @@ void ChatNode::connectLeader(string Tip, int port)
 
 }
 
-void ChatNode::updateUserlist(vector<User> vector)
+void ChatNode::updateUserlist(vector<User> newuserlist)
 {
+	this->userlist = newuserlist;
 
 }
 
 void ChatNode::addUser(string ip, string name, int port)
 {
+	User t;
+	t.setIP(ip);
+	t.setNickname(name);
+	t.setPort(port);
+	t.setID(this->userlist.size());
+	t.setIsLeader(false);
+	t.setTotal(me.getTotal());
+	this->userlist.push_back(t);
+	multicastUserlist();
+
 
 }
 
 void ChatNode::multicastUserlist()
 {
-
+	string requestName ="updateUserlist";
+	string msg;
+	string content = "";
+	//string IP, string nickname, int port, int ID, int total, bool isleader
+	content = me.getIP() +"_"+ me.getPort()+"_";
+	for(User u: this->userlist){
+		content += u.getIP()+"_"+u.getNickname()+"_"+u.getPort()+"_"+u.getID()+"_"+u.getTotal()+"_";
+		if(u.isLeader()) content += "1";
+		else content += "0";
+	}
+	msg = requestName+"#"+content;
+	for(User u: this->userlist){
+		if(me.isLeader()) continue;
+		stub_send(u.getIP(), u.getPort(), msg);
+	}
 }
 
 
