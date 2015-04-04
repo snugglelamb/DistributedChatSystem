@@ -132,7 +132,7 @@ void ChatNode::connectLeader(string Tip, int Tport)
     stub_send(Tip, Tport, msg);
 }
 
-
+//update userlist
 void ChatNode::updateUserlist(vector<User> newuserlist)
 {
 	this->userlist = newuserlist;
@@ -140,9 +140,18 @@ void ChatNode::updateUserlist(vector<User> newuserlist)
 		if(u.getIP() == me.getIP() && u.getPort() == me.getPort())
 			me = u;
 	}
-
+	int proposedNumber;
+	int receivedNumber;
+	for(User u: this->userlist)
+	{
+		if(u.getIsLeader()){
+			proposedNumber = u.getTotal();
+			receivedNumber = u.getTotal();
+		}
+	}
 }
 
+//add new user to userlist and then multicast new userlist to other clients
 void ChatNode::addUser(string ip, string name, int port)
 {
 	User t;
@@ -154,10 +163,10 @@ void ChatNode::addUser(string ip, string name, int port)
 	t.setTotal(me.getTotal());
 	this->userlist.push_back(t);
 	multicastUserlist();
-
-
 }
 
+
+//multicast new userlist to other clients
 void ChatNode::multicastUserlist()
 {
 	string requestName ="updateUserlist";
