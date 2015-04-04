@@ -205,6 +205,7 @@ bool ChatNode::canJoin(string ip, int port)
 
 void ChatNode::join(User user, string ip, int port)
 {
+	// send request to <ip port>
 	cout<<"ip:"<<ip<<";port="<<port<<endl;
 	char* destIP = new char[ip.length() + 1]; 
 	copy(ip.begin(), ip.end(), destIP);
