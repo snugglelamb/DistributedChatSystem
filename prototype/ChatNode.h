@@ -17,7 +17,7 @@ private:
 public:
 	static ChatNode* getInstance();
 	vector<User> getUserlist();
-	void setUserlist(Vector<User> vector);
+	void setUserlist(vector<User> userlist);
 	User getMe();
 	void setMe(User user);
 	int getProposedNumber();

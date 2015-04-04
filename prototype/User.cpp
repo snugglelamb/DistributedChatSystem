@@ -49,22 +49,22 @@ void User::setTotal(int total)
 
 bool User::isLeader()
 {
-	return this->isLeader;
+	return this->leader;
 }
 
-void User::setIsLeader(bool isLeader)
+void User::setIsLeader(bool leader)
 {
-	this.isLeader = isLeader;
+	this->leader = leader;
 }
 
-User::User(string IP, string nickname, int port, int ID, int total, isLeader)
+User::User(string IP, string nickname, int port, int ID, int total, bool leader)
 {
 	this->IP = IP;
 	this->nickname = nickname;
 	this->port = port;
 	this->ID = ID;
 	this->total = total;
-	this->isLeader = isLeader;
+	this->leader = leader;
 }
 
 User::User(string IP, string nickname, int port)
