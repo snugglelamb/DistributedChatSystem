@@ -1,10 +1,195 @@
 #include "ChatNode.h"
 #include <iostream>
+#include <cstddef>
 
 extern "C"
 {
 	#include "multicast.h"
 }
+
+ChatNode* ChatNode::node = NULL;
+
+ChatNode* ChatNode::getInstance()
+{
+	if(!node)
+		node = new ChatNode;
+	return node;
+}
+
+vector<User> ChatNode::getUserlist()
+{
+	return this->userlist;
+}
+
+void ChatNode::setUserlist(vector<User> userlist)
+{
+	this->userlist = userlist;
+}
+
+User ChatNode::getMe()
+{
+	return this->me;
+}
+
+void ChatNode::setMe(User user)
+{
+	this->me = user;
+}
+
+int ChatNode::getProposedNumber()
+{
+	return this->proposedNumber;
+}
+
+void ChatNode::setProposedNumber(int number)
+{
+	this->proposedNumber = number;
+}
+
+int ChatNode::getReceivedNumber()
+{
+	return this->receivedNumber;
+}
+
+void ChatNode::setReceivedNumber(int number)
+{
+	this->receivedNumber = number;
+}
+
+void ChatNode::createChat(User user)
+{
+	userlist.push_back(user);
+	setMe(user);
+	proposedNumber = 0;
+	receivedNumber = 0;
+}
+
+
+// request leader information from other client using target IP and port.
+void ChatNode::reqLeader(string Tip, int Tport)
+{
+	string msg;
+	string requestName;
+	string content;
+	requestName = "sendLeader";
+	msg= requestName + "#" +content;
+	stub_send(Tip, Tport, msg);
+}
+
+// send leader information back to new added client
+void ChatNode::sendLeader(string Tip, int Tport)
+{
+	string msg;
+	string requestName;
+	string content;
+
+	string leaderIP;
+	int leaderPort;
+	for(int i=0;i<userlist.size();i++)
+	{
+		User user = userlist[i];
+		if(user.getIsLeader())
+		{
+			leaderIP = user.getIP();
+			leaderPort = user.getPort();
+		}
+	}
+	requestName = "connectLeader";
+
+	char leaderPortArr[5];
+    sprintf(leaderPortArr,"%d",leaderPort);
+    string portStr(leaderPortArr);
+
+    string SIP = me.getIP();
+    int Sport = me.getPort();
+
+    char mePortArr[5];
+    sprintf(mePortArr,"%d",Sport);
+    string mePortStr(mePortArr);
+
+    content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
+	msg = requestName + "#" + content;
+	stub_send(Tip, Tport, msg);
+}
+
+// connect to leader. add new client to userlist
+void ChatNode::connectLeader(string Tip, int Tport)
+{
+	string msg;
+	string requestName;
+	string content;
+
+	string SIP = me.getIP();
+	string Sname = me.getNickname();
+	int Sport = me.getPort();
+
+	char mePortArr[5];
+    sprintf(mePortArr,"%d",Sport);
+    string mePortStr(mePortArr);
+
+    requestName = "addUser";
+    content = SIP + "_" + mePortStr + "_" + SIP + "_" + Sname + "_"+ mePortStr ;
+    msg = requestName + "#" + content;
+    stub_send(Tip, Tport, msg);
+}
+
+//update userlist
+void ChatNode::updateUserlist(vector<User> newuserlist)
+{
+	this->userlist = newuserlist;
+	for(User u: this->userlist){
+		if(u.getIP() == me.getIP() && u.getPort() == me.getPort())
+			me = u;
+	}
+	int proposedNumber;
+	int receivedNumber;
+	for(User u: this->userlist)
+	{
+		if(u.getIsLeader()){
+			proposedNumber = u.getTotal();
+			receivedNumber = u.getTotal();
+		}
+	}
+}
+
+//add new user to userlist and then multicast new userlist to other clients
+void ChatNode::addUser(string ip, string name, int port)
+{
+	User t;
+	t.setIP(ip);
+	t.setNickname(name);
+	t.setPort(port);
+	t.setID(this->userlist.size());
+	t.setIsLeader(false);
+	t.setTotal(me.getTotal());
+	this->userlist.push_back(t);
+	multicastUserlist();
+}
+
+
+//multicast new userlist to other clients
+void ChatNode::multicastUserlist()
+{
+	string requestName ="updateUserlist";
+	string msg;
+	string content = "";
+	//string IP, string nickname, int port, int ID, int total, bool isleader
+	content = me.getIP()+"_"+to_string(me.getPort())+"_";
+	for(User u: this->userlist){
+		content += u.getIP()+"_"+u.getNickname()+"_"+to_string(u.getPort())+"_"+to_string(u.getID())+"_"+to_string(u.getTotal())+"_";
+		if(u.getIsLeader()) content += "1";
+		else content += "0";
+	}
+	msg = requestName+"#"+content;
+	for(User u: this->userlist){
+		if(me.getIsLeader()) continue;
+		stub_send(u.getIP(), u.getPort(), msg);
+	}
+}
+
+
+
+/*
 void ChatNode::addUser(User user)
 {
 	this->userlist.push_back(user);
@@ -48,7 +233,7 @@ void ChatNode::setCurrentUser(User currentUser)
 
 bool ChatNode::canJoin(string ip, int port)
 {
-	/*
+
 	for(vector<User>::iterator it=this->userlist.begin();it!= userlist.end();it++)
 	{
 		User curUser = *it;
@@ -59,12 +244,12 @@ bool ChatNode::canJoin(string ip, int port)
 			return true;
 	}
     return false;
-    */
     return true;
 }
 
 void ChatNode::join(User user, string ip, int port)
 {
+	// send request to <ip port>
 	cout<<"ip:"<<ip<<";port="<<port<<endl;
 	char* destIP = new char[ip.length() + 1]; 
 	copy(ip.begin(), ip.end(), destIP);
@@ -82,7 +267,7 @@ void ChatNode::join(User user, string ip, int port)
 		cout<<"Sorry, no chat is active on "<<ip<<":"<<port<<" , try again later."<<endl;
 		cout<<"Bye."<<endl;
 	}
-	*/
+
 
 }
 bool ChatNode::userEquals(User user1, User user2)
@@ -144,7 +329,7 @@ void ChatNode::controlJoin(User user, string ip, int port)
 		{
 			if(userEquals(currentUser,*it)!=true && userEquals(user,*it)!=true)
 			{
-				/*
+
 				string curIp = it->getIP();
 				char* destIP = new char[curIp.length() + 1]; 
 				copy(curIp.begin(), curIp.end(), destIP);
@@ -165,7 +350,6 @@ void ChatNode::controlJoin(User user, string ip, int port)
 				char* destListStr = new char[listStr.length() + 1]; 
 				copy(listStr.begin(), listStr.end(), destListStr);
 				sendUserlist(destIP, curPort, destListStr);		
-				*/
 				string curIp = it->getIP();
 				char* destIP = new char[curIp.length() + 1]; 
 				copy(curIp.begin(), curIp.end(), destIP);
@@ -267,4 +451,4 @@ void ChatNode::showUserlist()
 			cout<<userlist[i].getNickname()<<" "<<userlist[i].getIP()<<":"<<userlist[i].getPort()<<endl;
 	}
 }
-
+*/
