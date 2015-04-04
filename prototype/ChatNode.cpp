@@ -1,5 +1,6 @@
 #include "ChatNode.h"
 #include <iostream>
+#include <cstddef>
 
 extern "C"
 {
