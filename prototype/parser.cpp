@@ -1,4 +1,4 @@
-//#include "ChatNode.h"
+#include "ChatNode.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -6,7 +6,8 @@
 #include <assert.h>
 using namespace std;
 class Parser{
-	//ChatNode cn = ChatNode.getInstance();
+
+	
 
 	vector<string> splitstr(string ori, char deli){
 		vector<string> tmp;
@@ -19,6 +20,9 @@ class Parser{
 	}
 
 	public: 
+		Parser(){
+			this->cn = ChatNode.getInstance();
+		}
 		void parsePara(char* arr ){
 		string str = string(arr);
 		size_t pos = str.find("#");
@@ -34,17 +38,19 @@ class Parser{
     	// }
     	if(req.compare("sendLeader") == 0){
     		assert(params.size() == 2);
-    		
+
     		cn.sendLeader(params[0], atoi(params[1].c_str()));
 
     	}else if(req.compare("connectLeader")){
-    		assert(params.size() == 2);
-    		cn.connectLeader(params[0], atoi(params[1].c_str()));
+
+    		assert(params.size() == 4);
+    		cn.connectLeader(params[2], atoi(params[3].c_str()));
+
     	}else if(req.compare("updateUserlist") == 0){
     		//string IP, string nickname, int port, int ID, int total, bool isleader
-    		assert(params.size()/6 ==0);
+    		assert(params.size()/6 == 2);
     		vector<User> tmp;
-    		for(int i = 0; i < params.size()/6; i += 6){
+    		for(int i = 2; i < params.size()/6; i += 6){
     			User t;
     			t.setIP(params[i]);
     			t.setNickname(params[i+1]);
@@ -57,10 +63,12 @@ class Parser{
     		cn.updateUserlist(tmp);
 
     	}else if(req.compare("addUser") ==0){
-    		assert(params.size() == 3);
-    		cn.addUser(params[0], params[1], atoi(params[2]).c_str();
+
+    		assert(params.size() == 5);
+    		cn.addUser(params[2], params[3], atoi(params[4]).c_str();
+
     	}else if(req.compare("multicastUserlist") == 0){
-    		assert(params.size() == 0);
+    		assert(params.size() == 2);
     		cn.multicastUserlist();
     	}
 		 
