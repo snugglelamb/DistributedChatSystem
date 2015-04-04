@@ -26,8 +26,8 @@ public:
 	void setReceivedNumber(int number);
 
 	void createChat(User user);
-	void reqLeader(int Tip, int Tport);
-	void connectLeader(int Tip, int port);
+	void reqLeader(string Tip, int Tport);
+	void connectLeader(string Tip, int port);
 	void updateUserlist(vector<User> vector);
 	void addUser(string ip, string name, int port);
 	void multicastUserlist();
