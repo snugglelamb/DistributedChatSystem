@@ -32,9 +32,9 @@ class Parser{
     	// for(string s: params){
     	// 	cout<< s<<endl;
     	// }
-    	if(req.compare("reqLeader") == 0){
-    		assert(params.size() == 2);
-    		cn.reqLeader(params[0], atoi(params[1].c_str()));
+    	if(req.compare("sendLeader") == 0){
+    		assert(params.size() == 0);
+    		cn.sendLeader();
     	}else if(req.compare("connectLeader")){
     		assert(params.size() == 2);
     		cn.connectLeader(params[0], atoi(params[1].c_str()));
