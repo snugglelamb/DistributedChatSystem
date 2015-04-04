@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <thread>
 #include "User.h"
 #include "ChatNode.h"
 #include "util.h"
@@ -12,6 +13,25 @@ extern "C"
 }
 
 using namespace std;
+
+void receive()
+{
+	// call stub_receive
+	stub_receive();
+}
+
+void type()
+{
+	// call ChatNode to parse down msg
+	
+	// call stub_send
+	stub_send(string Tip, string Tport, string msg);
+}
+
+void check()
+{
+	// heart beat check alive
+}
 
 int main(int argc, char** argv)
 {
@@ -40,71 +60,23 @@ int main(int argc, char** argv)
         node.setCurrentUser(user);
 		node.join(user, ip, port);
 	}
-
-	for(;;)
-	{
-		User user = node.getCurrentUser();
-		int port = user.getPort();
-		cout<<"listening on port:"<<port<<endl;
-		string response(onReceive(port));
-		//cout<<"response:"<<response<<endl;
-
-    	string buf;
-    	stringstream ss(response); 
-    	vector<string> tokens; 
-		while (ss >> buf)
-        	tokens.push_back(buf);
-
-        if(tokens[0].compare("JOIN")==0)
-        {
-        	cout<<"join msg"<<endl;
-        	string ip(tokens[1]);
-        	string name(tokens[2]);
-        	string portStr(tokens[3]);
-    		int port = atoi(portStr.c_str()); 
-        	User user(ip,name,port);
-        	node.controlJoin(user, ip, port);
-        }else if(tokens[0].compare("NEWUSER"))
-        {
-        	cout<<"newuser msg"<<endl;
-    		string ip(tokens[1]);
-    		string name(tokens[2]);
-    		string portStr(tokens[3]);
-    		int port = atoi(portStr.c_str()); 
-    		User newUser(ip,name,port);
-        	node.controlNewUser(newUser);
-        }else if(tokens[0].compare("USERLIST"))
-        {
-        	cout<<"userlist msg"<<endl;
-        	vector<User> list;
-        	for(int j=1; j<tokens.size();j=j+3)
-        	{
-        		string ip(tokens[j]);
-        		string name(tokens[j+1]);
-        		string portStr(tokens[j+2]);
-        		int port = atoi(portStr.c_str());
-        		User newUser(ip,name,port);
-        		list.push_back(newUser);
-        	}
-        	node.controlUserlist(list);
-        }else if(tokens[0].compare("SEQUENCER"))
-        {
-        	cout<<"sequencer msg"<<endl;
-        	string ip(tokens[1]);
-        	string name(tokens[2]);
-        	string portStr(tokens[3]);
-    		int port = atoi(portStr.c_str()); 
-        	User sequencer(ip,name,port);
-        	node.controlSequencer(sequencer);
-        }else if(tokens[0].compare("SEQUENCENUMBER"))
-        {
-        	cout<<"sequence number msg"<<endl;
-        	string numStr(tokens[2]);
-        	int sequenceNumber = atoi(numStr.c_str()); 
-        	node.controlSequenceNumber(sequenceNumber);
-        }
-
-    }
+	
+	
+	// three thread1: receive; thread2: type; thread3: check
+	std::thread main_receive(receive);
+	std::thread main_type(type);
+	std::thread main_check(check);
+	
+	std::cout << "threads started.\n";
+	
+	main_receive.join();
+	main_type.join();
+	main_check.join();
+	
+	std:cout << "threads finished.\n";
+	
+	return 0;
+		
 }
 
 
