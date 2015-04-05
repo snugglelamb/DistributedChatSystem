@@ -187,7 +187,7 @@ void ChatNode::multicastUserlist()
 	}
 }
 
-void ChatNode::sendMsg(string message)
+void ChatNode::sendMsg(string ip)
 {
 	string requestName = "multicastMsg";
 	string msg;
@@ -204,11 +204,25 @@ void ChatNode::sendMsg(string message)
 			Tport = u.getPort();
 		}
 	}
-
 	msg = requestName + "#" + content;
     stub_send(Tip, Tport, msg);
+}
+
+void multicastMsg(string msg){
+	String requestName = "recMsg";
+	String msg;
+	totalMutex.lock();
+	String content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(total)+"_";
+	totalMutex.unlock();
+	msg = requestName+"#"+content;
+	for(User u: this->userlist){
+		stub_send(u.getIP(), u.getPort(), msg);
+	}
+	
 
 }
+
+
 
 
 /*
