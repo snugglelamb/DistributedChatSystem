@@ -187,7 +187,7 @@ void ChatNode::multicastUserlist()
 	}
 }
 
-void ChatNode::sendMsg(string ip)
+void ChatNode::sendMsg(string message)
 {
 	string requestName = "multicastMsg";
 	string msg;
