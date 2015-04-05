@@ -187,9 +187,16 @@ void ChatNode::multicastUserlist()
 	}
 }
 
+
 void multicastMsg(string msg, int total){
 	
 }
+
+void ChatNode::sendMsg(string ip)
+{
+	
+}
+
 
 /*
 void ChatNode::addUser(User user)
