@@ -127,7 +127,7 @@ void ChatNode::connectLeader(string Tip, int Tport)
     sprintf(mePortArr,"%d",Sport);
     string mePortStr(mePortArr);
 
-    requestName = "addUser";
+    requestName = "addUser";	
     content = SIP + "_" + mePortStr + "_" + SIP + "_" + Sname + "_"+ mePortStr ;
     msg = requestName + "#" + content;
     stub_send(Tip, Tport, msg);

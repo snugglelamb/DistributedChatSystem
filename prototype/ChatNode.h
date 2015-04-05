@@ -3,6 +3,7 @@
 
 #include "User.h"
 #include <vector>
+#include <queue>
 using namespace std;
 
 class ChatNode
@@ -14,6 +15,12 @@ private:
 	User me;
 	int proposedNumber;
 	int receivedNumber;
+	struct Compare{
+		bool operator() (int a, int b){
+			return a > b;
+		}
+	};
+	priority_queue<int, vector<int>, Compare> holdback;
 public:
 	static ChatNode* getInstance();
 	vector<User> getUserlist();
