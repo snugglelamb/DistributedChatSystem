@@ -187,7 +187,9 @@ void ChatNode::multicastUserlist()
 	}
 }
 
-
+void multicastMsg(string msg, int total){
+	
+}
 
 /*
 void ChatNode::addUser(User user)
