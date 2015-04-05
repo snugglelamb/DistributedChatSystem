@@ -36,24 +36,24 @@ void ChatNode::setMe(User user)
 	this->me = user;
 }
 
-int ChatNode::getProposedNumber()
+int ChatNode::getPNum()
 {
-	return this->proposedNumber;
+	return this->pNum;
 }
 
-void ChatNode::setProposedNumber(int number)
+void ChatNode::setPNum(int number)
 {
-	this->proposedNumber = number;
+	this->pNum = number;
 }
 
-int ChatNode::getReceivedNumber()
+int ChatNode::getRNum()
 {
-	return this->receivedNumber;
+	return this->rNum;
 }
 
-void ChatNode::setReceivedNumber(int number)
+void ChatNode::setRNum(int number)
 {
-	this->receivedNumber = number;
+	this->rNum = number;
 }
 
 void ChatNode::createChat(User user)

@@ -12,18 +12,23 @@ private:
 	static ChatNode* node;
 	vector<User> userlist;
 	User me;
-	int proposedNumber;
-	int receivedNumber;
+	int pNum;
+	int rNum;
+	mutex userlistMutex;
+	mutex meMutex;
+	mutex pNumMutex;
+	mutex rNumMutex;
+
 public:
 	static ChatNode* getInstance();
 	vector<User> getUserlist();
 	void setUserlist(vector<User> userlist);
 	User getMe();
 	void setMe(User user);
-	int getProposedNumber();
-	void setProposedNumber(int number);
-	int getReceivedNumber();
-	void setReceivedNumber(int number);
+	int getPNum();
+	void setPNum(int number);
+	int getRNum();
+	void setRNum(int number);
 
 	void createChat(User user);
 	void reqLeader(string Tip, int Tport);
