@@ -218,7 +218,8 @@ void multicastMsg(string msg){
 	String requestName = "recMsg";
 	String msg;
 	totalMutex.lock();
-	String content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(total)+"_";
+	String content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
+	me.setTotal(++(me.getTotal()))
 	totalMutex.unlock();
 	msg = requestName+"#"+content;
 	for(User u: this->userlist){
