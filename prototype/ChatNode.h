@@ -45,6 +45,8 @@ public:
 	void addUser(string ip, string name, int port);
 	void multicastUserlist();
 
+	void sendMsg(string msg);
+	void multicastMsg(string msg, int total);
 	
 };
 
