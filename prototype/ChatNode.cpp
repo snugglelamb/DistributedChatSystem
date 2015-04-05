@@ -208,14 +208,14 @@ void ChatNode::sendMsg(string message)
     stub_send(Tip, Tport, msg);
 }
 
-void multicastMsg(string msg){
+void multicastMsg(string message){
 	String requestName = "recMsg";
 	String msg;
 	totalMutex.lock();
 	String content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
 	me.setTotal(++(me.getTotal()))
 	totalMutex.unlock();
-	msg = requestName+"#"+content;
+	msg = requestName+"#"+content+message;
 	for(User u: this->userlist){
 		stub_send(u.getIP(), u.getPort(), msg);
 	}
