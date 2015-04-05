@@ -1,6 +1,5 @@
 #ifndef CHATNODE_H
 #define CHATNODE_H
-#define NODE 1
 #include "User.h"
 #include <vector>
 using namespace std;
