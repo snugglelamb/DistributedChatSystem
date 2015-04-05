@@ -187,6 +187,10 @@ void ChatNode::multicastUserlist()
 	}
 }
 
+void ChatNode::sendMsg(string ip)
+{
+	
+}
 
 
 /*

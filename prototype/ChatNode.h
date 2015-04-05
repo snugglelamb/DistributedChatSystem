@@ -12,12 +12,11 @@ private:
 	static ChatNode* node;
 	vector<User> userlist;
 	User me;
-	int pNum;
 	int rNum;
 	mutex userlistMutex;
 	mutex meMutex;
-	mutex pNumMutex;
 	mutex rNumMutex;
+	mutex totalMutex;
 
 	struct Compare{
 		bool operator() (int a, int b){
