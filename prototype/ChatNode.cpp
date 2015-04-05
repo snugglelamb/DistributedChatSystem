@@ -197,15 +197,21 @@ void ChatNode::sendMsg(string message)
 	string Tip;
 	int Tport;
   
-    for(User u: this->userlist){
-		if(u.getIsLeader())
-		{
-			Tip = u.getIP();
-			Tport = u.getPort();
+  	if(me.getIsLeader())
+  	{
+  		multicastMsg(messgage);
+  	}else
+  	{
+  		for(User u: this->userlist){
+			if(u.getIsLeader())
+			{
+				Tip = u.getIP();
+				Tport = u.getPort();
+			}
 		}
-	}
-	msg = requestName + "#" + content;
-    stub_send(Tip, Tport, msg);
+		msg = requestName + "#" + content;
+    	stub_send(Tip, Tport, msg);
+  	}
 }
 
 void multicastMsg(string message){
