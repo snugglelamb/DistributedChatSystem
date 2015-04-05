@@ -180,16 +180,34 @@ void ChatNode::multicastUserlist()
 		if(u.getIsLeader()) content += "1";
 		else content += "0";
 	}
-	msg = requestName+"#"+content;
+	msg = requestName + "#" + content;
 	for(User u: this->userlist){
 		if(me.getIsLeader()) continue;
 		stub_send(u.getIP(), u.getPort(), msg);
 	}
 }
 
-void ChatNode::sendMsg(string ip)
+void ChatNode::sendMsg(string message)
 {
-	
+	string requestName = "multicastMsg";
+	string msg;
+	string content;
+	content = me.getIP() + "_" + to_string(me.getPort()) + "_" + message;
+
+	string Tip;
+	int Tport;
+  
+    for(User u: this->userlist){
+		if(u.getIsLeader())
+		{
+			Tip = u.getIP();
+			Tport = u.getPort();
+		}
+	}
+
+	msg = requestName + "#" + content;
+    stub_send(Tip, Tport, msg);
+
 }
 
 

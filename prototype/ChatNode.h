@@ -45,7 +45,7 @@ public:
 	void multicastUserlist();
 
 	void sendMsg(string msg);
-	void multicastMsg(string msg, int total);
+	void multicastMsg(string msg);
 	
 };
 
