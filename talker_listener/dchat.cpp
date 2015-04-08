@@ -5,12 +5,12 @@
 #include <thread>
 // #include "User.h"
 // #include "ChatNode.h"
-#include "util.h"
 #include <string.h>
 
 extern "C"
 {
 	#include "multicast.h"
+	#include "util.h"
 }
 
 using namespace std;
