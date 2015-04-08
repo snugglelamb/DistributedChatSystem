@@ -115,10 +115,9 @@ public:
   BlockingQueue msgQueue;
 */
 
-method:
+// method:
 createChat(User user);
-// A new user create a chat. Then the chatNode object add the user to the userlist and set
-this user to be the leader.
+// A new user create a chat. Then the chatNode object add the user to the userlist and set this user to be the leader.
 
 reqLeader(string Tip, int Tport);
 // Client request leader information from other client using target IP and port. 
