@@ -109,7 +109,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
 
     content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
 	msg = requestName + "#" + content;
-	stub_send(Tip.c_str(), Tport, msg.c_tr());
+	stub_send(Tip.c_str(), Tport, msg.c_str());
 }
 
 // connect to leader. add new client to userlist
@@ -214,15 +214,15 @@ void ChatNode::sendMsg(string message)
   	}
 }
 
-void multicastMsg(string message){
+void ChatNode::multicastMsg(string message){
 	string requestName = "recMsg";
 	string msg;
 	totalMutex.lock();
 	string content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
-	me.setTotal(++(me.getTotal()))
+	me.setTotal(me.getTotal()+1)
 	totalMutex.unlock();
 	msg = requestName+"#"+content+message;
-	for(User u: this->userlist){
+	for(User u: userlist){
 		stub_send(u.getIP().c_str(), u.getPort(), msg.c_str());
 	}
 	
