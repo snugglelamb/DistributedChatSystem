@@ -147,11 +147,11 @@ char* stub_receive()
 	}
 	
 	// parse string received
-	// parsePara(&buf);
+	parsePara(buf);
 	return "SUCCESS";
 }
 
-char* stub_send(char* Tip, char* Tport, char* msg)
+char* stub_send(const char* Tip, const char* Tport, const char* msg)
 {
     int sockfd_w;
     struct addrinfo hints, *servinfo, *p;
