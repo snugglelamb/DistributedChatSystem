@@ -11,13 +11,13 @@
 #include <unistd.h>
 #include <errno.h>
 #include <netdb.h>
-// #include "parser.h"
+#include "parser.h"
 #include "util.h"
 
 
 char* stub_connect(char* Tip, char* Tport);
 char* stub_receive();
-char* stub_send(char* Tip, char* Tport, char* msg);
+char* stub_send(const char* Tip, const char* Tport, const char* msg);
 char* stub_create();
 char* getlocalinfo();
 void* get_in_addr(struct sockaddr *sa);
