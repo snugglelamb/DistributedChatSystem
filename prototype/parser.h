@@ -9,10 +9,14 @@
 #include <assert.h>
 #include <stdlib.h>
 
+
 using namespace std;
+
+class ChatNode;
+
 class Parser{
 private:
-		ChatNode * cn;
+		ChatNode  *cn;
 		vector<string> splitstr(string ori, char deli);
 public:
 		Parser();

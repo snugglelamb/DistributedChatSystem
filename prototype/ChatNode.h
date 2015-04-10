@@ -2,7 +2,7 @@
 #define CHATNODE_H
 #include "User.h"
 #include <vector>
-#include <queue>
+
 #include <mutex>
 #include "multicast.h"
 // extern "C"
@@ -25,12 +25,14 @@ private:
 	mutex rNumMutex;
 	mutex totalMutex;
 
-	struct Compare{
+/*
+	struct CompareQueue{
 		bool operator() (int a, int b){
 			return a > b;
 		}
 	};
-	priority_queue<int, vector<int>, Compare> holdback;
+	priority_queue<int, vector<int>, CompareQueue> holdback;
+	*/
 	char* str2cstr(string ori);
 public:
 	static ChatNode* getInstance();

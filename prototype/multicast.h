@@ -2,7 +2,7 @@
 #define MULTICAST_H
 
 #include "parser.h"
-#include "util.h"
+
 extern "C"{
 	#include <sys/socket.h>
 	#include <sys/types.h>
@@ -14,14 +14,15 @@ extern "C"{
 	#include <unistd.h>
 	#include <errno.h>
 	#include <netdb.h>
+	#include "util.h"
 };
 
-char* stub_connect(char* Tip, char* Tport);
-char* stub_receive();
-char* stub_send(const char* Tip, const char* Tport, const char* msg);
-char* stub_create();
-char* getlocalinfo();
-void* get_in_addr(struct sockaddr *sa);
+extern "C" char* stub_connect(char* Tip, char* Tport);
+extern "C" char* stub_receive();
+extern "C" char* stub_send(const char* Tip, const char* Tport, const char* msg);
+extern "C" char* stub_create();
+extern "C" char* getlocalinfo();
+extern "C" void* get_in_addr(struct sockaddr *sa);
 
 #endif
 
