@@ -60,8 +60,8 @@ void ChatNode::createChat(User user)
 {
 	userlist.push_back(user);
 	setMe(user);
-	proposedNumber = 0;
-	receivedNumber = 0;
+	pNum = 0;
+	rNum = 0;
 }
 
 
@@ -73,7 +73,7 @@ void ChatNode::reqLeader(string Tip, int Tport)
 	string content;
 	requestName = "sendLeader";
 	msg= requestName + "#" +content;
-	stub_send(Tip, Tport, msg);
+	stub_send(Tip.c_str(), Tport, msg.c_str());
 }
 
 // send leader information back to new added client
@@ -109,7 +109,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
 
     content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
 	msg = requestName + "#" + content;
-	stub_send(Tip, Tport, msg);
+	stub_send(Tip.c_str(), Tport, msg.c_tr());
 }
 
 // connect to leader. add new client to userlist
@@ -130,7 +130,7 @@ void ChatNode::connectLeader(string Tip, int Tport)
     requestName = "addUser";	
     content = SIP + "_" + mePortStr + "_" + SIP + "_" + Sname + "_"+ mePortStr ;
     msg = requestName + "#" + content;
-    stub_send(Tip, Tport, msg);
+    stub_send(Tip.c_tr(), Tport, msg.c_str());
 }
 
 //update userlist
@@ -183,7 +183,7 @@ void ChatNode::multicastUserlist()
 	msg = requestName + "#" + content;
 	for(User u: this->userlist){
 		if(me.getIsLeader()) continue;
-		stub_send(u.getIP(), u.getPort(), msg);
+		stub_send(u.getIP().c_str(), u.getPort(), msg.c_str());
 	}
 }
 
@@ -199,7 +199,7 @@ void ChatNode::sendMsg(string message)
   
   	if(me.getIsLeader())
   	{
-  		multicastMsg(messgage);
+  		multicastMsg(message);
   	}else
   	{
   		for(User u: this->userlist){
@@ -210,20 +210,20 @@ void ChatNode::sendMsg(string message)
 			}
 		}
 		msg = requestName + "#" + content;
-    	stub_send(Tip, Tport, msg);
+    	stub_send(Tip.c_str(), Tport, msg.c_str());
   	}
 }
 
 void multicastMsg(string message){
-	String requestName = "recMsg";
-	String msg;
+	string requestName = "recMsg";
+	string msg;
 	totalMutex.lock();
-	String content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
+	string content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
 	me.setTotal(++(me.getTotal()))
 	totalMutex.unlock();
 	msg = requestName+"#"+content+message;
 	for(User u: this->userlist){
-		stub_send(u.getIP(), u.getPort(), msg);
+		stub_send(u.getIP().c_str(), u.getPort(), msg.c_str());
 	}
 	
 

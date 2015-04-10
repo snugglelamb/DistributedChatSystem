@@ -3,6 +3,7 @@
 #include "User.h"
 #include <vector>
 #include <queue>
+#include <mutex>
 using namespace std;
 
 class ChatNode
@@ -13,6 +14,7 @@ private:
 	vector<User> userlist;
 	User me;
 	int rNum;
+	int pNum;
 	mutex userlistMutex;
 	mutex meMutex;
 	mutex rNumMutex;
