@@ -1,7 +1,6 @@
 #ifndef MULTICAST_H
 #define MULTICAST_H
 
-
 #include "parser.h"
 #include "util.h"
 extern "C"{
