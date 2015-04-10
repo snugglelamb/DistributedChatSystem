@@ -73,7 +73,7 @@ void ChatNode::reqLeader(string Tip, int Tport)
 	string content;
 	requestName = "sendLeader";
 	msg= requestName + "#" +content;
-	stub_send(Tip.c_str(), Tport, msg.c_str());
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
 }
 
 // send leader information back to new added client
@@ -109,7 +109,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
 
     content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
 	msg = requestName + "#" + content;
-	stub_send(Tip.c_str(), Tport, msg.c_str());
+	stub_send(Tip.c_str(), to_String(Tport).c_str(), msg.c_str());
 }
 
 // connect to leader. add new client to userlist
@@ -130,7 +130,7 @@ void ChatNode::connectLeader(string Tip, int Tport)
     requestName = "addUser";	
     content = SIP + "_" + mePortStr + "_" + SIP + "_" + Sname + "_"+ mePortStr ;
     msg = requestName + "#" + content;
-    stub_send(Tip.c_tr(), Tport, msg.c_str());
+    stub_send(Tip.c_tr(), to_string(Tport).c_str(), msg.c_str());
 }
 
 //update userlist
@@ -183,7 +183,7 @@ void ChatNode::multicastUserlist()
 	msg = requestName + "#" + content;
 	for(User u: this->userlist){
 		if(me.getIsLeader()) continue;
-		stub_send(u.getIP().c_str(), u.getPort(), msg.c_str());
+		stub_send(u.getIP().c_str(), to_String(u.getPort()).c_str(), msg.c_str());
 	}
 }
 
@@ -210,7 +210,7 @@ void ChatNode::sendMsg(string message)
 			}
 		}
 		msg = requestName + "#" + content;
-    	stub_send(Tip.c_str(), Tport, msg.c_str());
+    	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
   	}
 }
 
@@ -223,7 +223,7 @@ void ChatNode::multicastMsg(string message){
 	totalMutex.unlock();
 	msg = requestName+"#"+content+message;
 	for(User u: userlist){
-		stub_send(u.getIP().c_str(), u.getPort(), msg.c_str());
+		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(), msg.c_str());
 	}
 	
 
