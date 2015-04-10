@@ -16,7 +16,7 @@ vector<string> Parser::splitstr(string ori, char deli){
 	void Parser::parsePara(char* arr ){
 		string str = string(arr); size_t pos = str.find("#");
 		if (pos == string::npos){
-			cout << "cannot find #"<<endl; return;
+			//cout << "cannot find #"<<endl; return;
 		} 
 		string req = str.substr(0, pos); 
 		//cout << "requestis " << req<<endl;

@@ -2,8 +2,6 @@
 #include <iostream>
 #include <cstddef>
 
-
-
 ChatNode* ChatNode::node = NULL;
 
 ChatNode* ChatNode::getInstance()

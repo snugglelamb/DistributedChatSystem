@@ -4,18 +4,15 @@
 #include "User.h"
 #include <string>
 #include <vector>
-//#include <iostream>
+#include <iostream>
 #include <sstream>
 #include <assert.h>
-#include <cstdlib>
-extern "C"
-{
-	#include "multicast.h"
-}
+#include <stdlib.h>
+
 using namespace std;
 class Parser{
 private:
-		ChatNode *cn;
+		ChatNode * cn;
 		vector<string> splitstr(string ori, char deli);
 public:
 		Parser();

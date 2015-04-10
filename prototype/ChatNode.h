@@ -2,12 +2,13 @@
 #define CHATNODE_H
 #include "User.h"
 #include <vector>
-//#include <queue>
+#include <queue>
 #include <mutex>
-extern "C"
-{
-	#include "multicast.h"
-}
+#include "multicast.h"
+// extern "C"
+// {
+// 	
+// }
 using namespace std;
 
 class ChatNode
@@ -29,7 +30,7 @@ private:
 			return a > b;
 		}
 	};
-	//priority_queue<int, vector<int>, Compare> holdback;
+	priority_queue<int, vector<int>, Compare> holdback;
 	char* str2cstr(string ori);
 public:
 	static ChatNode* getInstance();
