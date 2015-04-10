@@ -4,10 +4,14 @@
 #include "User.h"
 #include <string>
 #include <vector>
-#include <iostream>
+//#include <iostream>
 #include <sstream>
 #include <assert.h>
 #include <cstdlib>
+extern "C"
+{
+	#include "multicast.h"
+}
 using namespace std;
 class Parser{
 private:

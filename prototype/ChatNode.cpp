@@ -2,10 +2,7 @@
 #include <iostream>
 #include <cstddef>
 
-extern "C"
-{
-	#include "multicast.h"
-}
+
 
 ChatNode* ChatNode::node = NULL;
 
@@ -64,6 +61,11 @@ void ChatNode::createChat(User user)
 	rNum = 0;
 }
 
+char* ChatNode::str2cstr(string str){
+	char *cstr = new char[str.length() + 1];
+	strcpy(cstr, str.c_str());
+	return cstr;
+}
 
 // request leader information from other client using target IP and port.
 void ChatNode::reqLeader(string Tip, int Tport)
@@ -73,7 +75,7 @@ void ChatNode::reqLeader(string Tip, int Tport)
 	string content;
 	requestName = "sendLeader";
 	msg= requestName + "#" +content;
-	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
 }
 
 // send leader information back to new added client
@@ -109,7 +111,7 @@ void ChatNode::sendLeader(string Tip, int Tport)
 
     content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
 	msg = requestName + "#" + content;
-	stub_send(Tip.c_str(), to_String(Tport).c_str(), msg.c_str());
+	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
 }
 
 // connect to leader. add new client to userlist
@@ -130,7 +132,7 @@ void ChatNode::connectLeader(string Tip, int Tport)
     requestName = "addUser";	
     content = SIP + "_" + mePortStr + "_" + SIP + "_" + Sname + "_"+ mePortStr ;
     msg = requestName + "#" + content;
-    stub_send(Tip.c_tr(), to_string(Tport).c_str(), msg.c_str());
+    stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
 }
 
 //update userlist
@@ -183,7 +185,7 @@ void ChatNode::multicastUserlist()
 	msg = requestName + "#" + content;
 	for(User u: this->userlist){
 		if(me.getIsLeader()) continue;
-		stub_send(u.getIP().c_str(), to_String(u.getPort()).c_str(), msg.c_str());
+		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
 	}
 }
 
@@ -210,7 +212,7 @@ void ChatNode::sendMsg(string message)
 			}
 		}
 		msg = requestName + "#" + content;
-    	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+    	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
   	}
 }
 
@@ -219,11 +221,11 @@ void ChatNode::multicastMsg(string message){
 	string msg;
 	totalMutex.lock();
 	string content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
-	me.setTotal(me.getTotal()+1)
+	me.setTotal(me.getTotal()+1);
 	totalMutex.unlock();
 	msg = requestName+"#"+content+message;
 	for(User u: userlist){
-		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(), msg.c_str());
+		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
 	}
 	
 
