@@ -93,6 +93,9 @@ void ChatNode::reqLeader(string Tip, int Tport)
 	string requestName;
 	string content;
 	requestName = "sendLeader";
+	string SIP = me.getIP();
+	string mePortArr = to_string(me.getPort());
+	content = SIP + "_" + mePortArr;
 	msg= requestName + "#" +content;
 	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
 }
