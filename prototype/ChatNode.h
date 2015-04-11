@@ -2,7 +2,8 @@
 #define CHATNODE_H
 #include "User.h"
 #include <vector>
-
+#include <algorithm>
+//#include <deque>
 #include <mutex>
 #include "multicast.h"
 // extern "C"
