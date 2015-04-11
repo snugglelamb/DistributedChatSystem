@@ -193,7 +193,8 @@ void ChatNode::addUser(string ip, string name, int port)
 	t.setIsLeader(false);
 	t.setTotal(me.getTotal());
 	this->userlist.push_back(t);
-	showCurrentUser();
+	//showCurrentUser();
+	cout<<"NOTICE "<<name<<" joined on "<<ip<<":"<<port<<endl;
 	multicastUserlist();
 }
 

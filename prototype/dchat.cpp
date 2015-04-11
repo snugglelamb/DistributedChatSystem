@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 	//	cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
-			std::cout << "Met error, could not join chat.\n";
+			std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
 			exit(1);
 		}
 		while(handle.compare("CREATEERROR") == 0)
@@ -133,6 +133,7 @@ int main(int argc, char** argv)
 		User user(string(sip), name, selfPort);
 		node->setMe(user);
 		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
+		cout<<string(sip)<<":"<<string(sport)<<endl;
 		cout<<"Succeeded, current users:"<<endl;
 		node->reqLeader(string(tip), atoi(tport));
 
