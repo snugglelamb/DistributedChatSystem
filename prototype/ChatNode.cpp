@@ -53,6 +53,9 @@ void ChatNode::setRNum(int number)
 
 void ChatNode::createChat(User user)
 {
+	user.setTotal(0);
+	user.setID(0);
+	user.setIsLeader(true);
 	userlist.push_back(user);
 	setMe(user);
 	pNum = 0;
@@ -68,8 +71,11 @@ void ChatNode::showCurrentUser()
 		string ip = u.getIP();
 		string name = u.getNickname();
 		int port = u.getPort();
+		cout<<name<<endl;
 		if(isLeader)
 			cout<<name<<" "<<ip<<":"<<port<<" (Leader)"<<endl;
+		else
+			cout<<name<<" "<<ip<<":"<<port<<endl;
 	}
 }
 
