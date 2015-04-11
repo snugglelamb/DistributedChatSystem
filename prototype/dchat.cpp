@@ -61,11 +61,11 @@ int main(int argc, char** argv)
 	if(argc == 2)
 	{
 		string name(argv[1]);
-		std::cout << "Create Chat, name: "<< name << endl;
+	//	std::cout << "Create Chat, name: "<< name << endl;
 		// create
 
 		string handle = string(stub_create());
-		cout<<"create chat:"<<handle<<endl;
+		//cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
@@ -101,17 +101,16 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 		
-		std::cout << name << " attempts to join chat at "<< addr << endl;
+		//std::cout << name << " attempts to join chat at "<< addr << endl;
 		char *tip = (char *) addr.substr(0, pos).c_str();		
 		char *tport = (char *) addr.substr(pos+1, -1).c_str();
 		
 		strcpy(test_port, tport);
 		
 		string handle = string(stub_connect(tip, tport));
-		cout<<"handle:"<<handle<<endl;
+	//	cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
-			// ERROR
 			std::cout << "Met error, could not join chat.\n";
 			exit(1);
 		}
@@ -134,7 +133,7 @@ int main(int argc, char** argv)
 		User user(string(sip), name, selfPort);
 		node->setMe(user);
 		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
-		cout<<string(sip)<<":"<<string(sport)<<endl;
+		cout<<"Succeeded, current users:"<<endl;
 		node->reqLeader(string(tip), atoi(tport));
 
 	} else {

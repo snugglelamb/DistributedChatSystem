@@ -29,24 +29,18 @@ void Parser::parsePara(char* arr) {
 	vector<string> params = splitstr(str.substr(pos + 1), '_');
 	// for(string s: params){ //      cout<< s<<endl; // }
 	if (req.compare("sendLeader") == 0) {
-		cout<<"sendLeader"<<endl;
+	//	cout<<"sendLeader"<<endl;
 		assert(params.size() == 2);
 
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
 
 	} else if (req.compare("connectLeader") == 0) {
-		cout<<"connectLeader"<<endl;
-		cout << "params: ";
-		for(string v: params){
-			cout <<" "<<v;
-		}
-		cout<<endl;
 		assert(params.size() == 4);
 		cn->connectLeader(params[2], atoi(params[3].c_str()));
 
 	} else if (req.compare("updateUserlist") == 0) {
-		cout<<"update user list"<<endl;
+		//cout<<"update user list"<<endl;
 		//string IP, string nickname, int port, int ID, inttotal, bool isleader 
 		assert(params.size() % 6 == 2);
 		vector<User> tmp;
@@ -63,13 +57,13 @@ void Parser::parsePara(char* arr) {
 		cn->updateUserlist(tmp);
 
 	} else if (req.compare("addUser") == 0) {
-		cout<<"add user"<<endl;
+	//	cout<<"add user"<<endl;
 
 		assert(params.size() == 5);
 		cn->addUser(params[2], params[3], atoi(params[4].c_str()));
 
 	} else if (req.compare("multicastUserlist") == 0) {
-		cout<<"multicast user list"<<endl;
+	//	cout<<"multicast user list"<<endl;
 		assert(params.size() == 2);
 		cn->multicastUserlist();
 	}
