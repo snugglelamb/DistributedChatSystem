@@ -71,7 +71,6 @@ void ChatNode::showCurrentUser()
 		string ip = u.getIP();
 		string name = u.getNickname();
 		int port = u.getPort();
-		cout<<name<<endl;
 		if(isLeader)
 			cout<<name<<" "<<ip<<":"<<port<<" (Leader)"<<endl;
 		else
@@ -96,6 +95,7 @@ void ChatNode::reqLeader(string Tip, int Tport)
 	string SIP = me.getIP();
 	string mePortArr = to_string(me.getPort());
 	content = SIP + "_" + mePortArr;
+	cout<<"content"<<content<<endl;
 	msg= requestName + "#" +content;
 	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
 }
@@ -131,6 +131,10 @@ void ChatNode::sendLeader(string Tip, int Tport)
     sprintf(mePortArr,"%d",Sport);
     string mePortStr(mePortArr);
 
+    cout<<"SIP"<<SIP<<endl;
+    cout<<"Sport"<<Sport<<endl;
+    cout<<leaderIP<<leaderPortArr<<endl;
+
     content = SIP + "_" + mePortArr + "_" +leaderIP + "_" + leaderPortArr;
 	msg = requestName + "#" + content;
 	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
@@ -160,18 +164,20 @@ void ChatNode::connectLeader(string Tip, int Tport)
 //update userlist
 void ChatNode::updateUserlist(vector<User> newuserlist)
 {
+	cout<<"in update userlist"<<endl;
+	cout<<"size:"<<newuserlist.size()<<endl;
 	this->userlist = newuserlist;
 	for(User u: this->userlist){
 		if(u.getIP() == me.getIP() && u.getPort() == me.getPort())
 			me = u;
 	}
-	int proposedNumber;
-	int receivedNumber;
+	cout<<"dsfsdfsdfsfs"<<endl;
 	for(User u: this->userlist)
 	{
 		if(u.getIsLeader()){
-			proposedNumber = u.getTotal();
-			receivedNumber = u.getTotal();
+			cout<<"is leader"<<endl;
+			rNum = u.getTotal();
+			pNum = u.getTotal();
 		}
 	}
 	showCurrentUser();
@@ -180,6 +186,7 @@ void ChatNode::updateUserlist(vector<User> newuserlist)
 //add new user to userlist and then multicast new userlist to other clients
 void ChatNode::addUser(string ip, string name, int port)
 {
+	cout<<"in add user"<<endl;
 	User t;
 	t.setIP(ip);
 	t.setNickname(name);
@@ -188,6 +195,7 @@ void ChatNode::addUser(string ip, string name, int port)
 	t.setIsLeader(false);
 	t.setTotal(me.getTotal());
 	this->userlist.push_back(t);
+	showCurrentUser();
 	multicastUserlist();
 }
 
@@ -195,6 +203,7 @@ void ChatNode::addUser(string ip, string name, int port)
 //multicast new userlist to other clients
 void ChatNode::multicastUserlist()
 {
+	cout<<"in multicast userlist"<<endl;
 	string requestName ="updateUserlist";
 	string msg;
 	string content = "";
@@ -202,14 +211,20 @@ void ChatNode::multicastUserlist()
 	content = me.getIP()+"_"+to_string(me.getPort())+"_";
 	for(User u: this->userlist){
 		content += u.getIP()+"_"+u.getNickname()+"_"+to_string(u.getPort())+"_"+to_string(u.getID())+"_"+to_string(u.getTotal())+"_";
-		if(u.getIsLeader()) content += "1";
-		else content += "0";
+		if(u.getIsLeader()) content += "1_";
+		else content += "0_";
 	}
-	msg = requestName + "#" + content;
+
+	msg = requestName + "#" + content.substr(0,content.size()-1);
 	for(User u: this->userlist){
-		if(me.getIsLeader()) continue;
+		if(u.getIsLeader()) 
+			continue;
+		cout<<"msg:"<<msg<<endl;
+		cout<<"ip:"<<u.getIP();
+		cout<<"port:"<<u.getPort();
 		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
 	}
+	showCurrentUser();
 }
 
 void ChatNode::sendMsg(string message)

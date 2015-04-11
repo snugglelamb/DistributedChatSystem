@@ -65,6 +65,7 @@ int main(int argc, char** argv)
 		// create
 
 		string handle = string(stub_create());
+		cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
@@ -101,12 +102,13 @@ int main(int argc, char** argv)
 		} 
 		
 		std::cout << name << " attempts to join chat at "<< addr << endl;
-		char *ip = (char *) addr.substr(0, pos).c_str();		
-		char *port = (char *) addr.substr(pos+1, -1).c_str();
+		char *tip = (char *) addr.substr(0, pos).c_str();		
+		char *tport = (char *) addr.substr(pos+1, -1).c_str();
 		
-		strcpy(test_port, port);
+		strcpy(test_port, tport);
 		
-		string handle = string(stub_connect(ip, port));
+		string handle = string(stub_connect(tip, tport));
+		cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
 			// ERROR
@@ -115,7 +117,7 @@ int main(int argc, char** argv)
 		}
 		while(handle.compare("CREATEERROR") == 0)
 		{
-			handle = string(stub_connect(ip, port));
+			handle = string(stub_connect(tip, tport));
 		}
 		size_t posTarget = handle.find(":");
 		if (pos == string::npos)
@@ -124,10 +126,15 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 
-		char *tip = (char *) addr.substr(0, posTarget).c_str();		
-		char *tport = (char *) addr.substr(posTarget+1, -1).c_str();
-		int selfPort = atoi(tport); 
-		node->reqLeader(string(tip), selfPort);
+		char *sip = (char *) handle.substr(0, posTarget).c_str();		
+		char *sport = (char *) handle.substr(posTarget+1, -1).c_str();
+
+		int selfPort = atoi(sport); 
+	
+		User user(string(sip), name, selfPort);
+		node->setMe(user);
+
+		node->reqLeader(string(tip), atoi(tport));
 
 	} else {
 		std::cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
