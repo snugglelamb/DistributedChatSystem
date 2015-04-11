@@ -28,14 +28,15 @@ void Parser::parsePara(char* arr) {
 
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
-	}else if(req.compare("connectLeader")){
-		cout<<"params"<<endl;
-		for(string val:params){
-			cout<<val<<endl;
+
+	} else if (req.compare("connectLeader")) {
+		cout << "params: ";
+		for(string v: params){
+			cout <<" "<<v;
 		}
-		//assert(params.size() == 4); cn->connectLeader(params[2],
-		atoi(params[3].c_str());
-	} 
+		cout<<endl;
+		assert(params.size() == 4);
+		cn->connectLeader(params[2], atoi(params[3].c_str()));
 
 	} else if (req.compare("updateUserlist") == 0) {
 		//string IP, string nickname, int port, int ID, inttotal, bool isleader 
