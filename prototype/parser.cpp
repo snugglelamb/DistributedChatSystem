@@ -48,7 +48,7 @@ void Parser::parsePara(char* arr) {
 	} else if (req.compare("updateUserlist") == 0) {
 		cout<<"update user list"<<endl;
 		//string IP, string nickname, int port, int ID, inttotal, bool isleader 
-		assert(params.size() / 6 == 2);
+		assert(params.size() % 6 == 2);
 		vector<User> tmp;
 		for (int i = 2; i < params.size(); i += 6) {
 			User t;
