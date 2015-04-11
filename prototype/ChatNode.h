@@ -3,13 +3,10 @@
 #include "User.h"
 #include <vector>
 #include <algorithm>
-//#include <deque>
 #include <mutex>
 #include "multicast.h"
-// extern "C"
-// {
-// 	
-// }
+#include "HoldbackQueue.h"
+
 using namespace std;
 
 class ChatNode
@@ -25,15 +22,9 @@ private:
 	mutex meMutex;
 	mutex rNumMutex;
 	mutex totalMutex;
+	
+	HoldbackQueue holdback;
 
-/*
-	struct CompareQueue{
-		bool operator() (int a, int b){
-			return a > b;
-		}
-	};
-	priority_queue<int, vector<int>, CompareQueue> holdback;
-	*/
 	char* str2cstr(string ori);
 public:
 	static ChatNode* getInstance();

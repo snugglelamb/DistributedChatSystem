@@ -18,6 +18,8 @@ using namespace std;
 // for test purpose, type msgs are all sent to creator
 static char test_port[10];
 
+ChatNode *node = ChatNode::getInstance();
+
 void receive()
 {
 	// call stub_receive
@@ -45,7 +47,8 @@ void type()
 			strcpy(port_, test_port);
 			// strcpy(port_,"20000");
 			// call stub_send
-			stub_send(ip, port_, msg);
+			//stub_send(ip, port_, msg);
+			node->sendMsg(string(msg));
 		}
 	}
 }
@@ -57,15 +60,15 @@ void check()
 
 int main(int argc, char** argv)
 {
-	 ChatNode *node = ChatNode::getInstance();
+
 	if(argc == 2)
 	{
 		string name(argv[1]);
-		std::cout << "Create Chat, name: "<< name << endl;
+	//	std::cout << "Create Chat, name: "<< name << endl;
 		// create
 
 		string handle = string(stub_create());
-		cout<<"create chat:"<<handle<<endl;
+		//cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
@@ -101,18 +104,17 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 		
-		std::cout << name << " attempts to join chat at "<< addr << endl;
+		//std::cout << name << " attempts to join chat at "<< addr << endl;
 		char *tip = (char *) addr.substr(0, pos).c_str();		
 		char *tport = (char *) addr.substr(pos+1, -1).c_str();
 		
 		strcpy(test_port, tport);
 		
 		string handle = string(stub_connect(tip, tport));
-		cout<<"handle:"<<handle<<endl;
+	//	cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
-			// ERROR
-			std::cout << "Met error, could not join chat.\n";
+			std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
 			exit(1);
 		}
 		while(handle.compare("CREATEERROR") == 0)
@@ -135,6 +137,7 @@ int main(int argc, char** argv)
 		node->setMe(user);
 		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
 		cout<<string(sip)<<":"<<string(sport)<<endl;
+		cout<<"Succeeded, current users:"<<endl;
 		node->reqLeader(string(tip), atoi(tport));
 
 	} else {
