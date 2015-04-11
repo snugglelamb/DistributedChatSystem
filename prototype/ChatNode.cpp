@@ -269,6 +269,8 @@ void ChatNode::multicastMsg(string message){
 
 
 
+
+
 /*
 void ChatNode::addUser(User user)
 {
