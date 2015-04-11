@@ -29,7 +29,11 @@ void Parser::parsePara(char* arr) {
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
 	} else if (req.compare("connectLeader")) {
-
+		cout << "params: ";
+		for(string v: params){
+			cout <<" "<<v;
+		}
+		cout<<endl;
 		assert(params.size() == 4);
 		cn->connectLeader(params[2], atoi(params[3].c_str()));
 
