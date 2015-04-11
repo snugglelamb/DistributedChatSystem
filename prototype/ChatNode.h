@@ -46,6 +46,7 @@ public:
 	void setRNum(int number);
 
 	void createChat(User user);
+	void showCurrentUser();
 	void reqLeader(string Tip, int Tport);
 	void sendLeader(string Tip, int Tport);
 	void connectLeader(string Tip, int Tport);

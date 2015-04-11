@@ -62,7 +62,7 @@ char* stub_create()
 
     if ((rv = getaddrinfo(NULL, port_, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-        return "ERROR";
+        return "CREATEERROR";
     }
 
     // loop through all the results and bind to the first valid one
@@ -84,7 +84,7 @@ char* stub_create()
 
     if (p == NULL) {
         fprintf(stderr, "stub: failed to bind socket\n");
-        return "ERROR";
+        return "CREATEERROR";
     }
 
     freeaddrinfo(servinfo); // done with servinfo

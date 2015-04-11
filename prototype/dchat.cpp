@@ -57,30 +57,36 @@ void check()
 
 int main(int argc, char** argv)
 {
-	// ChatNode node;
+	 ChatNode *node = ChatNode::getInstance();
 	if(argc == 2)
 	{
 		string name(argv[1]);
 		std::cout << "Create Chat, name: "<< name << endl;
 		// create
+
 		string handle = string(stub_create());
-		if ( handle.compare("ERROR") == 0 ) 
+		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
 			std::cout << "Met error, could not create chat.\n";
-			exit(1);
-		} else {
-			size_t pos = handle.find(":");
-			if (pos == string::npos)
-			{
-				cout << "please enter address as 0.0.0.0:1234" << endl;
-				exit(1);
-			} 
+			handle = string(stub_create());
+		} 
 
-			char *ip = (char *) handle.substr(0, pos).c_str();		
-			char *port = (char *) handle.substr(pos+1, -1).c_str();
-			strcpy(test_port, port);
-		}
+		size_t pos = handle.find(":");
+		if (pos == string::npos)
+		{
+			cout << "please enter address as 0.0.0.0:1234" << endl;
+			exit(1);
+		} 
+
+		char *ip = (char *) handle.substr(0, pos).c_str();		
+		char *port = (char *) handle.substr(pos+1, -1).c_str();
+
+		int leaderPort = atoi(port); 
+
+		strcpy(test_port, port);
+		User user(string(ip), name, leaderPort);
+		node->createChat(user);
 		
 	}else if(argc == 3)
 	{
@@ -107,7 +113,22 @@ int main(int argc, char** argv)
 			std::cout << "Met error, could not join chat.\n";
 			exit(1);
 		}
-		
+		while(handle.compare("CREATEERROR") == 0)
+		{
+			handle = string(stub_connect(ip, port));
+		}
+		size_t posTarget = handle.find(":");
+		if (pos == string::npos)
+		{
+			cout << "please enter address as 0.0.0.0:1234" << endl;
+			exit(1);
+		} 
+
+		char *tip = (char *) addr.substr(0, posTarget).c_str();		
+		char *tport = (char *) addr.substr(posTarget+1, -1).c_str();
+		int selfPort = atoi(tport); 
+		node->reqLeader(string(tip), selfPort);
+
 	} else {
 		std::cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
 		exit(1);

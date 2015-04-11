@@ -57,7 +57,22 @@ void ChatNode::createChat(User user)
 	setMe(user);
 	pNum = 0;
 	rNum = 0;
+	showCurrentUser();
+	cout<<"Waiting for others to join ..."<<endl;
 }
+
+void ChatNode::showCurrentUser()
+{
+	for(User u: this->userlist){
+		bool isLeader = u.getIsLeader();
+		string ip = u.getIP();
+		string name = u.getNickname();
+		int port = u.getPort();
+		if(isLeader)
+			cout<<name<<" "<<ip<<":"<<port<<" (Leader)"<<endl;
+	}
+}
+
 
 char* ChatNode::str2cstr(string str){
 	char *cstr = new char[str.length() + 1];
