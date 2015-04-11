@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 		strcpy(test_port, port);
 		User user(string(ip), name, leaderPort);
 		node->createChat(user);
-		
+		cout<<name<<" started a new chat, listening on "<<string(ip)<<":"<<string(port)<<endl;
 	}else if(argc == 3)
 	{
 		string name(argv[1]);
@@ -133,7 +133,8 @@ int main(int argc, char** argv)
 	
 		User user(string(sip), name, selfPort);
 		node->setMe(user);
-
+		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
+		cout<<string(sip)<<":"<<string(sport)<<endl;
 		node->reqLeader(string(tip), atoi(tport));
 
 	} else {
