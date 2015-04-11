@@ -26,8 +26,44 @@ char* getlocalinfo()
 	socklen_t addressLength = sizeof(localAddress);
 	getsockname(sockfd, (struct sockaddr*)&localAddress, &addressLength);
 	
+	//get ip
+    struct ifaddrs *ifaddr, *ifa;
+    int family, s;
+    char host[NI_MAXHOST];
+
+    if (getifaddrs(&ifaddr) == -1) 
+    {
+        perror("getifaddrs");
+        return "GETIPERROR";
+    }
+	
+
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) 
+    {
+        if (ifa->ifa_addr == NULL)
+            continue;  
+
+        s = getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in),host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+
+		// en0 on mac, eth0 on linuxs
+        if((strcmp(ifa->ifa_name,"en0")==0)&&(ifa->ifa_addr->sa_family==AF_INET))
+        {
+            if (s != 0)
+            {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                return "GETIPERROR";
+            }
+			sprintf(ip, "%s", host);
+            // printf("\tInterface : <%s>\n",ifa->ifa_name );
+            // printf("\t  Address : <%s>\n", host);
+        }
+    }
+
+    freeifaddrs(ifaddr);
+	
+	
 	port = (int) ntohs(localAddress.sin_port);
-	strcpy(ip, inet_ntoa(localAddress.sin_addr));
+	// strcpy(ip, inet_ntoa(localAddress.sin_addr));
 	printf("local address: %s\n", ip);
 	printf("local port: %d\n", port);
 	

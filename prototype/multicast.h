@@ -14,6 +14,7 @@ extern "C"{
 	#include <unistd.h>
 	#include <errno.h>
 	#include <netdb.h>
+	#include <ifaddrs.h>
 	#include "util.h"
 };
 
