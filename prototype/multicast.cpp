@@ -132,7 +132,7 @@ char* stub_connect(char* Tip, char* Tport)
 {
 
 	char msg[20];	
-	strcpy(msg, "connect");
+	strcpy(msg, "connect@");
 		
 	if ( strcmp(stub_send(Tip, Tport, msg), "ERROR") == 0 ) return "ERROR";
 

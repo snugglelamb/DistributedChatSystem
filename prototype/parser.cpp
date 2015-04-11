@@ -14,7 +14,10 @@ Parser::Parser() {
 	this->cn = ChatNode::getInstance();
 }
 void Parser::parsePara(char* arr) {
-	string str = string(arr);
+	string rawStr = string(arr);
+	size_t pos0 = rawStr.find("@");
+	string str = rawStr.substr(pos0);
+
 	size_t pos = str.find("#");
 	if (pos == string::npos) {
 		//cout << "cannot find #"<<endl; return;
