@@ -72,7 +72,7 @@ char* getlocalinfo()
 	strcat(msg,":");
 	strcat(msg,port_);
 	
-	printf("stub: finish binding. ip:port -> %s:%d\n",ip,port);
+	printf("stub: finish binding. ip:port -> %s\n",msg);
     printf("stub: waiting to recvfrom...\n");
 	
 	return msg;
@@ -131,14 +131,18 @@ char* stub_create()
 char* stub_connect(char* Tip, char* Tport)
 {
 
-	char msg[20];	
-	strcpy(msg, "connect");
+	char msg[500];	
+	strcpy(msg, "CONNECT@");
 		
 	if ( strcmp(stub_send(Tip, Tport, msg), "ERROR") == 0 ) return "ERROR";
 
 	strcpy(msg, stub_create());
+
 	if ( strcmp(msg, "ERROR") == 0 ) { return "ERROR"; 	}
-	else { return msg; }
+	else { 
+		printf("########connect get msg :%s\n", msg);
+		return msg; 
+	}
 
 }
 
@@ -183,8 +187,14 @@ char* stub_receive()
 	}
 	
 	// parse string received
-	Parser p;
-	p.parsePara(buf);
+
+	if (buf[6] == 'C') {
+		printf("stub: connect received. do nothing\n");
+	} else {
+		Parser p;
+		p.parsePara(buf);
+	}
+
 	return "SUCCESS";
 }
 
@@ -202,7 +212,7 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
     char s[INET6_ADDRSTRLEN];
 	
 	// customize request sent
-	char fullmsg[512];
+	char fullmsg[1024];
 	// sometimes char* mess up with address in memory
 	// printf("Target IP:%s\n", Tip);
 	// printf("Target PORT:%s\n", Tport); // check if Tport is shifted to "msg"
@@ -244,7 +254,7 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
 
 	// customize request sent
 	strcpy(fullmsg,"");
-	strcat(fullmsg, "00000"); // add prefix
+	strcat(fullmsg, "00000@"); // add prefix
 	strcat(fullmsg, msg);
 	// strcpy(fullmsg, "0ABCDEF"); // test
 	printf("stub: msg prepared to send: %s\n",fullmsg);
@@ -279,4 +289,3 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
 	return "SUCCESS";
 	
 }
-
