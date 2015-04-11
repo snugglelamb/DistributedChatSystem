@@ -28,9 +28,12 @@ vector<string> Parser::splitstr(string ori, char deli){
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
 	}else if(req.compare("connectLeader")){
-
-		assert(params.size() == 4); cn->connectLeader(params[2],
-		atoi(params[3].c_str()));
+		cout<<"params"<<endl;
+		for(string val:params){
+			cout<<val<<endl;
+		}
+		//assert(params.size() == 4); cn->connectLeader(params[2],
+		atoi(params[3].c_str());
 
 	}else if(req.compare("updateUserlist") == 0){
 		//string IP, string nickname, int port, int ID, inttotal, bool isleader 
