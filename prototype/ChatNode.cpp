@@ -264,8 +264,6 @@ void ChatNode::multicastMsg(string message){
 	for(User u: userlist){
 		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
 	}
-	
-
 }
 
 

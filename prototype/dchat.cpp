@@ -18,6 +18,8 @@ using namespace std;
 // for test purpose, type msgs are all sent to creator
 static char test_port[10];
 
+ChatNode *node = ChatNode::getInstance();
+
 void receive()
 {
 	// call stub_receive
@@ -45,7 +47,8 @@ void type()
 			strcpy(port_, test_port);
 			// strcpy(port_,"20000");
 			// call stub_send
-			stub_send(ip, port_, msg);
+			//stub_send(ip, port_, msg);
+			node->sendMsg(string(msg));
 		}
 	}
 }
@@ -57,7 +60,7 @@ void check()
 
 int main(int argc, char** argv)
 {
-	 ChatNode *node = ChatNode::getInstance();
+
 	if(argc == 2)
 	{
 		string name(argv[1]);
