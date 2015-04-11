@@ -183,8 +183,14 @@ char* stub_receive()
 	}
 	
 	// parse string received
-	Parser p;
-	p.parsePara(buf);
+
+	if (buf[5] == 'c') {
+		printf("stub: connect received. do nothing\n");
+	} else {
+		Parser p;
+		p.parsePara(buf);
+	}
+
 	return "SUCCESS";
 }
 
@@ -244,7 +250,7 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
 
 	// customize request sent
 	strcpy(fullmsg,"");
-	strcat(fullmsg, "00000"); // add prefix
+	strcat(fullmsg, "00000@"); // add prefix
 	strcat(fullmsg, msg);
 	// strcpy(fullmsg, "0ABCDEF"); // test
 	printf("stub: msg prepared to send: %s\n",fullmsg);
