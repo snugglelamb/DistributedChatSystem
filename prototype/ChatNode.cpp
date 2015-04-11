@@ -165,6 +165,7 @@ void ChatNode::updateUserlist(vector<User> newuserlist)
 			receivedNumber = u.getTotal();
 		}
 	}
+	showCurrentUser();
 }
 
 //add new user to userlist and then multicast new userlist to other clients
