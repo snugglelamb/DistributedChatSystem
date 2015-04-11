@@ -44,7 +44,7 @@ In our design, low-level communication is separate from high-level communication
 Since we need to use UDP for message transferring, we have to design a small application-level protocol that would handle possible packet loss and reordering. The steps are as follows.
 
 
-example msg: [size][sequence] RequestName#selfip_selfport_content
+example msg:  RequestName#selfip_selfport_content
 
 
 - Datagrams less than MTU (plus IP and UDP headers) in size (say 1024 bytes) to avoid IP fragmentation.
