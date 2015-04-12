@@ -6,6 +6,7 @@
 #include <mutex>
 #include "multicast.h"
 #include "HoldbackQueue.h"
+#include "Queue.cpp"
 
 using namespace std;
 
@@ -22,8 +23,9 @@ private:
 	mutex meMutex;
 	mutex rNumMutex;
 	mutex totalMutex;
-	
+
 	HoldbackQueue holdback;
+	Queue msgQueue;
 
 	char* str2cstr(string ori);
 public:
@@ -48,6 +50,9 @@ public:
 
 	void sendMsg(string msg);
 	void multicastMsg(string msg);
+	void checkMsgQueue();
+	void recMsg(string name, int total, string msg);
+	void showMsg(string name, string msg)
 	
 };
 

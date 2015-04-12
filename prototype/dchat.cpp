@@ -20,6 +20,15 @@ static char test_port[10];
 
 ChatNode *node = ChatNode::getInstance();
 
+void leaderMsgSend()
+{
+	while(1)
+	{
+		node->checkMsgQueue();
+	}
+}
+
+
 void receive()
 {
 	// call stub_receive

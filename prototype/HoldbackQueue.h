@@ -3,18 +3,23 @@
 
 #include <algorithm>
 #include <vector>
+#include <unordered_map>
+#include <string>
 
 using namespace std;
 
 class HoldbackQueue
 {
 public:
-	vector<int> queue;
+	vector<int> myQueue;
+	unordered_map<int, string> myMap;
 
-	void enqueue(int val);
+	void enqueue(int val, string msg);
+
 	void dequeue();
 	int peek();
-
+	string get(int key);
+	bool isEmpty();
 	HoldbackQueue();
 
 };
