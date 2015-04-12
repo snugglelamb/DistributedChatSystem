@@ -3,7 +3,7 @@
 void HoldbackQueue::enqueue(int val, string msg)
 {
 	myQueue.push_back(-1 * val);
-	myMap.insert(make_pair<int, string>(val, msg));
+	myMap.insert(make_pair(val, msg));
 	push_heap(myQueue.begin(),myQueue.end());
 }
 
