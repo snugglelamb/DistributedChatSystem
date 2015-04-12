@@ -295,7 +295,7 @@ void ChatNode::recMsg(string name, int total, string msg)
 				string message = holdback.get(key);
 				holdback.dequeue();		
 				rNum++;
-				showMsg(message);
+				showMsg(name, message);
 			}
 
 		}
