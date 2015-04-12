@@ -14,11 +14,11 @@ Parser::Parser() {
 	this->cn = ChatNode::getInstance();
 }
 void Parser::parsePara(char* arr) {
-	cout<<"get 44444444params:"<<endl;
-	cout<<string(arr)<<endl;
+	cout << "get 44444444params:" << endl;
+	cout << string(arr) << endl;
 	string rawStr = string(arr);
 	size_t pos0 = rawStr.find("@");
-	string str = rawStr.substr(pos0+1);
+	string str = rawStr.substr(pos0 + 1);
 
 	size_t pos = str.find("#");
 	if (pos == string::npos) {
@@ -29,24 +29,17 @@ void Parser::parsePara(char* arr) {
 	vector<string> params = splitstr(str.substr(pos + 1), '_');
 	// for(string s: params){ //      cout<< s<<endl; // }
 	if (req.compare("sendLeader") == 0) {
-		cout<<"sendLeader"<<endl;
+		//	cout<<"sendLeader"<<endl;
 		assert(params.size() == 2);
 
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
-
 	} else if (req.compare("connectLeader") == 0) {
-		cout<<"connectLeader"<<endl;
-		cout << "params: ";
-		for(string v: params){
-			cout <<" "<<v;
-		}
-		cout<<endl;
 		assert(params.size() == 4);
 		cn->connectLeader(params[2], atoi(params[3].c_str()));
 
 	} else if (req.compare("updateUserlist") == 0) {
-		cout<<"update user list"<<endl;
+		//cout<<"update user list"<<endl;
 		//string IP, string nickname, int port, int ID, inttotal, bool isleader 
 		assert(params.size() % 6 == 2);
 		vector<User> tmp;
@@ -63,24 +56,22 @@ void Parser::parsePara(char* arr) {
 		cn->updateUserlist(tmp);
 
 	} else if (req.compare("addUser") == 0) {
-		cout<<"add user"<<endl;
+		//	cout<<"add user"<<endl;
 
 		assert(params.size() == 5);
 		cn->addUser(params[2], params[3], atoi(params[4].c_str()));
 
 	} else if (req.compare("multicastUserlist") == 0) {
-		cout<<"multicast user list"<<endl;
+		//	cout<<"multicast user list"<<endl;
 		assert(params.size() == 2);
 		cn->multicastUserlist();
+	} else if (req.compare("recMsg") == 0) {
+		assert(params.size() == 5);
+		cn->recMsg(params[3],atoi(params[2].c_str()) ,params[4]);
+
+	} else if(req.compare("enqueueMsg") == 0){
+		assert(params.size() == 4);
+		cn->multicastMsg(params[2]+"_"+params[3]);
 	}
 
 }
-
-// int main(){ 
-//      Parser p; 
-//      string tmp ="multicastUserlist#"; 
-//      char* arr = new char[tmp.length() +1]; 
-//      strcpy(arr, tmp.c_str()); 
-//      p.parsePara(arr); 
-//return 0; // }
-

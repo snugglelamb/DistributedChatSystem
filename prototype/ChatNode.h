@@ -2,13 +2,13 @@
 #define CHATNODE_H
 #include "User.h"
 #include <vector>
-
+#include <algorithm>
 #include <mutex>
+#include <list>
 #include "multicast.h"
-// extern "C"
-// {
-// 	
-// }
+#include "HoldbackQueue.h"
+#include "Queue.h"
+
 using namespace std;
 
 class ChatNode
@@ -25,14 +25,9 @@ private:
 	mutex rNumMutex;
 	mutex totalMutex;
 
-/*
-	struct CompareQueue{
-		bool operator() (int a, int b){
-			return a > b;
-		}
-	};
-	priority_queue<int, vector<int>, CompareQueue> holdback;
-	*/
+	HoldbackQueue holdback;
+	Queue msgQueue;
+
 	char* str2cstr(string ori);
 public:
 	static ChatNode* getInstance();
@@ -53,9 +48,13 @@ public:
 	void updateUserlist(vector<User> vector);
 	void addUser(string ip, string name, int port);
 	void multicastUserlist();
+	void enqueueMsg(string msg);
 
 	void sendMsg(string msg);
+	void checkMsgQueue();
 	void multicastMsg(string msg);
+	void recMsg(string name, int total, string msg);
+	void showMsg(string name, string msg);
 	
 };
 
