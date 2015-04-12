@@ -13,12 +13,13 @@
 #include <condition_variable>
 #include <list>
 #include <iostream>
-template <typename T>
+#include <string>
+//template <typename T>
 class Queue
 {
  public:
 
-  T pop()
+  string pop()
   {
     std::unique_lock<std::mutex> mlock(mutex_);
     while (queue_.empty())
@@ -30,7 +31,7 @@ class Queue
     return val;
   }
 
-  void pop(T& item)
+  void pop(string& item)
   {
     std::unique_lock<std::mutex> mlock(mutex_);
     while (queue_.empty())
@@ -38,7 +39,7 @@ class Queue
       cond_.wait(mlock);
     }
     item = queue_.front();
-    queue_.pop();
+    queue_.pop_front();
   }
   void showqueue(){
 	  std::unique_lock<std::mutex> mlock(mutex_);
@@ -49,7 +50,7 @@ class Queue
 	  std::cout<<std::endl;
 	  mlock.unlock();
   }
-  void push(const T& item)
+  void push(const string& item)
   {
     std::unique_lock<std::mutex> mlock(mutex_);
     queue_.push_back(item);
@@ -61,7 +62,7 @@ class Queue
   Queue& operator=(const Queue&) = delete; // disable assignment
 
  private:
-  std::list<T> queue_;
+  std::list<string> queue_;
   std::mutex mutex_;
   std::condition_variable cond_;
 };

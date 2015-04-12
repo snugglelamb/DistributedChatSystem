@@ -26,7 +26,7 @@ private:
 	mutex totalMutex;
 
 	HoldbackQueue holdback;
-	Queue<string> msgQueue;
+	Queue msgQueue;
 
 	char* str2cstr(string ori);
 public:
@@ -51,7 +51,6 @@ public:
 	void enqueueMsg(string msg);
 
 	void sendMsg(string msg);
-	void enqueueMsg(string msg);
 	void checkMsgQueue();
 	void multicastMsg(string msg);
 	void recMsg(string name, int total, string msg);
