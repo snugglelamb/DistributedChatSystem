@@ -4,9 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <mutex>
+#include <list>
 #include "multicast.h"
 #include "HoldbackQueue.h"
-#include "Queue.cpp"
+#include "Queue.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ private:
 	mutex totalMutex;
 
 	HoldbackQueue holdback;
-	Queue msgQueue;
+	Queue<string> msgQueue;
 
 	char* str2cstr(string ori);
 public:
@@ -47,6 +48,7 @@ public:
 	void updateUserlist(vector<User> vector);
 	void addUser(string ip, string name, int port);
 	void multicastUserlist();
+	void enqueueMsg(string msg);
 
 	void sendMsg(string msg);
 	void enqueueMsg(string msg);
