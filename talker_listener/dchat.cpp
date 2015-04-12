@@ -5,12 +5,12 @@
 #include <thread>
 // #include "User.h"
 // #include "ChatNode.h"
+#include "util.h"
 #include <string.h>
 
 extern "C"
 {
 	#include "multicast.h"
-	#include "util.h"
 }
 
 using namespace std;
@@ -33,7 +33,6 @@ void type()
 	{
 		// call ChatNode to parse down msg
 		char msg[512];
-		char ip[20], port_[20];
 		std::cin.getline (msg, 512);
 		if (strlen(msg) == 0)
 		{
@@ -41,11 +40,14 @@ void type()
 			std::cout << "Hint: blank messages won't be sent.\n";
 
 		} else {
-			strcpy(ip, "127.0.0.1");
-			strcpy(port_, test_port);
+			const char ip[] = "127.0.0.1";
+			const char* port_ = test_port;
+			// strcpy(ip, "127.0.0.1");
+			// strcpy(port_, test_port);
 			// strcpy(port_,"20000");
 			// call stub_send
-			stub_send(ip, port_, msg);
+			stub_send(ip, port_, msg, 0);
+			printf("main: %d messages left in send queue.\n", sendQ_num);
 		}
 	}
 }
@@ -95,8 +97,8 @@ int main(int argc, char** argv)
 		} 
 		
 		std::cout << name << " attempts to join chat at "<< addr << endl;
-		char *ip = (char *) addr.substr(0, pos).c_str();		
-		char *port = (char *) addr.substr(pos+1, -1).c_str();
+		const char *ip = (char *) addr.substr(0, pos).c_str();		
+		const char *port = (char *) addr.substr(pos+1, -1).c_str();
 		
 		strcpy(test_port, port);
 		
