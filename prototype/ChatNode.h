@@ -51,8 +51,9 @@ public:
 	void enqueueMsg(string msg);
 
 	void sendMsg(string msg);
-	void multicastMsg(string msg);
+	void enqueueMsg(string msg);
 	void checkMsgQueue();
+	void multicastMsg(string msg);
 	void recMsg(string name, int total, string msg);
 	void showMsg(string name, string msg);
 	
