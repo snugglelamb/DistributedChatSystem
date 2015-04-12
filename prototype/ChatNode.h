@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <mutex>
+#include <list>
 #include "multicast.h"
 #include "HoldbackQueue.h"
 
