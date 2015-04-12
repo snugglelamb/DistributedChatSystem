@@ -75,12 +75,3 @@ void Parser::parsePara(char* arr) {
 	}
 
 }
-
-// int main(){ 
-//      Parser p; 
-//      string tmp ="multicastUserlist#"; 
-//      char* arr = new char[tmp.length() +1]; 
-//      strcpy(arr, tmp.c_str()); 
-//      p.parsePara(arr); 
-//return 0; // }
-
