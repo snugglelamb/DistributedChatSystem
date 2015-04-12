@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 using namespace std;
@@ -12,7 +12,7 @@ class HoldbackQueue
 {
 public:
 	vector<int> myQueue;
-	map<int, string> myMap;
+	unordered_map<int, string> myMap;
 
 	void enqueue(int val, string msg);
 
