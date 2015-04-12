@@ -16,7 +16,10 @@
 #include <string>
 
 //template <typename T>
+
 //using namespace boost;
+using namespace std;
+
 using namespace std;
 
 class Queue
@@ -61,6 +64,21 @@ class Queue
     mlock.unlock();
     cond_.notify_one();
   }
+
+  string pop();
+
+  void pop(string& item);
+//  void showqueue(){
+//	  unique_lock<mutex> mlock(mutex_);
+//	  //mutex_.lock();
+//	  for(auto it : queue_){
+//		  cout<< it<<" ";
+//	  }
+//	  cout<<endl;
+//	  mlock.unlock();
+//  }
+  void push(const string& item);
+
   Queue()=default;
   Queue(const Queue&) = delete;            // disable copying
   Queue& operator=(const Queue&) = delete; // disable assignment
