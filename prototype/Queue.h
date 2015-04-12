@@ -15,56 +15,32 @@
 #include <iostream>
 #include <string>
 //template <typename T>
+using namespace std;
 class Queue
 {
  public:
 
-  string pop()
-  {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    while (queue_.empty())
-    {
-      cond_.wait(mlock);
-    }
-    auto val = queue_.front();
-    queue_.pop_front();
-    return val;
-  }
+  string pop();
 
-  void pop(string& item)
-  {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    while (queue_.empty())
-    {
-      cond_.wait(mlock);
-    }
-    item = queue_.front();
-    queue_.pop_front();
-  }
-  void showqueue(){
-	  std::unique_lock<std::mutex> mlock(mutex_);
-	  //mutex_.lock();
-	  for(auto it : queue_){
-		  std::cout<< it<<" ";
-	  }
-	  std::cout<<std::endl;
-	  mlock.unlock();
-  }
-  void push(const string& item)
-  {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    queue_.push_back(item);
-    mlock.unlock();
-    cond_.notify_one();
-  }
+  void pop(string& item);
+//  void showqueue(){
+//	  unique_lock<mutex> mlock(mutex_);
+//	  //mutex_.lock();
+//	  for(auto it : queue_){
+//		  cout<< it<<" ";
+//	  }
+//	  cout<<endl;
+//	  mlock.unlock();
+//  }
+  void push(const string& item);
   Queue()=default;
   Queue(const Queue&) = delete;            // disable copying
   Queue& operator=(const Queue&) = delete; // disable assignment
 
  private:
-  std::list<string> queue_;
-  std::mutex mutex_;
-  std::condition_variable cond_;
+  list<string> queue_;
+  mutex mutex_;
+  condition_variable cond_;
 };
 
 #endif

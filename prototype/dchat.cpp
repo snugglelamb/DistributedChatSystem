@@ -7,11 +7,7 @@
 // #include "ChatNode.h"
 #include "util.h"
 #include <string.h>
-
-extern "C"
-{
-	#include "multicast.h"
-}
+#include "multicast.h"
 
 using namespace std;
 
