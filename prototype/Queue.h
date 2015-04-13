@@ -14,8 +14,12 @@
 #include <list>
 #include <iostream>
 #include <string>
+
 //template <typename T>
+
+//using namespace boost;
 using namespace std;
+
 class Queue
 {
  public:
@@ -33,6 +37,7 @@ class Queue
 //	  mlock.unlock();
 //  }
   void push(const string& item);
+
   Queue()=default;
   Queue(const Queue&) = delete;            // disable copying
   Queue& operator=(const Queue&) = delete; // disable assignment

@@ -7,7 +7,9 @@
 // #include "ChatNode.h"
 #include "util.h"
 #include <string.h>
+
 #include "multicast.h"
+
 
 using namespace std;
 
@@ -73,7 +75,7 @@ int main(int argc, char** argv)
 		// create
 
 		string handle = string(stub_create());
-		//cout<<"create chat:"<<handle<<endl;
+		cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
@@ -84,6 +86,7 @@ int main(int argc, char** argv)
 		size_t pos = handle.find(":");
 		if (pos == string::npos)
 		{
+			cout<< "argc 2 the pos is npos" <<endl;
 			cout << "please enter address as 0.0.0.0:1234" << endl;
 			exit(1);
 		} 
@@ -110,21 +113,22 @@ int main(int argc, char** argv)
 		} 
 		
 		//std::cout << name << " attempts to join chat at "<< addr << endl;
-		char *tip = (char *) addr.substr(0, pos).c_str();		
-		char *tport = (char *) addr.substr(pos+1, -1).c_str();
+		//char *tip = addr.substr(0, pos).c_str();
+		//char *tport = addr.substr(pos+1, -1).c_str();
 		
-		strcpy(test_port, tport);
+
+		//strcpy(test_port, tport);
 		
-		string handle = string(stub_connect(tip, tport));
-	//	cout<<"handle:"<<handle<<endl;
+		string handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
+		cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
-			std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
+			//std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
 			exit(1);
 		}
 		while(handle.compare("CREATEERROR") == 0)
 		{
-			handle = string(stub_connect(tip, tport));
+			handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
 		}
 		size_t posTarget = handle.find(":");
 		if (pos == string::npos)
@@ -133,17 +137,17 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 
-		char *sip = (char *) handle.substr(0, posTarget).c_str();		
-		char *sport = (char *) handle.substr(posTarget+1, -1).c_str();
+		//char *sip = (char *) handle.substr(0, posTarget).c_str();
+		//char *sport = (char *) handle.substr(posTarget+1, -1).c_str();
 
-		int selfPort = atoi(sport); 
+		int selfPort = atoi(handle.substr(posTarget+1, -1).c_str());
 	
-		User user(string(sip), name, selfPort);
+		User user(handle.substr(0, posTarget), name, selfPort);
 		node->setMe(user);
-		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
-		cout<<string(sip)<<":"<<string(sport)<<endl;
+		//cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
+		cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
 		cout<<"Succeeded, current users:"<<endl;
-		node->reqLeader(string(tip), atoi(tport));
+		node->reqLeader(addr.substr(0, pos), atoi(addr.substr(pos+1, -1).c_str()));
 
 	} else {
 		std::cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
@@ -155,12 +159,14 @@ int main(int argc, char** argv)
 	std::thread main_receive(receive);
 	std::thread main_type(type);
 	std::thread main_check(check);
+	std::thread main_leaderMsgSend(leaderMsgSend);
 	
 	std::cout << "threads started.\n";
 	
 	main_receive.join();
 	main_type.join();
 	main_check.join();
+	main_leaderMsgSend.join();
 	
 	std:cout << "threads finished.\n";
 	
