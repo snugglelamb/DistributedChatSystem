@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 		//strcpy(test_port, tport);
 		
 		string handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
-	//	cout<<"handle:"<<handle<<endl;
+		cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
 			//std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
@@ -159,12 +159,14 @@ int main(int argc, char** argv)
 	std::thread main_receive(receive);
 	std::thread main_type(type);
 	std::thread main_check(check);
+	std::thread main_leaderMsgSend(leaderMsgSend);
 	
 	std::cout << "threads started.\n";
 	
 	main_receive.join();
 	main_type.join();
 	main_check.join();
+	main_leaderMsgSend.join();
 	
 	std:cout << "threads finished.\n";
 	

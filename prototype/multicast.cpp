@@ -134,7 +134,7 @@ char* stub_create()
 			
 }
 
-char* stub_connect(const char* Tip, const char* Tport)
+string stub_connect(const char* Tip, const char* Tport)
 {
 	printf("tip: %s tport: %s\n",Tip, Tport);
 	char msg[500];
@@ -143,11 +143,12 @@ char* stub_connect(const char* Tip, const char* Tport)
 	if ( strcmp(stub_send(Tip, Tport, msg), "ERROR") == 0 ) return "ERROR";
 
 	strcpy(msg, stub_create());
-	printf("%s\n", msg);
+	//printf("%s\n", msg);
 	if ( strcmp(msg, "ERROR") == 0 ) { return "ERROR"; 	}
 	else { 
 		printf("########connect get msg :%s\n", msg);
-		return msg; 
+
+		return string(msg); 
 	}
 
 }

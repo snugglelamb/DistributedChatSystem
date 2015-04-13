@@ -17,7 +17,7 @@ private:
 	ChatNode(){};
 	static ChatNode* node;
 	vector<User> userlist;
-	User me;
+	User *me;
 	int rNum;
 	int pNum;
 	mutex userlistMutex;
@@ -33,8 +33,8 @@ public:
 	static ChatNode* getInstance();
 	vector<User> getUserlist();
 	void setUserlist(vector<User> userlist);
-	User getMe();
-	void setMe(User user);
+	User* getMe();
+	void setMe(User &user);
 	int getPNum();
 	void setPNum(int number);
 	int getRNum();
