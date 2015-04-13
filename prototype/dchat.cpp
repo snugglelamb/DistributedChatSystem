@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 		// create
 
 		string handle = string(stub_create());
-		//cout<<"create chat:"<<handle<<endl;
+		cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
@@ -86,6 +86,7 @@ int main(int argc, char** argv)
 		size_t pos = handle.find(":");
 		if (pos == string::npos)
 		{
+			cout<< "argc 2 the pos is npos" <<endl;
 			cout << "please enter address as 0.0.0.0:1234" << endl;
 			exit(1);
 		} 
