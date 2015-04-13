@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 		char *tport = (char *) addr.substr(pos+1, -1).c_str();
 		
 		strcpy(test_port, tport);
-		
+		cout<<string(tip)<<":"<<string(tport)<<endl;
 		string handle = string(stub_connect(tip, tport));
 	//	cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 

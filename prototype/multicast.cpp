@@ -15,9 +15,9 @@ void *get_in_addr(struct sockaddr *sa)
 char* getlocalinfo()
 {
 	int port;
-	char msg[100]={0};
-	char port_[10]={0};
-	char ip[20]={0};
+	char msg[100]="";
+	char port_[10]="";
+	char ip[20]="";
 	
 	// get local ip, port info; ip:port	
 	// could only get 0.0.0.0 from listening socket
@@ -83,7 +83,7 @@ char* stub_create()
 {
     struct addrinfo hints, *servinfo, *p;
     int rv, port;
-	char port_[20]={0};
+	char port_[30]={0};
 	
 	// randomly assign a port number
 	port = randomPort();
