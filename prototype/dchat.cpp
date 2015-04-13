@@ -47,7 +47,7 @@ void type()
 		if (strlen(msg) == 0)
 		{
 			// won't send blank message
-			std::cout << "Hint: blank messages won't be sent.\n";
+			cout << "Hint: blank messages won't be sent.\n";
 
 		} else {
 			strcpy(ip, "127.0.0.1");
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
-			std::cout << "Met error, could not create chat.\n";
+			cout << "Met error, could not create chat.\n";
 			handle = string(stub_create());
 		} 
 
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
 		node->reqLeader(addr.substr(0, pos), atoi(addr.substr(pos+1, -1).c_str()));
 
 	} else {
-		std::cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
+		cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
 		exit(1);
 	}
 	
@@ -161,14 +161,14 @@ int main(int argc, char** argv)
 	std::thread main_check(check);
 	std::thread main_leaderMsgSend(leaderMsgSend);
 	
-	std::cout << "threads started.\n";
+	cout << "threads started.\n";
 	
 	main_receive.join();
 	main_type.join();
 	main_check.join();
 	main_leaderMsgSend.join();
 	
-	std:cout << "threads finished.\n";
+	cout << "threads finished.\n";
 	
 	return 0;
 		
