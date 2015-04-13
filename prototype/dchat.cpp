@@ -113,8 +113,8 @@ int main(int argc, char** argv)
 		} 
 		
 		//std::cout << name << " attempts to join chat at "<< addr << endl;
-		const char *tip = addr.substr(0, pos).c_str();
-		const char *tport = addr.substr(pos+1, -1).c_str();
+		//char *tip = addr.substr(0, pos).c_str();
+		//char *tport = addr.substr(pos+1, -1).c_str();
 		
 
 		//strcpy(test_port, tport);
@@ -137,17 +137,17 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 
-		char *sip = (char *) handle.substr(0, posTarget).c_str();		
-		char *sport = (char *) handle.substr(posTarget+1, -1).c_str();
+		//char *sip = (char *) handle.substr(0, posTarget).c_str();
+		//char *sport = (char *) handle.substr(posTarget+1, -1).c_str();
 
-		int selfPort = atoi(sport); 
+		int selfPort = atoi(handle.substr(posTarget+1, -1).c_str());
 	
 		User user(handle.substr(0, posTarget), name, selfPort);
 		node->setMe(user);
-		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
-		cout<<string(sip)<<":"<<string(sport)<<endl;
+		//cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
+		cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
 		cout<<"Succeeded, current users:"<<endl;
-		node->reqLeader(string(tip), atoi(tport));
+		node->reqLeader(addr.substr(0, pos), atoi(addr.substr(pos+1, -1).c_str()));
 
 	} else {
 		std::cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
