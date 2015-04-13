@@ -15,9 +15,11 @@ void *get_in_addr(struct sockaddr *sa)
 char* getlocalinfo()
 {
 	int port;
-	char msg[100]="";
-	char port_[10]="";
-	char ip[20]="";
+
+	char msg[100];
+	char port_[10];
+	char ip[20];
+
 	
 	// get local ip, port info; ip:port	
 	// could only get 0.0.0.0 from listening socket
@@ -67,7 +69,8 @@ char* getlocalinfo()
 	printf("local address: %s\n", ip);
 	printf("local port: %d\n", port);
 	
-	sprintf(port_, "%d", port);	
+	sprintf(port_, "%d", port);
+	strcpy(msg,"");
 	strcat(msg,ip);
 	strcat(msg,":");
 	strcat(msg,port_);
@@ -83,7 +86,9 @@ char* stub_create()
 {
     struct addrinfo hints, *servinfo, *p;
     int rv, port;
-	char port_[30]={0};
+
+	char port_[30];
+
 	
 	// randomly assign a port number
 	port = randomPort();
@@ -129,16 +134,16 @@ char* stub_create()
 			
 }
 
-char* stub_connect(char* Tip, char* Tport)
+char* stub_connect(const char* Tip, const char* Tport)
 {
-
-	char msg[500]={0};
+	printf("tip: %s tport: %s\n",Tip, Tport);
+	char msg[500];
 	strcpy(msg, "CONNECT@");
 		
 	if ( strcmp(stub_send(Tip, Tport, msg), "ERROR") == 0 ) return "ERROR";
 
 	strcpy(msg, stub_create());
-
+	printf("%s\n", msg);
 	if ( strcmp(msg, "ERROR") == 0 ) { return "ERROR"; 	}
 	else { 
 		printf("########connect get msg :%s\n", msg);
@@ -215,9 +220,8 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
 	// customize request sent
 	char fullmsg[1024];
 	// sometimes char* mess up with address in memory
-	// printf("Target IP:%s\n", Tip);
-	// printf("Target PORT:%s\n", Tport); // check if Tport is shifted to "msg"
 	
+
 	// set timeout val
 	struct timeval tv;
 	tv.tv_sec = 5;  /* 5 Secs Timeout */
@@ -226,6 +230,9 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
+
+    printf("Target IP:%s %d\n", Tip,strlen(Tip));
+    printf("Target PORT:%s %d\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
 
     if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));

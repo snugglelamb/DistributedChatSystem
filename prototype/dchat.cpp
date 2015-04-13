@@ -113,21 +113,22 @@ int main(int argc, char** argv)
 		} 
 		
 		//std::cout << name << " attempts to join chat at "<< addr << endl;
-		char *tip = (char *) addr.substr(0, pos).c_str();		
-		char *tport = (char *) addr.substr(pos+1, -1).c_str();
+		const char *tip = addr.substr(0, pos).c_str();
+		const char *tport = addr.substr(pos+1, -1).c_str();
 		
-		strcpy(test_port, tport);
-		cout<<string(tip)<<":"<<string(tport)<<endl;
-		string handle = string(stub_connect(tip, tport));
+
+		//strcpy(test_port, tport);
+		
+		string handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
 	//	cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
-			std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
+			//std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
 			exit(1);
 		}
 		while(handle.compare("CREATEERROR") == 0)
 		{
-			handle = string(stub_connect(tip, tport));
+			handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
 		}
 		size_t posTarget = handle.find(":");
 		if (pos == string::npos)
@@ -141,7 +142,7 @@ int main(int argc, char** argv)
 
 		int selfPort = atoi(sport); 
 	
-		User user(string(sip), name, selfPort);
+		User user(handle.substr(0, posTarget), name, selfPort);
 		node->setMe(user);
 		cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
 		cout<<string(sip)<<":"<<string(sport)<<endl;
