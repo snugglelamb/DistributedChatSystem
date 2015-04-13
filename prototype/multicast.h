@@ -18,7 +18,7 @@ extern "C"{
 	#include "util.h"
 };
 
-extern "C" char* stub_connect(char* Tip, char* Tport);
+extern "C" char* stub_connect(const char* Tip, const char* Tport);
 extern "C" char* stub_receive();
 extern "C" char* stub_send(const char* Tip, const char* Tport, const char* msg);
 extern "C" char* stub_create();
