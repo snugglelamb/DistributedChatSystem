@@ -15,9 +15,9 @@ void *get_in_addr(struct sockaddr *sa)
 char* getlocalinfo()
 {
 	int port;
-	char msg[30];
-	char port_[10];
-	char ip[20];
+	char msg[100]={0};
+	char port_[10]={0};
+	char ip[20]={0};
 	
 	// get local ip, port info; ip:port	
 	// could only get 0.0.0.0 from listening socket
@@ -71,7 +71,7 @@ char* getlocalinfo()
 	strcat(msg,ip);
 	strcat(msg,":");
 	strcat(msg,port_);
-	
+	//strcat(msg,'\0');
 	printf("stub: finish binding. ip:port -> %s\n",msg);
     printf("stub: waiting to recvfrom...\n");
 	
@@ -83,7 +83,7 @@ char* stub_create()
 {
     struct addrinfo hints, *servinfo, *p;
     int rv, port;
-	char port_[20];
+	char port_[20]={0};
 	
 	// randomly assign a port number
 	port = randomPort();
@@ -124,6 +124,7 @@ char* stub_create()
     }
 
     freeaddrinfo(servinfo); // done with servinfo
+    //printf("%s\n", getlocalinfo());
 	return getlocalinfo();
 			
 }
@@ -131,7 +132,7 @@ char* stub_create()
 char* stub_connect(char* Tip, char* Tport)
 {
 
-	char msg[500];	
+	char msg[500]={0};
 	strcpy(msg, "CONNECT@");
 		
 	if ( strcmp(stub_send(Tip, Tport, msg), "ERROR") == 0 ) return "ERROR";
