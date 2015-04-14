@@ -71,7 +71,7 @@ void Parser::parsePara(char* arr) {
 
 	} else if(req.compare("enqueueMsg") == 0){
 		assert(params.size() == 4);
-		cn->multicastMsg(params[2]+"_"+params[3]);
+		cn->enqueueMsg(params[2]+"_"+params[3]);
 	}else if(req.compare("deleteUser") == 0){
 		if(this->paserdebug) cout << "parser: in delete user"<<endl;
 		if(this->paserdebug)for(string s : params){
