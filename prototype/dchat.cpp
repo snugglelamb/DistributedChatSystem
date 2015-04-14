@@ -74,13 +74,13 @@ int main(int argc, char** argv)
 	//	std::cout << "Create Chat, name: "<< name << endl;
 		// create
 
-		string handle = string(stub_create());
+		string handle = stub_create();
 		cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
 			cout << "Met error, could not create chat.\n";
-			handle = string(stub_create());
+			handle = stub_create();
 		} 
 
 		size_t pos = handle.find(":");
@@ -144,8 +144,8 @@ int main(int argc, char** argv)
 	
 		User user(handle.substr(0, posTarget), name, selfPort);
 		node->setMe(user);
-		//cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
-		cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
+		cout<<name<<" joining a new chat on "<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<", listening on"<<endl;
+		//cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
 		cout<<"Succeeded, current users:"<<endl;
 		node->reqLeader(addr.substr(0, pos), atoi(addr.substr(pos+1, -1).c_str()));
 
