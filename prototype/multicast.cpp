@@ -12,12 +12,14 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-char* getlocalinfo()
+string getlocalinfo()
 {
 	int port;
-	char msg[100];
-	char port_[10];
-	char ip[20];
+
+	char* msg = new char[100];
+	char* port_ = new char[10];
+	char* ip = new char[20];
+
 	
 	// get local ip, port info; ip:port	
 	// could only get 0.0.0.0 from listening socket
@@ -73,24 +75,30 @@ char* getlocalinfo()
 	strcat(msg,":");
 	strcat(msg,port_);
 	//strcat(msg,'\0');
+
+	delete[] port_;
+	delete[] ip;
+	
 	printf("stub: finish binding. ip:port -> %s\n",msg);
     printf("stub: waiting to recvfrom...\n");
 	
-	return msg;
+	return string(msg);
 }
 
 
-char* stub_create()
+string stub_create()
 {
     struct addrinfo hints, *servinfo, *p;
     int rv, port;
-	char port_[30];
+
+	char* port_ = new char[10];
+
 	
 	// randomly assign a port number
 	port = randomPort();
 	// port = 20000;
 	sprintf(port_,"%d", port);
-	printf("stub: PORT specified: %d\n", port);
+	printf("stub: PORT specified: %s\n", port_);
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
@@ -110,7 +118,7 @@ char* stub_create()
             continue;
         }
 
-        if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+        if (::bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             close(sockfd);
             perror("stub: bind");
             continue;
@@ -126,36 +134,39 @@ char* stub_create()
 
     freeaddrinfo(servinfo); // done with servinfo
     //printf("%s\n", getlocalinfo());
+	delete[] port_;
+	
 	return getlocalinfo();
 			
 }
 
-char* stub_connect(const char* Tip, const char* Tport)
+string stub_connect(const char* Tip, const char* Tport)
 {
 	printf("tip: %s tport: %s\n",Tip, Tport);
-	char msg[500];
-	strcpy(msg, "CONNECT@");
-		
-	if ( strcmp(stub_send(Tip, Tport, msg), "ERROR") == 0 ) return "ERROR";
-
-	strcpy(msg, stub_create());
-	printf("%s\n", msg);
-	if ( strcmp(msg, "ERROR") == 0 ) { return "ERROR"; 	}
+	const char* msg = "CONNECT@";
+	if ( (stub_send(Tip, Tport, msg)).compare("ERROR") == 0 ) return "ERROR";
+	delete msg;
+	
+	string msg_;
+	msg_.assign(stub_create());
+	//printf("%s\n", msg);
+	if ( msg_.compare("ERROR") == 0 ) { return "ERROR"; }
 	else { 
-		printf("########connect get msg :%s\n", msg);
-		return msg; 
+		std::cout << "########connect get msg: "<< msg_ << endl;
+
+		return msg_; 
 	}
 
 }
 
-char* stub_receive()
+string stub_receive()
 {
 	struct sockaddr_storage their_addr;
     int numbytes;
     char buf[MAXBUFLEN];
     socklen_t addr_len;
     char s[INET6_ADDRSTRLEN];
-	char Sip[30];
+	char* Sip = new char[30];
 
     addr_len = sizeof their_addr;
 	
@@ -173,8 +184,8 @@ char* stub_receive()
     buf[numbytes] = '\0';
     printf("stub: packet contains \"%s\"\n", buf);
 		
-	char str[20];
-	strcpy(str, "OK:3");
+	char* str = new char[20];
+	strcpy(str, "OK");
 	if ( buf[0] == '0') {
 		// connect received, send ack back
 		if ((numbytes = sendto(sockfd, str, strlen(str), 0, 
@@ -200,7 +211,7 @@ char* stub_receive()
 	return "SUCCESS";
 }
 
-char* stub_send(const char* Tip, const char* Tport, const char* msg)
+string stub_send(const char* Tip, const char* Tport, const char* msg)
 {
     int sockfd_w;
     struct addrinfo hints, *servinfo, *p;
@@ -214,10 +225,9 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
     char s[INET6_ADDRSTRLEN];
 	
 	// customize request sent
-	char fullmsg[1024];
+	char* fullmsg = new char[1024];
 	// sometimes char* mess up with address in memory
 	
-
 	// set timeout val
 	struct timeval tv;
 	tv.tv_sec = 5;  /* 5 Secs Timeout */
@@ -227,8 +237,8 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
 
-    printf("Target IP:%s %d\n", Tip,strlen(Tip));
-    printf("Target PORT:%s %d\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
+    printf("Target IP:%s %zu\n", Tip,strlen(Tip));
+    printf("Target PORT:%s %zu\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
 
     if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));

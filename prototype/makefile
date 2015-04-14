@@ -11,6 +11,5 @@ dchat: dchat.o User.o ChatNode.o multicast.o parser.o util.o Queue.o HoldbackQue
 	$(CXX) $(CXXFLAGS) -c -o parser.o parser.cpp
 	$(CXX) $(CXXFLAGS) -c -o dchat.o dchat.cpp
 	$(CXX) $(CXXFLAGS) -o dchat dchat.o User.o ChatNode.o multicast.o parser.o util.o Queue.o HoldbackQueue.o
-
 clean:
-	rm -f *.o  
+	rm -f *.o  dchat

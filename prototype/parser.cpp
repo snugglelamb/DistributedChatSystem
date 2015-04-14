@@ -31,7 +31,7 @@ void Parser::parsePara(char* arr) {
 	if (req.compare("sendLeader") == 0) {
 		//	cout<<"sendLeader"<<endl;
 		assert(params.size() == 2);
-
+		cout << "parser: "<<params[0] << "   " <<params[1].c_str()<<endl;
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
 	} else if (req.compare("connectLeader") == 0) {
