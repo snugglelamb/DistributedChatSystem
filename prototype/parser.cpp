@@ -14,8 +14,8 @@ Parser::Parser() {
 	this->cn = ChatNode::getInstance();
 }
 void Parser::parsePara(char* arr) {
-	cout << "get 44444444params:" << endl;
-	cout << string(arr) << endl;
+	//cout << "get 44444444params:" << endl;
+	//cout << string(arr) << endl;
 	string rawStr = string(arr);
 	size_t pos0 = rawStr.find("@");
 	string str = rawStr.substr(pos0 + 1);
@@ -31,7 +31,7 @@ void Parser::parsePara(char* arr) {
 	if (req.compare("sendLeader") == 0) {
 		//	cout<<"sendLeader"<<endl;
 		assert(params.size() == 2);
-		cout << "parser: "<<params[0] << "   " <<params[1].c_str()<<endl;
+		//cout << "parser: "<<params[0] << "   " <<params[1].c_str()<<endl;
 		cn->sendLeader(params[0], atoi(params[1].c_str()));
 
 	} else if (req.compare("connectLeader") == 0) {
