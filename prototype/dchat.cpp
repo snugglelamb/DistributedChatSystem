@@ -7,6 +7,7 @@
 // #include "ChatNode.h"
 #include "util.h"
 #include <string.h>
+#include <chrono>
 
 #include "multicast.h"
 
@@ -22,6 +23,7 @@ void leaderMsgSend()
 {
 	while(1)
 	{
+		this_thread::sleep_for(chrono::seconds(1));
 		node->checkMsgQueue();
 	}
 }
@@ -32,6 +34,7 @@ void receive()
 	// call stub_receive
 	while(1)
 	{
+		cout<<"111111"<<endl;
 		stub_receive();
 	}
 }

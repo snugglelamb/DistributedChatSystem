@@ -224,7 +224,9 @@ void ChatNode::sendMsg(string message) {
 
 // only called by leader object
 void ChatNode::enqueueMsg(string msg) {
+	cout<<"before push"<<endl;
 	msgQueue.push(msg);
+	cout<<"after push"<<endl;
 }
 
 void ChatNode::checkMsgQueue() {
@@ -233,6 +235,7 @@ void ChatNode::checkMsgQueue() {
 }
 
 void ChatNode::multicastMsg(string message) {
+	cout<<"multicast msg!!!!!!!!!!!!!!!!!!!!!"<<endl;
 	string requestName = "recMsg";
 	string msg;
 	//totalMutex.lock();
@@ -242,7 +245,7 @@ void ChatNode::multicastMsg(string message) {
 	//totalMutex.unlock();
 	msg = requestName + "#" + content + message;
 	for (User u : userlist) {
-
+		//if()
 		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
 				msg.c_str());
 
