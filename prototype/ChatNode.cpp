@@ -193,6 +193,7 @@ void ChatNode::multicastUserlist()
 	//string IP, string nickname, int port, int ID, int total, bool isleader
 	content = me.getIP()+"_"+to_string(me.getPort())+"_";
 	for(User u: this->userlist){
+		if(u.getIsLeader()) u.setTotal(me.getTotal());
 		content += u.getIP()+"_"+u.getNickname()+"_"+to_string(u.getPort())+"_"+to_string(u.getID())+"_"+to_string(u.getTotal())+"_";
 		if(u.getIsLeader()) content += "1_";
 		else content += "0_";
@@ -259,7 +260,7 @@ void ChatNode::multicastMsg(string message)
 	//totalMutex.unlock();
 	msg = requestName + "#" + content + message;
 	for(User u: userlist){
-		if(u.getIsLeader()) u.setTotal(me.getTotal());
+
 		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
 	}
 }
