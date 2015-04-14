@@ -35,7 +35,7 @@ string getlocalinfo()
 
     if (getifaddrs(&ifaddr) == -1) 
     {
-        perror("getifaddrs");
+       // perror("getifaddrs");
         return "GETIPERROR";
     }
 	
@@ -52,6 +52,7 @@ string getlocalinfo()
         {
             if (s != 0)
             {
+
                 if(debug)printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 return "GETIPERROR";
             }
@@ -78,10 +79,12 @@ string getlocalinfo()
 
 	delete[] port_;
 	delete[] ip;
+
 	
 	printf("stub: finish binding. ip:port -> %s\n",msg);
     if(debug)printf("stub: waiting to recvfrom...\n");
 	
+
 	return string(msg);
 }
 
@@ -194,9 +197,11 @@ string stub_receive()
 	        return "ERROR";
 	    }
 		
+
 	    if(debug)printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
 	           get_in_addr((struct sockaddr *)&their_addr),
 	            s, sizeof s), str);
+
 	}
 	
 	// parse string received
@@ -237,8 +242,10 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
 
+
     if(debug)printf("Target IP:%s %zu\n", Tip,strlen(Tip));
     if(debug)printf("Target PORT:%s %zu\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
+
 
     if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -288,6 +295,10 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
         return "ERROR";
     }
 	
+
+
+    buf[numbytes] = '\0';
+
     if(debug)printf("stub: received packet from %s\n",
         inet_ntop(their_addr.ss_family,
            get_in_addr((struct sockaddr *)&their_addr),
