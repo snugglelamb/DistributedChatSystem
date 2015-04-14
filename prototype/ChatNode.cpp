@@ -276,7 +276,7 @@ void ChatNode::showMsg(string name, string msg) {
 
 void ChatNode::userExit() {
 	string msg = "deleteUser#" + me.getIP() + "_" + to_string(me.getPort())
-			+ "_" + me.getIP() +"_"+ to_string(me.getPort());
+			+ "_" + me.getIP() + "_" + to_string(me.getPort());
 	string Tip;
 	int Tport;
 	for (User u : this->userlist) {
@@ -288,10 +288,11 @@ void ChatNode::userExit() {
 	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
 }
 
-void ChatNode::deleteUser(string Tip, int Tport){
+void ChatNode::deleteUser(string Tip, int Tport) {
 
-	for(vector<User>::iterator it = this->userlist.begin(); it != this->userlist.end(); it++){
-		if(it->getIP() == Tip && it->getPort() == Tport){
+	for (vector<User>::iterator it = this->userlist.begin();
+			it != this->userlist.end(); it++) {
+		if (it->getIP() == Tip && it->getPort() == Tport) {
 			this->userlist.erase(it);
 			break;
 		}
