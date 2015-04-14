@@ -2,7 +2,7 @@
 // local ip, port for dchat
 #define MAXBUFLEN 9999
 static int sockfd; //used for listener
-
+bool debug = true;
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {
@@ -52,6 +52,8 @@ string getlocalinfo()
         {
             if (s != 0)
             {
+
+                if(debug)printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 return "GETIPERROR";
             }
 			sprintf(ip, "%s", host);
@@ -65,8 +67,8 @@ string getlocalinfo()
 	
 	port = (int) ntohs(localAddress.sin_port);
 	// strcpy(ip, inet_ntoa(localAddress.sin_addr));
-	//printf("local address: %s\n", ip);
-	//printf("local port: %d\n", port);
+	if(debug)printf("local address: %s\n", ip);
+	if(debug)printf("local port: %d\n", port);
 	
 	sprintf(port_, "%d", port);
 	strcpy(msg,"");
@@ -77,7 +79,12 @@ string getlocalinfo()
 
 	delete[] port_;
 	delete[] ip;
-		
+
+	
+	printf("stub: finish binding. ip:port -> %s\n",msg);
+    if(debug)printf("stub: waiting to recvfrom...\n");
+	
+
 	return string(msg);
 }
 
@@ -94,7 +101,7 @@ string stub_create()
 	port = randomPort();
 	// port = 20000;
 	sprintf(port_,"%d", port);
-	//printf("stub: PORT specified: %s\n", port_);
+	if(debug)printf("stub: PORT specified: %s\n", port_);
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
@@ -129,7 +136,7 @@ string stub_create()
     }
 
     freeaddrinfo(servinfo); // done with servinfo
-    //printf("%s\n", getlocalinfo());
+    if(debug)printf("%s\n", getlocalinfo().c_str());
 	delete[] port_;
 	
 	return getlocalinfo();
@@ -138,14 +145,14 @@ string stub_create()
 
 string stub_connect(const char* Tip, const char* Tport)
 {
-	//printf("tip: %s tport: %s\n",Tip, Tport);
+	if(debug)printf("tip: %s tport: %s\n",Tip, Tport);
 	const char* msg = "CONNECT@";
 	if ( (stub_send(Tip, Tport, msg)).compare("ERROR") == 0 ) return "ERROR";
 	
 
 	string msg_;
 	msg_.assign(stub_create());
-	//printf("%s\n", msg);
+	if(debug)printf("%s\n", msg);
 	if ( msg_.compare("ERROR") == 0 ) { return "ERROR"; }
 	else { 
 		std::cout << "########connect get msg: "<< msg_ << endl;
@@ -174,11 +181,11 @@ string stub_receive()
 	
 	// store source ip
 	strcpy(Sip, inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s));
-    //printf("stub: got packet from %s\n", Sip);
+    if(debug)printf("stub: got packet from %s\n", Sip);
 	
-    //printf("stub: packet is %d bytes long\n", numbytes);
+    if(debug)printf("stub: packet is %d bytes long\n", numbytes);
     buf[numbytes] = '\0';
-    //printf("stub: packet contains \"%s\"\n", buf);
+    if(debug)printf("stub: packet contains \"%s\"\n", buf);
 		
 	char* str = new char[20];
 	strcpy(str, "OK");
@@ -190,12 +197,17 @@ string stub_receive()
 	        return "ERROR";
 	    }
 		
+
+	    if(debug)printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
+	           get_in_addr((struct sockaddr *)&their_addr),
+	            s, sizeof s), str);
+
 	}
 	
 	// parse string received
 
 	if (buf[6] == 'C') {
-		//printf("stub: connect received. do nothing\n");
+		if(debug)printf("stub: connect received. do nothing\n");
 	} else {
 		Parser p;
 		p.parsePara(buf);
@@ -231,6 +243,10 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
     hints.ai_socktype = SOCK_DGRAM;
 
 
+    if(debug)printf("Target IP:%s %zu\n", Tip,strlen(Tip));
+    if(debug)printf("Target PORT:%s %zu\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
+
+
     if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         return "ERROR";
@@ -262,13 +278,13 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
 	strcat(fullmsg, "00000@"); // add prefix
 	strcat(fullmsg, msg);
 	// strcpy(fullmsg, "0ABCDEF"); // test
-	//printf("stub: msg prepared to send: %s\n",fullmsg);
+	if(debug)printf("stub: msg prepared to send: %s\n",fullmsg);
     if ((numbytes = sendto(sockfd_w, fullmsg, strlen(fullmsg), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
         perror("stub: sendto");
         return "ERROR";
     }
-	//printf("stub: sent %d bytes to %s\n", numbytes, Tip);
+	if(debug)printf("stub: sent %d bytes to %s\n", numbytes, Tip);
 	
 	// receive return msg from server
 	// ack timeout 5s
@@ -280,7 +296,18 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
     }
 	
 
+
     buf[numbytes] = '\0';
+
+    if(debug)printf("stub: received packet from %s\n",
+        inet_ntop(their_addr.ss_family,
+           get_in_addr((struct sockaddr *)&their_addr),
+           s, sizeof s));
+
+    if(debug)printf("stub: packet is %d bytes long\n", numbytes);
+    buf[numbytes] = '\0';
+    if(debug)printf("stub: packet contains: %s\n", buf);
+
 
     close(sockfd_w);
 	

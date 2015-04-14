@@ -4,55 +4,45 @@
 
 ChatNode* ChatNode::node = NULL;
 
-ChatNode* ChatNode::getInstance()
-{
-	if(!node)
+ChatNode* ChatNode::getInstance() {
+	if (!node)
 		node = new ChatNode;
 	return node;
 }
 
-vector<User> ChatNode::getUserlist()
-{
+vector<User> ChatNode::getUserlist() {
 	return this->userlist;
 }
 
-void ChatNode::setUserlist(vector<User> userlist)
-{
+void ChatNode::setUserlist(vector<User> userlist) {
 	this->userlist = userlist;
 }
 
-User ChatNode::getMe()
-{
+User ChatNode::getMe() {
 	return this->me;
 }
 
-void ChatNode::setMe(User user)
-{
+void ChatNode::setMe(User user) {
 	this->me = user;
 }
 
-int ChatNode::getPNum()
-{
+int ChatNode::getPNum() {
 	return this->pNum;
 }
 
-void ChatNode::setPNum(int number)
-{
+void ChatNode::setPNum(int number) {
 	this->pNum = number;
 }
 
-int ChatNode::getRNum()
-{
+int ChatNode::getRNum() {
 	return this->rNum;
 }
 
-void ChatNode::setRNum(int number)
-{
+void ChatNode::setRNum(int number) {
 	this->rNum = number;
 }
 
-void ChatNode::createChat(User user)
-{
+void ChatNode::createChat(User user) {
 	user.setTotal(0);
 	user.setID(0);
 	user.setIsLeader(true);
@@ -61,33 +51,30 @@ void ChatNode::createChat(User user)
 	pNum = 0;
 	rNum = 0;
 	showCurrentUser();
-	cout<<"Waiting for others to join ..."<<endl;
+	cout << "Waiting for others to join ..." << endl;
 }
 
-void ChatNode::showCurrentUser()
-{
-	for(User u: this->userlist){
+void ChatNode::showCurrentUser() {
+	for (User u : this->userlist) {
 		bool isLeader = u.getIsLeader();
 		string ip = u.getIP();
 		string name = u.getNickname();
 		int port = u.getPort();
-		if(isLeader)
-			cout<<name<<" "<<ip<<":"<<port<<" (Leader)"<<endl;
+		if (isLeader)
+			cout << name << " " << ip << ":" << port << " (Leader)" << endl;
 		else
-			cout<<name<<" "<<ip<<":"<<port<<endl;
+			cout << name << " " << ip << ":" << port << endl;
 	}
 }
 
-
-char* ChatNode::str2cstr(string str){
+char* ChatNode::str2cstr(string str) {
 	char *cstr = new char[str.length() + 1];
 	strcpy(cstr, str.c_str());
 	return cstr;
 }
 
 // request leader information from other client using target IP and port.
-void ChatNode::reqLeader(string Tip, int Tport)
-{
+void ChatNode::reqLeader(string Tip, int Tport) {
 	string msg;
 	string requestName;
 	string content;
@@ -95,69 +82,64 @@ void ChatNode::reqLeader(string Tip, int Tport)
 	string SIP = me.getIP();
 	string mePortArr = to_string(me.getPort());
 	content = SIP + "_" + mePortArr;
-	cout<<"content"<<content<<endl;
-	msg= requestName + "#" +content;
-	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
+	cout << "content" << content << endl;
+	msg = requestName + "#" + content;
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
 }
 
 // send leader information back to new added client
-void ChatNode::sendLeader(string Tip, int Tport)
-{
+void ChatNode::sendLeader(string Tip, int Tport) {
 	string msg;
 	string requestName;
 	string content;
 
 	string leaderIP;
 	int leaderPort;
-	for(int i=0;i<userlist.size();i++)
-	{
-		
-		if(userlist[i].getIsLeader())
-		{
+	for (int i = 0; i < userlist.size(); i++) {
+
+		if (userlist[i].getIsLeader()) {
 			leaderIP = userlist[i].getIP();
 			leaderPort = userlist[i].getPort();
 		}
 	}
 	requestName = "connectLeader";
 
-		
+	// cout<<"SIP"<<SIP<<endl;
+	// cout<<"Sport"<<Sport<<endl;
 
-   // cout<<"SIP"<<SIP<<endl;
-   // cout<<"Sport"<<Sport<<endl;
-    
-
-    content = me.getIP() + "_" + to_string(me.getPort())+ "_" +leaderIP + "_" + to_string(leaderPort);
-    cout<<"!!!!!!!!!!!!! " << content <<endl;
+	content = me.getIP() + "_" + to_string(me.getPort()) + "_" + leaderIP + "_"
+			+ to_string(leaderPort);
+	cout << "!!!!!!!!!!!!! " << content << endl;
 	msg = requestName + "#" + content;
-	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
+
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
 }
 
 // connect to leader. add new client to userlist
-void ChatNode::connectLeader(string Tip, int Tport)
-{
+void ChatNode::connectLeader(string Tip, int Tport) {
 	string msg;
 	string requestName;
 	string content;
 
-    requestName = "addUser";	
-    content = me.getIP()+ "_" + to_string(me.getPort()) + "_" + me.getIP() + "_" + me.getNickname()+ "_"+ to_string(me.getPort());
-    msg = requestName + "#" + content;
-    stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
+	requestName = "addUser";
+	content = me.getIP() + "_" + to_string(me.getPort()) + "_" + me.getIP()
+			+ "_" + me.getNickname() + "_" + to_string(me.getPort());
+	msg = requestName + "#" + content;
+
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
 }
 
 //update userlist
-void ChatNode::updateUserlist(vector<User> newuserlist)
-{
+void ChatNode::updateUserlist(vector<User> newuserlist) {
 	//cout<<"in update userlist"<<endl;
 	this->userlist = newuserlist;
-	for(User u: this->userlist){
-		if(u.getIP() == me.getIP() && u.getPort() == me.getPort())
+	for (User u : this->userlist) {
+		if (u.getIP() == me.getIP() && u.getPort() == me.getPort())
 			me = u;
 	}
-	for(User u: this->userlist)
-	{
-		if(u.getIsLeader()){
-		//	cout<<"is leader"<<endl;
+	for (User u : this->userlist) {
+		if (u.getIsLeader()) {
+			//	cout<<"is leader"<<endl;
 			rNum = u.getTotal();
 			pNum = u.getTotal();
 		}
@@ -166,8 +148,7 @@ void ChatNode::updateUserlist(vector<User> newuserlist)
 }
 
 //add new user to userlist and then multicast new userlist to other clients
-void ChatNode::addUser(string ip, string name, int port)
-{
+void ChatNode::addUser(string ip, string name, int port) {
 	//cout<<"in add user"<<endl;
 	User t;
 	t.setIP(ip);
@@ -178,120 +159,142 @@ void ChatNode::addUser(string ip, string name, int port)
 	t.setTotal(me.getTotal());
 	this->userlist.push_back(t);
 	//showCurrentUser();
-	cout<<"NOTICE "<<name<<" joined on "<<ip<<":"<<port<<endl;
+	cout << "NOTICE " << name << " joined on " << ip << ":" << port << endl;
 	multicastUserlist();
 }
 
-
 //multicast new userlist to other clients
-void ChatNode::multicastUserlist()
-{
+void ChatNode::multicastUserlist() {
 	//cout<<"in multicast userlist"<<endl;
-	string requestName ="updateUserlist";
+	string requestName = "updateUserlist";
 	string msg;
 	string content = "";
 	//string IP, string nickname, int port, int ID, int total, bool isleader
-	content = me.getIP()+"_"+to_string(me.getPort())+"_";
-	for(User u: this->userlist){
-		if(u.getIsLeader()) u.setTotal(me.getTotal());
-		content += u.getIP()+"_"+u.getNickname()+"_"+to_string(u.getPort())+"_"+to_string(u.getID())+"_"+to_string(u.getTotal())+"_";
-		if(u.getIsLeader()) content += "1_";
-		else content += "0_";
+	content = me.getIP() + "_" + to_string(me.getPort()) + "_";
+	for (User u : this->userlist) {
+		if (u.getIsLeader())
+			u.setTotal(me.getTotal());
+		content += u.getIP() + "_" + u.getNickname() + "_"
+				+ to_string(u.getPort()) + "_" + to_string(u.getID()) + "_"
+				+ to_string(u.getTotal()) + "_";
+		if (u.getIsLeader())
+			content += "1_";
+		else
+			content += "0_";
 	}
 
-	msg = requestName + "#" + content.substr(0,content.size()-1);
-	for(User u: this->userlist){
-		if(u.getIsLeader()) 
+	msg = requestName + "#" + content.substr(0, content.size() - 1);
+	for (User u : this->userlist) {
+		if (u.getIsLeader())
 			continue;
-	//	cout<<"msg:"<<msg<<endl;
-	//	cout<<"ip:"<<u.getIP();
-	//	cout<<"port:"<<u.getPort();
-		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
+		//	cout<<"msg:"<<msg<<endl;
+		//	cout<<"ip:"<<u.getIP();
+		//	cout<<"port:"<<u.getPort();
+		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
+				msg.c_str());
+
 	}
 	showCurrentUser();
 }
 
-void ChatNode::sendMsg(string message)
-{
+void ChatNode::sendMsg(string message) {
 	string requestName = "enqueueMsg";
 	string msg;
 	string content;
 
-	content = me.getIP() + "_" + to_string(me.getPort()) + "_" + me.getNickname() + "_" + message;
+	content = me.getIP() + "_" + to_string(me.getPort()) + "_"
+			+ me.getNickname() + "_" + message;
 	string Tip;
 	int Tport;
-  
-  	if(me.getIsLeader())
-  	{
-  		msgQueue.push(me.getNickname()+"_"+message);
-  	}else
-  	{
-  		for(User u: this->userlist){
-			if(u.getIsLeader())
-			{
+
+	if (me.getIsLeader()) {
+		msgQueue.push(me.getNickname() + "_" + message);
+	} else {
+		for (User u : this->userlist) {
+			if (u.getIsLeader()) {
 				Tip = u.getIP();
 				Tport = u.getPort();
 			}
 		}
 		msg = requestName + "#" + content;
-    	stub_send(str2cstr(Tip), str2cstr(to_string(Tport)), str2cstr(msg));
-  	}
+
+		stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+	}
 }
 
 // only called by leader object
-void ChatNode::enqueueMsg(string msg)
-{
-  	msgQueue.push(msg);
+void ChatNode::enqueueMsg(string msg) {
+	msgQueue.push(msg);
 }
 
-void ChatNode::checkMsgQueue()
-{
+void ChatNode::checkMsgQueue() {
 	string item = (string) msgQueue.pop();
 	multicastMsg(item);
 }
 
-void ChatNode::multicastMsg(string message)
-{
+void ChatNode::multicastMsg(string message) {
 	string requestName = "recMsg";
 	string msg;
 	//totalMutex.lock();
-	string content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
-	me.setTotal(me.getTotal()+1);
+	string content = me.getIP() + "_" + to_string(me.getPort()) + "_"
+			+ to_string(me.getTotal()) + "_";
+	me.setTotal(me.getTotal() + 1);
 	//totalMutex.unlock();
 	msg = requestName + "#" + content + message;
-	for(User u: userlist){
+	for (User u : userlist) {
 
-		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
+		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
+				msg.c_str());
+
 	}
 }
 
-void ChatNode::recMsg(string name, int total, string msg)
-{
-	if(total == rNum)
-	{
+void ChatNode::recMsg(string name, int total, string msg) {
+	if (total == rNum) {
 		rNum++;
 		showMsg(name, msg);
-		while(!holdback.isEmpty() )
-		{
-			if(rNum != holdback.peek())
+		while (!holdback.isEmpty()) {
+			if (rNum != holdback.peek())
 				break;
-			else
-			{
+			else {
 				int key = holdback.peek();
 				string message = holdback.get(key);
-				holdback.dequeue();		
+				holdback.dequeue();
 				rNum++;
 				showMsg(name, message);
 			}
 
 		}
-	}else
-	{
+	} else {
 		holdback.enqueue(total, msg);
 	}
 }
 
-void ChatNode::showMsg(string name, string msg)
-{
-	cout<<name<<"::"<<msg<<endl;
+void ChatNode::showMsg(string name, string msg) {
+	cout << name << "::" << msg << endl;
+}
+
+void ChatNode::userExit() {
+	string msg = "deleteUser#" + me.getIP() + "_" + to_string(me.getPort())
+			+ "_" + me.getIP() +"_"+ to_string(me.getPort());
+	string Tip;
+	int Tport;
+	for (User u : this->userlist) {
+		if (u.getIsLeader()) {
+			Tip = u.getIP();
+			Tport = u.getPort();
+		}
+	}
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+}
+
+void ChatNode::deleteUser(string Tip, int Tport){
+
+	for(vector<User>::iterator it = this->userlist.begin(); it != this->userlist.end(); it++){
+		if(it->getIP() == Tip && it->getPort() == Tport){
+			this->userlist.erase(it);
+			break;
+		}
+	}
+	this->multicastUserlist();
 }
