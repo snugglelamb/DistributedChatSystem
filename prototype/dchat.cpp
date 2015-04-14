@@ -144,8 +144,12 @@ int main(int argc, char** argv)
 	
 		User user(handle.substr(0, posTarget), name, selfPort);
 		node->setMe(user);
+
 		//cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
 		cout<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<endl;
+		cout<<name<<" joining a new chat on "<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<", listening on"<<endl;
+		//cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
+
 		cout<<"Succeeded, current users:"<<endl;
 		node->reqLeader(addr.substr(0, pos), stoi(addr.substr(pos+1, -1)));
 
@@ -160,8 +164,10 @@ int main(int argc, char** argv)
 	std::thread main_type(type);
 	std::thread main_check(check);
 	std::thread main_leaderMsgSend(leaderMsgSend);
+
 	
 	cout << "threads started.\n";
+
 	
 	main_receive.join();
 	main_type.join();

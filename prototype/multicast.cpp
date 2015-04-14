@@ -146,6 +146,7 @@ string stub_connect(const char* Tip, const char* Tport)
 	const char* msg = "CONNECT@";
 	if ( (stub_send(Tip, Tport, msg)).compare("ERROR") == 0 ) return "ERROR";
 	
+
 	string msg_;
 	msg_.assign(stub_create());
 	//printf("%s\n", msg);
