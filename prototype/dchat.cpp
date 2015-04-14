@@ -158,7 +158,7 @@ int main(int argc, char** argv)
 	std::thread main_receive(receive);
 	std::thread main_type(type);
 	std::thread main_check(check);
-	
+	std::thread main_leaderMsgSend(leaderMsgSend);
 	std::cout << "threads started.\n";
 	
 	main_receive.join();
