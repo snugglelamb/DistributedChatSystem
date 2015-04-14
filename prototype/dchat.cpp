@@ -39,8 +39,6 @@ void type() {
 	while (1) {
 		// call ChatNode to parse down msg
 
-
-
 		  if (cin.eof()){ //checks for Control-D / EOF
 			  // node method
 			  node->userExit();
