@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 		User user(ip, name, leaderPort);
 		node->createChat(user);
 		cout<<name<<" started a new chat, listening on "<<ip<<":"<<port<<endl;
-	}else if(argc ==` 3)
+	}else if(argc == 3)
 	{
 		string name(argv[1]);
 		string addr(argv[2]);
