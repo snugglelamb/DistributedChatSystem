@@ -91,15 +91,15 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 
-		char *ip = (char *) handle.substr(0, pos).c_str();		
-		char *port = (char *) handle.substr(pos+1, -1).c_str();
+		string ip = handle.substr(0, pos);		
+		string port = handle.substr(pos+1, -1);
 
-		int leaderPort = atoi(port); 
+		int leaderPort = stoi(port); 
 
-		strcpy(test_port, port);
-		User user(string(ip), name, leaderPort);
+		//strcpy(test_port, port);
+		User user(ip, name, leaderPort);
 		node->createChat(user);
-		cout<<name<<" started a new chat, listening on "<<string(ip)<<":"<<string(port)<<endl;
+		cout<<name<<" started a new chat, listening on "<<ip<<":"<<port<<endl;
 	}else if(argc == 3)
 	{
 		string name(argv[1]);
