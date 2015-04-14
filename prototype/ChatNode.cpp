@@ -185,11 +185,8 @@ void ChatNode::multicastUserlist() {
 
 	msg = requestName + "#" + content.substr(0, content.size() - 1);
 	for (User u : this->userlist) {
-		if (u.getIsLeader())
+		if (u.getIP() == me.getIP() && u.getPort() == me.getPort())
 			continue;
-		//	cout<<"msg:"<<msg<<endl;
-		//	cout<<"ip:"<<u.getIP();
-		//	cout<<"port:"<<u.getPort();
 		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
 				msg.c_str());
 
@@ -278,6 +275,22 @@ void ChatNode::showMsg(string name, string msg) {
 }
 
 void ChatNode::userExit() {
+	if (me.getIsLeader()) {
+		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
+				it++) {
+			if (it->getIP() == me.getIP() && it->getPort() == me.getPort()) {
+				userlist.erase(it);
+				if (userlist.begin() != userlist.end()) {
+					userlist.begin()->setIsLeader(true);
+					this->multicastUserlist();
+					return;
+				}
+				return;
+			}
+		}
+
+
+	}
 	string msg = "deleteUser#" + me.getIP() + "_" + to_string(me.getPort())
 			+ "_" + me.getIP() + "_" + to_string(me.getPort());
 	string Tip;
