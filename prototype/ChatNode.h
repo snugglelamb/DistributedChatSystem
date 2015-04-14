@@ -55,6 +55,8 @@ public:
 	void multicastMsg(string msg);
 	void recMsg(string name, int total, string msg);
 	void showMsg(string name, string msg);
+	void userExit();
+	void deleteUser(string Tip, int Tport);
 	
 };
 
