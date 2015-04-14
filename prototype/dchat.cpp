@@ -119,7 +119,7 @@ int main(int argc, char** argv)
 
 		//strcpy(test_port, tport);
 		
-		string handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
+		string handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
 		cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
