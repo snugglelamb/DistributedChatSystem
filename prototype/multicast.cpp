@@ -52,7 +52,7 @@ string getlocalinfo()
         {
             if (s != 0)
             {
-                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                //printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 return "GETIPERROR";
             }
 			sprintf(ip, "%s", host);
@@ -66,8 +66,8 @@ string getlocalinfo()
 	
 	port = (int) ntohs(localAddress.sin_port);
 	// strcpy(ip, inet_ntoa(localAddress.sin_addr));
-	printf("local address: %s\n", ip);
-	printf("local port: %d\n", port);
+	//printf("local address: %s\n", ip);
+	//printf("local port: %d\n", port);
 	
 	sprintf(port_, "%d", port);
 	strcpy(msg,"");
@@ -80,7 +80,7 @@ string getlocalinfo()
 	delete[] ip;
 	
 	printf("stub: finish binding. ip:port -> %s\n",msg);
-    printf("stub: waiting to recvfrom...\n");
+    //printf("stub: waiting to recvfrom...\n");
 	
 	return string(msg);
 }
@@ -98,7 +98,7 @@ string stub_create()
 	port = randomPort();
 	// port = 20000;
 	sprintf(port_,"%d", port);
-	printf("stub: PORT specified: %s\n", port_);
+	//printf("stub: PORT specified: %s\n", port_);
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
@@ -142,7 +142,7 @@ string stub_create()
 
 string stub_connect(const char* Tip, const char* Tport)
 {
-	printf("tip: %s tport: %s\n",Tip, Tport);
+	//printf("tip: %s tport: %s\n",Tip, Tport);
 	const char* msg = "CONNECT@";
 	if ( (stub_send(Tip, Tport, msg)).compare("ERROR") == 0 ) return "ERROR";
 	
@@ -178,11 +178,11 @@ string stub_receive()
 	
 	// store source ip
 	strcpy(Sip, inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s));
-    printf("stub: got packet from %s\n", Sip);
+    //printf("stub: got packet from %s\n", Sip);
 	
-    printf("stub: packet is %d bytes long\n", numbytes);
+    //printf("stub: packet is %d bytes long\n", numbytes);
     buf[numbytes] = '\0';
-    printf("stub: packet contains \"%s\"\n", buf);
+    //printf("stub: packet contains \"%s\"\n", buf);
 		
 	char* str = new char[20];
 	strcpy(str, "OK");
@@ -194,15 +194,15 @@ string stub_receive()
 	        return "ERROR";
 	    }
 		
-	    printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
-	            get_in_addr((struct sockaddr *)&their_addr),
-	            s, sizeof s), str);
+	    //printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
+	          //  get_in_addr((struct sockaddr *)&their_addr),
+	           // s, sizeof s), str);
 	}
 	
 	// parse string received
 
 	if (buf[6] == 'C') {
-		printf("stub: connect received. do nothing\n");
+		//printf("stub: connect received. do nothing\n");
 	} else {
 		Parser p;
 		p.parsePara(buf);
@@ -237,8 +237,8 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
 
-    printf("Target IP:%s %zu\n", Tip,strlen(Tip));
-    printf("Target PORT:%s %zu\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
+    //printf("Target IP:%s %zu\n", Tip,strlen(Tip));
+    //printf("Target PORT:%s %zu\n", Tport,strlen(Tport)); // check if Tport is shifted to "msg"
 
     if ((rv = getaddrinfo(Tip, Tport, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -271,13 +271,13 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
 	strcat(fullmsg, "00000@"); // add prefix
 	strcat(fullmsg, msg);
 	// strcpy(fullmsg, "0ABCDEF"); // test
-	printf("stub: msg prepared to send: %s\n",fullmsg);
+	//printf("stub: msg prepared to send: %s\n",fullmsg);
     if ((numbytes = sendto(sockfd_w, fullmsg, strlen(fullmsg), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
         perror("stub: sendto");
         return "ERROR";
     }
-	printf("stub: sent %d bytes to %s\n", numbytes, Tip);
+	//printf("stub: sent %d bytes to %s\n", numbytes, Tip);
 	
 	// receive return msg from server
 	// ack timeout 5s
@@ -288,14 +288,14 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
         return "ERROR";
     }
 	
-    printf("stub: received packet from %s\n",
-        inet_ntop(their_addr.ss_family,
-            get_in_addr((struct sockaddr *)&their_addr),
-            s, sizeof s));
+    //printf("stub: received packet from %s\n",
+       // inet_ntop(their_addr.ss_family,
+        //    get_in_addr((struct sockaddr *)&their_addr),
+         //   s, sizeof s));
 
-    printf("stub: packet is %d bytes long\n", numbytes);
+    //printf("stub: packet is %d bytes long\n", numbytes);
     buf[numbytes] = '\0';
-    printf("stub: packet contains: %s\n", buf);
+    //printf("stub: packet contains: %s\n", buf);
 
 
     close(sockfd_w);
