@@ -253,12 +253,13 @@ void ChatNode::multicastMsg(string message)
 {
 	string requestName = "recMsg";
 	string msg;
-	totalMutex.lock();
+	//totalMutex.lock();
 	string content = me.getIP()+"_"+to_string(me.getPort())+"_" + to_string(me.getTotal())+"_";
 	me.setTotal(me.getTotal()+1);
-	totalMutex.unlock();
+	//totalMutex.unlock();
 	msg = requestName + "#" + content + message;
 	for(User u: userlist){
+		if(u.getIsLeader()) u.setTotal(me.getTotal());
 		stub_send(str2cstr(u.getIP()), str2cstr(to_string(u.getPort())), str2cstr(msg));
 	}
 }
