@@ -221,9 +221,7 @@ void ChatNode::sendMsg(string message) {
 
 // only called by leader object
 void ChatNode::enqueueMsg(string msg) {
-	cout<<"before push"<<endl;
 	msgQueue.push(msg);
-	cout<<"after push"<<endl;
 }
 
 void ChatNode::checkMsgQueue() {

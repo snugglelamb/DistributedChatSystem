@@ -2,7 +2,7 @@
 // local ip, port for dchat
 #define MAXBUFLEN 9999
 static int sockfd; //used for listener
-bool debug = true;
+bool debug = false;
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {
@@ -235,7 +235,7 @@ string stub_send(const char* Tip, const char* Tport, const char* msg)
 	
 	// set timeout val
 	struct timeval tv;
-	tv.tv_sec = 0;  /* 5 Secs Timeout */
+	tv.tv_sec = 5;  /* 5 Secs Timeout */
 	tv.tv_usec = 0;  // Not init'ing this can cause strange errors
 
     memset(&hints, 0, sizeof hints);

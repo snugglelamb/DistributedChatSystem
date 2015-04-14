@@ -16,7 +16,7 @@ class ChatNode;
 
 class Parser{
 private:
-		bool paserdebug = true;
+		bool paserdebug = false;
 		ChatNode  *cn;
 		vector<string> splitstr(string ori, char deli);
 public:
