@@ -74,13 +74,13 @@ int main(int argc, char** argv)
 	//	std::cout << "Create Chat, name: "<< name << endl;
 		// create
 
-		string handle = string(stub_create());
+		string handle = stub_create();
 		cout<<"create chat:"<<handle<<endl;
 		while ( handle.compare("CREATEERROR") == 0 ) 
 		{
 			// ERROR
 			cout << "Met error, could not create chat.\n";
-			handle = string(stub_create());
+			handle = stub_create();
 		} 
 
 		size_t pos = handle.find(":");
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 		User user(ip, name, leaderPort);
 		node->createChat(user);
 		cout<<name<<" started a new chat, listening on "<<ip<<":"<<port<<endl;
-	}else if(argc == 3)
+	}else if(argc ==` 3)
 	{
 		string name(argv[1]);
 		string addr(argv[2]);
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
 
 		//strcpy(test_port, tport);
 		
-		string handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
+		string handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
 		cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
 		}
 		while(handle.compare("CREATEERROR") == 0)
 		{
-			handle = string(stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str()));
+			handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
 		}
 		size_t posTarget = handle.find(":");
 		if (pos == string::npos)
@@ -140,14 +140,14 @@ int main(int argc, char** argv)
 		//char *sip = (char *) handle.substr(0, posTarget).c_str();
 		//char *sport = (char *) handle.substr(posTarget+1, -1).c_str();
 
-		int selfPort = atoi(handle.substr(posTarget+1, -1).c_str());
+		int selfPort = stoi(handle.substr(posTarget+1, -1));
 	
 		User user(handle.substr(0, posTarget), name, selfPort);
 		node->setMe(user);
 		//cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
-		cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
+		cout<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<endl;
 		cout<<"Succeeded, current users:"<<endl;
-		node->reqLeader(addr.substr(0, pos), atoi(addr.substr(pos+1, -1).c_str()));
+		node->reqLeader(addr.substr(0, pos), stoi(addr.substr(pos+1, -1)));
 
 	} else {
 		cout << "[./dchat Bob] or [./dchat Alice 192.168.1.101:3000]\n";
