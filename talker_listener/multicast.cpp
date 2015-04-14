@@ -1,30 +1,52 @@
 #include "multicast.h"
 // local ip, port for dchat
-#define MAXBUFLEN 9999
+#define MAXBUFLEN 4096
 #define QUEUESIZE 20
 #define SENDMAX 3
-#define PREFIXLEN 6
+#define PREFIXLEN 5 
+#define MAXUSER 50
 
 static int sockfd; //used for listener
 
-// for fault tolerance	
+// for send msg storage
 struct msgQueue_send {
 	int id;
-	char message[1024]; //msg length arbitrary 1024
+	char message[MAXBUFLEN]; //msg length arbitrary 1024
 };
 
-struct msgQueue_recv {
-	int id;
-	char message[1024]; //msg length arbitrary 1024
+// for send_seq_num management
+struct clock_send {
+	std::string label; // IP:PORT of target
+	int num; // valid msg sent to specific target
 };
 
+int clock_num = 0;
+struct clock_send vclock[MAXUSER];
+
+// hash table similar struct
+struct msg_monitor{
+	std::string label;
+	std::vector<int> holdback;
+	int latest;
+};
+
+int monitor_num = 0;
+struct msg_monitor monitor[MAXUSER];
+// struct msgQueue_recv {
+// 	int id;
+// 	char message[512]; //msg length arbitrary 1024
+// };
+
+// send Queue cache
 int sendID[QUEUESIZE];
 int sendQ_num = 0; // record no. of msg remained in send queue
-int recvQ_num = 0;
 struct msgQueue_send sendQ[QUEUESIZE]; // 10 is the size of msg queue
-struct msgQueue_recv recvQ[QUEUESIZE];
 const struct msgQueue_send empty_send = {};
-const struct msgQueue_recv empty_recv = {};
+
+// int recvQ_num = 0;
+// struct msgQueue_recv recvQ[QUEUESIZE];
+// const struct msgQueue_recv empty_recv = {};
+
 
 
 void *get_in_addr(struct sockaddr *sa)
@@ -36,12 +58,12 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-char* getlocalinfo()
+std::string getlocalinfo()
 {
 	int port;
-	char msg[30];
-	char port_[10];
-	char ip[20];
+	char* msg = new char[30];
+	char* port_ = new char[10];
+	char* ip = new char[20];
 	
 	// get local ip, port info; ip:port	
 	// could only get 0.0.0.0 from listening socket
@@ -88,26 +110,31 @@ char* getlocalinfo()
 	
 	port = (int) ntohs(localAddress.sin_port);
 	// strcpy(ip, inet_ntoa(localAddress.sin_addr));
-	printf("local address: %s\n", ip);
-	printf("local port: %d\n", port);
+	// printf("local address: %s\n", ip);
+	// printf("local port: %d\n", port);
 	
 	sprintf(port_, "%d", port);	
 	strcat(msg,ip);
 	strcat(msg,":");
 	strcat(msg,port_);
+	std::string msg_(msg);
 	
-	printf("stub: finish binding. ip:port -> %s:%d\n",ip,port);
-    printf("stub: waiting to recvfrom...\n");
+	delete[] ip;
+	delete[] port_;
+	delete[] msg;	
 	
-	return msg;
+	// std::cout << "stub: finish binding. ip:port ->" << msg_ << std::endl;
+    // printf("stub: waiting to recvfrom...\n");
+	
+	return msg_;
 }
 
 
-char* stub_create()
+std::string stub_create()
 {
     struct addrinfo hints, *servinfo, *p;
     int rv, port;
-	char port_[20];
+	char* port_ = new char[10];
 	
 	// randomly assign a port number
 	port = randomPort();
@@ -124,7 +151,7 @@ char* stub_create()
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         return "ERROR";
     }
-
+	
     // loop through all the results and bind to the first valid one
     for(p = servinfo; p != NULL; p = p->ai_next) {
         if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -148,6 +175,7 @@ char* stub_create()
     }
 
     freeaddrinfo(servinfo); // done with servinfo
+	delete[] port_;
 	
 	// init send queue
 	int i = 0;
@@ -158,21 +186,19 @@ char* stub_create()
 			
 }
 
-char* stub_connect(const char* Tip, const char* Tport)
+std::string stub_connect(const char* Tip, const char* Tport)
 {
 
-	char msg[20];	
-	strcpy(msg, "connect");
-		
-	if ( strcmp(stub_send(Tip, Tport, msg, 1), "ERROR") == 0 ) return "ERROR";
-
-	strcpy(msg, stub_create());
-	if ( strcmp(msg, "ERROR") == 0 ) { return "ERROR"; 	}
-	else { return msg; }
-
+	const char* msg = "00013CONNECT@";	
+	if ( stub_send(Tip, Tport, msg, 1).compare("ERROR") == 0 ) return "ERROR";
+	
+	std::string msg_;
+	msg_.assign(stub_create());
+	if ( msg_.compare("ERROR") == 0 ) { return "ERROR"; }
+	else { return msg_; }
 }
 
-char* stub_receive()
+std::string stub_receive()
 {
 	// will only receive normal msg other than OK, RESEND
 	struct sockaddr_storage their_addr;
@@ -180,7 +206,7 @@ char* stub_receive()
     char buf[MAXBUFLEN];
     socklen_t addr_len;
     char s[INET6_ADDRSTRLEN];
-	char Sip[30];
+	char* Sip = new char[30];
 
     addr_len = sizeof their_addr;
 	
@@ -193,10 +219,11 @@ char* stub_receive()
 	strcpy(Sip, inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s));
     printf("stub: got packet from %s\n", Sip);
     printf("stub: packet is %d bytes long\n", numbytes);
+	delete[] Sip;
 	
 	// check packet size
-	char packet_size[6];
-	char str[20]; //OK, RESEND
+	char packet_size[6] = {0};
+	char str[20] = {0}; //OK, RESEND
 	memcpy(packet_size, &buf[0], 5);
 	packet_size[5] = '\0';
 	int size = atoi(packet_size);
@@ -220,11 +247,105 @@ char* stub_receive()
 		    printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
 		            get_in_addr((struct sockaddr *)&their_addr),
 		            s, sizeof s), str);
-		}
+		} 
 		
-	// parse string received
-	// parsePara(&buf);
-	} 
+		if (buf[5] != 'C') {
+			// ignore first connect msg
+			// update monitor
+			int seq_num = 0;
+			std::string str(buf);
+			std::size_t start = str.find("STA");
+			std::size_t end = str.find("END");
+			std::string key;
+			std::string seq;
+			if (start!=std::string::npos && end!= std::string::npos ) {
+				// capture "IP:PORT" + "STA" + SEQ + "END"
+				key.assign(str.substr(5, start - 5));
+				seq.assign(str.substr(start + 3, end - start - 3));
+				seq_num = stoi(seq);
+				std::cout << "stub: monitor key received: " << key << std::endl;
+				std::cout << "stub: monitor seq received: " << seq_num << std::endl;
+			} else {
+				printf("stub: header not intact.\n");
+				return "ERROR";
+			}
+		
+			if (monitor_num == 0) {
+				// add in monitor
+				monitor[monitor_num].label = key;
+				if (seq_num == 1) { monitor[monitor_num].latest = 1; }
+				else { 
+					monitor[monitor_num].latest = 0;
+					monitor[monitor_num].holdback.push_back(seq_num); 
+				}
+				monitor_num++;
+				// parse string received
+				// parsePara(&buf);
+						
+			} else {
+				// loop to find if a match
+				int i = 0;
+				for (i = 0; i < monitor_num; i++ ) {
+					if ((monitor[i].label).compare(key) == 0) {
+						break;
+					}
+				}
+				if (i == monitor_num) {
+					// user not exist
+					monitor[monitor_num].label = key;
+					if (seq_num == 1) { monitor[monitor_num].latest = 1; }
+					else { 
+						monitor[monitor_num].latest = 0;
+						monitor[monitor_num].holdback.push_back(seq_num); 
+					}
+					monitor_num++;
+					// parse string received
+					// parsePara(&buf);
+				
+				} else {
+					// user exist 
+					int flag = seq_num - monitor[i].latest;
+					if ( flag <= 0 ) {
+						// duplicate
+						printf("stub: duplicate message.\n");
+					} else if ( flag == 1 ) {
+						// correct
+						monitor[i].latest = seq_num;
+						// parse string received
+						// parsePara(buf);
+					
+						while (!monitor[i].holdback.empty()) {
+							// remove seq_num + 1 one at a time
+							printf("stub: monitor check hold back.\n");
+							int found = 0;
+						    for (std::vector<int>::iterator it = monitor[i].holdback.begin(); it != monitor[i].holdback.end(); ++it) {
+						    	if ( *it == monitor[i].latest + 1) {
+									monitor[i].latest += 1;
+									monitor[i].holdback.erase(it);
+									found = 1;
+						    		break;
+						    	}
+						    }
+							if (found == 1) {
+								// dequeue msg here and send to parser							
+							} else {
+								// found no adjacent
+								printf("stub: monitor still %lu msg in holdback queue.\n", monitor[i].holdback.size());
+								break;
+							}
+						}// end while
+					
+					} else {
+						// some msg hasn't come
+						monitor[i].holdback.push_back(seq_num);
+						// may need to enqueue msg, but just pass to parser for now
+						// parse string received
+						// parsePara(buf);				
+					}
+				}			
+			} // end user exist/not exist handling
+		} // end check if CONNECT msg
+	} // end packet intact 
 	
 	// packet loss 
 	else {
@@ -251,9 +372,8 @@ char* stub_receive()
 	
 }
 
-char* stub_send(const char* Tip, const char* Tport, const char* msg, int request)
+std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request)
 {
-	// request > 1 ==> resend msg
     int sockfd_w;
     struct addrinfo hints, *servinfo, *p;
     int rv;
@@ -266,7 +386,7 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg, int request
     char s[INET6_ADDRSTRLEN];
 	
 	// customize request sent
-	char fullmsg[512];
+	char* fullmsg = new char[MAXBUFLEN];
 	// sometimes char* mess up with address in memory
 	// printf("Target IP:%s\n", Tip);
 	// printf("Target PORT:%s\n", Tport); // check if Tport is shifted to "msg"
@@ -318,13 +438,88 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg, int request
 		printf("stub: msgQue full.\n");
 		return "MSGQUEUEFULL";
 	}
-
-	// add prefix
-	int size = strlen(msg) + PREFIXLEN; // 6s is the length of header
-	sprintf(fullmsg, "%05d@", size);
-	strcat(fullmsg, msg);
+	// request >= 1 ==> resend msg	
+	if (request < 1) {
+		int valid_send_num = 0;
+		char* ip_ = new char[30];
+		char* port_ = new char[10];
+		char* taddr = new char[40];
+		
+		strcpy(ip_, Tip);
+		strcpy(port_, Tport);
+		strcpy(taddr, ip_);
+		strcat(taddr, ":");
+		strcat(taddr, port_);
+		std::string key(taddr);
+		delete[] ip_;
+		delete[] port_;
+		delete[] taddr;
+			
+		// check if target is already in the list
+		if (clock_num == 0) {
+			// no former target
+			printf("stub: clock new target.\n");
+			vclock[clock_num].label = key;
+			vclock[clock_num].num = 1;
+			clock_num++;
+			valid_send_num = 1; 
+			
+		} else {
+			int i = 0;
+			for (i = 0; i < clock_num; i++ ) {
+				if ((vclock[i].label).compare(key) == 0) {
+					break;
+				}
+			}
+			if (i == clock_num) {
+				// not in list, new target
+				printf("stub: clock new target, num = 1\n");
+				vclock[clock_num].label = key;
+				vclock[clock_num].num = 1;
+				clock_num++;
+				valid_send_num = 1; 
+			} else {
+				// in list, update num
+				vclock[i].num += 1;
+				valid_send_num = vclock[i].num;
+				printf("stub: clock update target, num = %d.\n", valid_send_num);
+			} // end check if in list
+		} // end check if new
+		
+		// add prefix
+		// PREFIXLEN is the length of header (data size)
+		char* seq_num = new char[10];
+		char* seq = new char[100];
+		char* info = new char[50];
+		std::string info_ = getlocalinfo();
+		strcpy(info, info_.c_str());
+		printf("SSSSTUB: get info: %s\n", info);
+		sprintf(seq_num, "%05d", valid_send_num);
+		// SEQ: IP:PORTSTA00000END@
+		strcpy(seq, info);
+		strcat(seq, "STA");
+		strcat(seq, seq_num);
+		strcat(seq, "END@");
+	
+		int size = PREFIXLEN + strlen(seq) + strlen(msg); 
+		sprintf(fullmsg, "%05d", size);
+		strcat(fullmsg, seq);
+		strcat(fullmsg, msg);
+		
+		delete[] seq_num;
+		delete[] seq;
+		delete[] info;
+		
+	} else {
+		// resend confirmed
+		strcpy(fullmsg, msg);
+	}
+	
 	printf("stub: msg prepared to send: %s\n",fullmsg);
-    if ((numbytes = sendto(sockfd_w, fullmsg, strlen(fullmsg), 0,
+	const char* fullmsg_ = fullmsg;
+	delete[] fullmsg; // free buffer
+	
+    if ((numbytes = sendto(sockfd_w, fullmsg_, strlen(fullmsg_), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
         perror("stub: sendto");
         return "ERROR";
@@ -350,9 +545,9 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg, int request
 			return "ERROR";
 		} else if (request == 0) {
 			// resend three times
-			return stub_send(Tip, Tport, msg, SENDMAX);
+			return stub_send(Tip, Tport, fullmsg_, SENDMAX);
 		} else {
-			return stub_send(Tip, Tport, msg, request - 1);
+			return stub_send(Tip, Tport, fullmsg_, request - 1);
 		}
     }
 	
@@ -378,7 +573,15 @@ char* stub_send(const char* Tip, const char* Tport, const char* msg, int request
 		sendQ_num--;
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
-		return stub_send(Tip, Tport, msg, 0);
+		if (request == 0) {
+			return stub_send(Tip, Tport, fullmsg_, SENDMAX);
+		} else if (request == 1) {
+			printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
+			return "ERROR";
+		} else {
+			return stub_send(Tip, Tport, fullmsg_, request - 1);
+		}
+		
 	}
 
     close(sockfd_w);

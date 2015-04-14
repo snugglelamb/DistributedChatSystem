@@ -1,6 +1,9 @@
 #ifndef MULTICAST_H
 #define MULTICAST_H
 
+#include <string>
+#include <iostream>
+#include <vector>
 extern "C"
 {
 	#include <sys/socket.h>
@@ -18,14 +21,13 @@ extern "C"
 	#include <net/if.h>
 }
 // #include "parser.h"
-
 extern int sendQ_num;
 
-extern "C" char* stub_connect(const char* Tip, const char* Tport);
-extern "C" char* stub_receive();
-extern "C" char* stub_send(const char* Tip, const char* Tport, const char* msg, int request);
-extern "C" char* stub_create();
-extern "C" char* getlocalinfo();
-extern "C" void* get_in_addr(struct sockaddr *sa);
+std::string stub_connect(const char* Tip, const char* Tport);
+std::string stub_receive();
+std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request);
+std::string stub_create();
+std::string getlocalinfo();
+void* get_in_addr(struct sockaddr *sa);
 
 #endif
