@@ -14,9 +14,6 @@
 
 using namespace std;
 
-// for test purpose, type msgs are all sent to creator
-static char test_port[10];
-
 ChatNode *node = ChatNode::getInstance();
 
 void leaderMsgSend()
@@ -34,7 +31,6 @@ void receive()
 	// call stub_receive
 	while(1)
 	{
-		cout<<"111111"<<endl;
 		stub_receive();
 	}
 }
@@ -44,8 +40,6 @@ void type()
 	while(1)
 	{
 		// call ChatNode to parse down msg
-
-
 		  if (cin.eof()){ //checks for Control-D / EOF
 			  // node method
 			  node->userExit();
@@ -102,8 +96,6 @@ int main(int argc, char** argv)
 		string port = handle.substr(pos+1, -1);
 
 		int leaderPort = stoi(port); 
-
-		//strcpy(test_port, port);
 		User user(ip, name, leaderPort);
 		node->createChat(user);
 		cout<<name<<" started a new chat, listening on "<<ip<<":"<<port<<endl;
@@ -120,11 +112,6 @@ int main(int argc, char** argv)
 		} 
 		
 		//std::cout << name << " attempts to join chat at "<< addr << endl;
-		//char *tip = addr.substr(0, pos).c_str();
-		//char *tport = addr.substr(pos+1, -1).c_str();
-		
-
-		//strcpy(test_port, tport);
 		
 		string handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
 		cout<<"handle:"<<handle<<endl;

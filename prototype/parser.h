@@ -21,7 +21,7 @@ private:
 		vector<string> splitstr(string ori, char deli);
 public:
 		Parser();
-		void parsePara(char* arr );
+		void parsePara(string arr );
 
 };
 

@@ -84,7 +84,7 @@ void ChatNode::reqLeader(string Tip, int Tport) {
 	content = SIP + "_" + mePortArr;
 	cout << "content" << content << endl;
 	msg = requestName + "#" + content;
-	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
 }
 
 // send leader information back to new added client
@@ -109,10 +109,9 @@ void ChatNode::sendLeader(string Tip, int Tport) {
 
 	content = me.getIP() + "_" + to_string(me.getPort()) + "_" + leaderIP + "_"
 			+ to_string(leaderPort);
-	cout << "!!!!!!!!!!!!! " << content << endl;
 	msg = requestName + "#" + content;
 
-	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
 }
 
 // connect to leader. add new client to userlist
@@ -126,7 +125,7 @@ void ChatNode::connectLeader(string Tip, int Tport) {
 			+ "_" + me.getNickname() + "_" + to_string(me.getPort());
 	msg = requestName + "#" + content;
 
-	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
 }
 
 //update userlist
@@ -188,7 +187,7 @@ void ChatNode::multicastUserlist() {
 		if (u.getIP() == me.getIP() && u.getPort() == me.getPort())
 			continue;
 		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
-				msg.c_str());
+				msg.c_str(), 0);
 
 	}
 	showCurrentUser();
@@ -215,7 +214,7 @@ void ChatNode::sendMsg(string message) {
 		}
 		msg = requestName + "#" + content;
 
-		stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+		stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
 	}
 }
 
@@ -230,7 +229,6 @@ void ChatNode::checkMsgQueue() {
 }
 
 void ChatNode::multicastMsg(string message) {
-	cout<<"multicast msg!!!!!!!!!!!!!!!!!!!!!"<<endl;
 	string requestName = "recMsg";
 	string msg;
 	//totalMutex.lock();
@@ -242,7 +240,7 @@ void ChatNode::multicastMsg(string message) {
 	for (User u : userlist) {
 		//if()
 		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
-				msg.c_str());
+				msg.c_str(), 0);
 
 	}
 }
@@ -299,7 +297,7 @@ void ChatNode::userExit() {
 			Tport = u.getPort();
 		}
 	}
-	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str());
+	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
 }
 
 void ChatNode::deleteUser(string Tip, int Tport) {
