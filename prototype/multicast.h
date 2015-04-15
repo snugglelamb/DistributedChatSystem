@@ -1,9 +1,12 @@
 #ifndef MULTICAST_H
 #define MULTICAST_H
 
-#include "parser.h"
 #include <string>
-extern "C"{
+#include <iostream>
+#include <vector>
+#include "parser.h"
+extern "C"
+{
 	#include <sys/socket.h>
 	#include <sys/types.h>
 	#include <netinet/in.h>
@@ -14,18 +17,18 @@ extern "C"{
 	#include <unistd.h>
 	#include <errno.h>
 	#include <netdb.h>
-	#include <ifaddrs.h>
 	#include "util.h"
-};
+	#include <ifaddrs.h>
+	#include <net/if.h>
+}
 
-string stub_connect(const char* Tip, const char* Tport);
-string stub_receive();
-string stub_send(const char* Tip, const char* Tport, const char* msg);
-string stub_create();
-string getlocalinfo();
+extern int sendQ_num;
+
+std::string stub_connect(const char* Tip, const char* Tport);
+std::string stub_receive();
+std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request);
+std::string stub_create();
+std::string getlocalinfo();
 void* get_in_addr(struct sockaddr *sa);
 
 #endif
-
-
-

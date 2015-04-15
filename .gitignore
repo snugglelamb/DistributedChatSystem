@@ -1,1 +1,8 @@
-/Debug/
+
+# Compiled source #
+###################
+*.o
+*.exe
+*.exec
+*.md
+

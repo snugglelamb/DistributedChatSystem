@@ -13,8 +13,8 @@ vector<string> Parser::splitstr(string ori, char deli) {
 Parser::Parser() {
 	this->cn = ChatNode::getInstance();
 }
-void Parser::parsePara(char* arr) {
-	if(this->paserdebug)cout << "get 44444444params:" << endl;
+void Parser::parsePara(string arr) {
+	if(this->paserdebug)cout << "parser: get params:" << endl;
 	if(this->paserdebug)cout << string(arr) << endl;
 	string rawStr = string(arr);
 	size_t pos0 = rawStr.find("@");
