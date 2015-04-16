@@ -124,8 +124,10 @@ void ChatNode::connectLeader(string Tip, int Tport) {
 	content = me.getIP() + "_" + to_string(me.getPort()) + "_" + me.getIP()
 			+ "_" + me.getNickname() + "_" + to_string(me.getPort());
 	msg = requestName + "#" + content;
-
-	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
+	if(stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0) == "ERROR"){
+		cout << "You can't connect with leader" <<endl;
+		exit(1);
+	}
 }
 
 //update userlist
