@@ -342,7 +342,7 @@ void ChatNode::checkAlive() {
 			if (result == "ERROR") {
 				userlistMutex.lock();
 				change = true;
-				userlist.erase(it);
+				userlist.erase(it--);
 				userlistMutex.unlock();
 			}
 		}
