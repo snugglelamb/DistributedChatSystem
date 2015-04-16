@@ -285,7 +285,6 @@ void ChatNode::userExit() {
 			}
 		}
 
-
 	}
 	string msg = "deleteUser#" + me.getIP() + "_" + to_string(me.getPort())
 			+ "_" + me.getIP() + "_" + to_string(me.getPort());
