@@ -8,7 +8,8 @@
 
 static int sockfd; //used for listener
 bool debug = false;
-
+bool encrypted = true;
+std::string hashkey = "happy";
 // for send msg storage
 struct msgQueue_send {
 	int id;
@@ -208,23 +209,37 @@ std::string stub_receive()
 	struct sockaddr_storage their_addr;
     int numbytes;
     char buf[MAXBUFLEN];
+	char buf_[MAXBUFLEN];
     socklen_t addr_len;
     char s[INET6_ADDRSTRLEN];
 	char* Sip = new char[30];
 
     addr_len = sizeof their_addr;
 	
-    if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,
+    if ((numbytes = recvfrom(sockfd, buf_, MAXBUFLEN-1 , 0,
         (struct sockaddr *)&their_addr, &addr_len)) == -1) {
         perror("recvfrom error");
         return "ERROR";
     }
+	buf_[numbytes] = '\0';
+	std::cout << "stub: receive encrypt" << buf_ << std::endl;
+	// decrypt
+	if (encrypted) {
+		std::string recv_decrypt(buf_);
+		strcpy(buf,decrypt(recv_decrypt, hashkey).c_str());
+		numbytes = strlen(buf);
+	} else {
+		strcpy(buf, buf_);
+	}
+	std::cout << "stub: receive decrypt " << buf << std::endl;
+	std::cout << "stub: receive size: " << numbytes << std::endl;
 	// store source ip
 	strcpy(Sip, inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s));
     if (debug) printf("stub: got packet from %s\n", Sip);
     if (debug) printf("stub: packet is %d bytes long\n", numbytes);
 	delete[] Sip;
-	
+
+
 	// check packet size
 	char packet_size[6] = {0};
 	char* str_ = new char[20]; //OK, RESEND
@@ -380,6 +395,7 @@ std::string stub_receive()
 std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request)
 {
     std::cout << "stub: sendto Tip:Tport->" << Tip <<":" << Tport << std::endl;
+	// std::cout << "stub: request no" << request << std::endl;
 	int sockfd_w;
     struct addrinfo hints, *servinfo, *p;
     int rv;
@@ -521,9 +537,22 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		strcpy(fullmsg, msg);
 	}
 	
-	printf("stub: msg prepared to send: %s\n",fullmsg);
-	const char* fullmsg_ = fullmsg;
+	// printf("stub: msg before encryption: %s\n", fullmsg);
+
+	const char* fullmsg_;
+	if (request < 1) {
+		if (encrypted) {
+			std::string msg_encrypted = encrypt(std::string(fullmsg), hashkey);
+			fullmsg_ = msg_encrypted.c_str();
+			std::cout << "stub: encrypted: " << fullmsg_ << std::endl;
+		} else {
+			fullmsg_ = fullmsg;
+		}
+	} else {
+		fullmsg_ = fullmsg;
+	}
 	delete[] fullmsg; // free buffer
+	printf("stub: msg prepared to send: %s\n",fullmsg_);
 	
     if ((numbytes = sendto(sockfd_w, fullmsg_, strlen(fullmsg_), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
@@ -595,4 +624,82 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	
 	return "SUCCESS";
 	
+}
+
+std::string encrypt(std::string msg, std::string key)
+{
+    // Make sure the key is at least as long as the message
+    std::string tmp(key);
+	int num_zero = 0;
+	int zero[50];
+    if(key.empty())
+        return msg;
+    
+    for (std::string::size_type i = 0; i < msg.size(); ++i)
+    {
+		 msg[i] ^= key[i%key.size()];
+		if ( msg[i] == '\0') {
+			msg[i] = '!';
+			zero[num_zero] = i;
+			num_zero++;
+    	}
+    }   
+
+	if ( num_zero != 0){
+		msg.append("###@###");
+		int j = 0;
+		for (j=0; j < num_zero; j++) {
+			msg += encrypt(std::to_string(zero[j]), key);
+			msg += "@";
+		}
+		msg.append("###!###");
+	}
+
+	return msg;
+}
+std::string decrypt(std::string msg, std::string key)
+{
+    if(key.empty()) return msg;
+
+	int zero[50];
+	int void_no[50];
+	int num_zero = 0;
+	std::size_t start = msg.find("###@###");
+	std::size_t end = msg.find("###!###");
+	std::string change;
+	std::string origin;
+	if (start!=std::string::npos && end!= std::string::npos ) {
+		change.assign(msg.substr(start+7, end - start - 7));
+		origin.assign(msg.substr(0, start));
+		// find until last @
+		for (std::string::size_type i = 0; i < change.size(); ++i)
+		{
+			if (change[i] == '@') {
+				zero[num_zero] = i;
+				num_zero++;
+			}
+		}
+		int i = 0;
+		int first = 0;
+		for (i=0; i<num_zero; i++) {
+			std::string muteInt = change.substr(first, zero[i] - first);
+			void_no[i] = std::stoi(encrypt(muteInt,key));
+			first = zero[i] + 1;
+		}
+		
+		// replace ! with \0
+		for (i=0; i<num_zero; i++) {
+			origin[void_no[i]] = '\0';
+		}	
+		
+	} else {
+		origin.assign(msg);
+	}
+	
+    for (std::string::size_type i = 0; i < origin.size(); ++i)
+    {
+		 origin[i] ^= key[i%key.size()];
+    }   
+	
+    return origin; // lol
 }

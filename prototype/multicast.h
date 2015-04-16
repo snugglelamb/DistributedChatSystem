@@ -29,6 +29,9 @@ std::string stub_receive();
 std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request);
 std::string stub_create();
 std::string getlocalinfo();
+std::string encrypt(std::string msg, std::string key);
+std::string decrypt(std::string msg, std::string key);
+
 void* get_in_addr(struct sockaddr *sa);
 
 #endif
