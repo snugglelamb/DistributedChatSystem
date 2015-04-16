@@ -340,6 +340,7 @@ void ChatNode::leaderElection() {
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(), "00006C",
 					0);
+			cout << "in leader election get result: "<< result <<endl;
 			if (result == "ERROR")
 				nextidx = (++nextidx) % userlist.size();
 			else
