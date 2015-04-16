@@ -64,10 +64,12 @@ void type()
 void check()
 {
 	// heart beat check alive
+	
 	while(1){
 		node->checkAlive();
 		this_thread::sleep_for (chrono::seconds(10));
 	}
+
 }
 
 int main(int argc, char** argv)

@@ -332,7 +332,8 @@ void ChatNode::checkAlive(){
 
 		for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
 			if(it->getIP()==me.getIP() && it->getPort() == me.getPort()) continue;
-			result = stub_send(it->getIP().c_str(), to_string(it->getPort()).c_str(), "00013C",3 );
+			result = stub_send(it->getIP().c_str(), to_string(it->getPort()).c_str(), "00006C",3 );
+			cout<<"result="<<result<<endl;
 			if(result == "ERROR"){
 				userlistMutex.lock();
 				change = true;
@@ -351,7 +352,8 @@ void ChatNode::checkAlive(){
 				break;
 			}
 		}
-		result = stub_send(ip.c_str(), port.c_str(), "00013C",3);
+		result = stub_send(ip.c_str(), port.c_str(), "00006C",3);
+		cout<<"result="<<result<<endl;
 		if(result == "ERROR"){
 			leaderElection();
 		}
