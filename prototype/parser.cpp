@@ -81,6 +81,7 @@ void Parser::parsePara(string arr) {
 		cn->deleteUser(params[2], stoi(params[3]));
 	}else if(req.compare("sendUID") == 0){
 		assert(params.size() == 3);
+		if(this->paserdebug)cout<<"send uid :" << params[2] <<endl;
 		cn->sendUID(stoi(params[2]));
 	}
 
