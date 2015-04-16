@@ -57,7 +57,9 @@ public:
 	void showMsg(string name, string msg);
 	void userExit();
 	void deleteUser(string Tip, int Tport);
-	
+	void checkAlive();
+	void leaderElection();
+
 };
 
 #endif
