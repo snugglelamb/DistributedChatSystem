@@ -133,6 +133,7 @@ void ChatNode::connectLeader(string Tip, int Tport) {
 //update userlist
 void ChatNode::updateUserlist(vector<User> newuserlist) {
 	//cout<<"in update userlist"<<endl;
+	participant = false;
 	userlistMutex.lock();
 	this->userlist = newuserlist;
 	userlistMutex.unlock();
@@ -382,12 +383,15 @@ void ChatNode::sendUID(int id) {
 
 
 		userlistMutex.lock();
+		int total;
 		for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
 			if(it->getIsLeader()) {
+				total = it->getTotal();
 				userlist.erase(it--);
 				continue;
 			}
 			if(it->getID() == me.getID()){
+				it->setTotal(total);
 				it->setIsLeader(true);
 			}
 		}
