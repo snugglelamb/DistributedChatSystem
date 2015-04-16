@@ -360,6 +360,7 @@ void ChatNode::sendUID(int id) {
 		return;
 	}
 	if (!participant) {
+		participant = true;
 		proposeID = id > me.getID() ? me.getID() : id;
 		int nextidx = (me.getID() + 1) % userlist.size();
 		string cnt = "sendUID#" + me.getIP() + "_" + to_string(me.getPort())
@@ -379,7 +380,7 @@ void ChatNode::sendUID(int id) {
 		stub_send(userlist[nextidx].getIP().c_str(),
 				to_string(userlist[nextidx].getPort()).c_str(), cnt.c_str(), 0);
 	}
-	if (id == me.getID()) {
+	else if (participant && id == me.getID()) {
 
 
 		userlistMutex.lock();
