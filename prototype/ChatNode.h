@@ -60,6 +60,7 @@ public:
 	void checkAlive();
 	void leaderElection();
 	void sendUID(int id);
+	void setNewLeader();
 };
 
 #endif
