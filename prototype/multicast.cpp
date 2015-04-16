@@ -7,7 +7,7 @@
 #define MAXUSER 50
 
 static int sockfd; //used for listener
-bool debug = false;
+bool debug = true;
 
 // for send msg storage
 struct msgQueue_send {
@@ -431,7 +431,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
         fprintf(stderr, "stub: failed to get addr.\n");
         return "ERROR";
     }
-	
+	cout<<4444<<endl;
 	// enqueue
 	int available_id = 0;
 	if (sendQ_num < QUEUESIZE) { 
@@ -524,7 +524,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	printf("stub: msg prepared to send: %s\n",fullmsg);
 	const char* fullmsg_ = fullmsg;
 	delete[] fullmsg; // free buffer
-	
+	cout<<5555<<endl;
     if ((numbytes = sendto(sockfd_w, fullmsg_, strlen(fullmsg_), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
         perror("stub: sendto");
@@ -546,6 +546,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
 		// need to check if target alive
+		cout<<6666<<endl;
 		if (request == 1) {
 			// send only once, target host down
 			printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
@@ -580,6 +581,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		sendQ_num--;
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
+		cout<<7777<<endl;
 		if (request == 0) {
 			return stub_send(Tip, Tport, fullmsg_, SENDMAX);
 		} else if (request == 1) {
