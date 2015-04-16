@@ -297,6 +297,7 @@ void ChatNode::userExit() {
 				return;
 			}
 		}
+
 	}
 	string msg = "deleteUser#" + me.getIP() + "_" + to_string(me.getPort())
 			+ "_" + me.getIP() + "_" + to_string(me.getPort());
@@ -351,6 +352,7 @@ void ChatNode::leaderElection() {
 }
 
 void ChatNode::sendUID(int id) {
+	cout<<"sendUID called"<<endl;
 	int proposeID;
 	string result;
 	if (participant && id > me.getID()) {
@@ -395,6 +397,7 @@ void ChatNode::sendUID(int id) {
 
 }
 void ChatNode::checkAlive() {
+	cout<<"check alive called"<<endl;
 	bool change = false;
 	string result;
 	if (me.getIsLeader()) {
@@ -403,6 +406,7 @@ void ChatNode::checkAlive() {
 				it++) {
 			if (it->getIP() == me.getIP() && it->getPort() == me.getPort())
 				continue;
+
 
 			result = stub_send(it->getIP().c_str(),
 					to_string(it->getPort()).c_str(), "00006C", 3);
@@ -428,6 +432,7 @@ void ChatNode::checkAlive() {
 				break;
 			}
 		}
+
 		if (ip.length() != 0 && port.length() != 0) {
 			result = stub_send(ip.c_str(), port.c_str(), "00006C", 3);
 			cout << "user result:" << result << endl;
