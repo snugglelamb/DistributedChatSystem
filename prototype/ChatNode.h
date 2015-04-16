@@ -24,7 +24,7 @@ private:
 	mutex meMutex;
 	mutex rNumMutex;
 	mutex totalMutex;
-
+	bool participant = false;
 	HoldbackQueue holdback;
 	Queue msgQueue;
 
@@ -57,7 +57,10 @@ public:
 	void showMsg(string name, string msg);
 	void userExit();
 	void deleteUser(string Tip, int Tport);
-	
+	void checkAlive();
+	void leaderElection();
+	void sendUID(int id);
+	void setNewLeader();
 };
 
 #endif

@@ -283,8 +283,8 @@ std::string stub_receive()
 				key.assign(str.substr(5, start - 5));
 				seq.assign(str.substr(start + 3, end - start - 3));
 				seq_num = stoi(seq);
-				std::cout << "stub: monitor key received: " << key << std::endl;
-				std::cout << "stub: monitor seq received: " << seq_num << std::endl;
+				if (debug)std::cout << "stub: monitor key received: " << key << std::endl;
+				if (debug)std::cout << "stub: monitor seq received: " << seq_num << std::endl;
 			} else {
 				printf("stub: header not intact.\n");
 				return "ERROR";
@@ -327,7 +327,7 @@ std::string stub_receive()
 					int flag = seq_num - monitor[i].latest;
 					if ( flag <= 0 ) {
 						// duplicate
-						printf("stub: duplicate message.\n");
+						 if (debug)printf("stub: duplicate message.\n");
 					} else if ( flag == 1 ) {
 						// correct
 						monitor[i].latest = seq_num;
@@ -336,7 +336,7 @@ std::string stub_receive()
 					
 						while (!monitor[i].holdback.empty()) {
 							// remove seq_num + 1 one at a time
-							printf("stub: monitor check hold back.\n");
+							 if (debug)printf("stub: monitor check hold back.\n");
 							int found = 0;
 						    for (std::vector<int>::iterator it = monitor[i].holdback.begin(); it != monitor[i].holdback.end(); ++it) {
 						    	if ( *it == monitor[i].latest + 1) {
@@ -350,7 +350,7 @@ std::string stub_receive()
 								// dequeue msg here and send to parser							
 							} else {
 								// found no adjacent
-								printf("stub: monitor still %lu msg in holdback queue.\n", monitor[i].holdback.size());
+								 if (debug)printf("stub: monitor still %lu msg in holdback queue.\n", monitor[i].holdback.size());
 								break;
 							}
 						}// end while
@@ -369,7 +369,7 @@ std::string stub_receive()
 	
 	// packet loss 
 	else {
-		printf("stub: packet loss occurs, request resend.\n");
+		 if (debug)printf("stub: packet loss occurs, request resend.\n");
 		
 		strcpy(str_, "RESEND");
 		if ( buf[0] == '0') {
@@ -380,7 +380,7 @@ std::string stub_receive()
 		        return "ERROR";
 		    }
 		
-		    printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
+			 if (debug) printf("stub: send %d bytes to %s\n	msg contains: %s\n\n", numbytes, inet_ntop(their_addr.ss_family,
 		            get_in_addr((struct sockaddr *)&their_addr),
 		            s, sizeof s), str_);
 		}
@@ -394,6 +394,7 @@ std::string stub_receive()
 
 std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request)
 {
+
     std::cout << "stub: sendto Tip:Tport->" << Tip <<":" << Tport << std::endl;
 	// std::cout << "stub: request no" << request << std::endl;
 	int sockfd_w;
@@ -447,7 +448,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
         fprintf(stderr, "stub: failed to get addr.\n");
         return "ERROR";
     }
-	
+	// cout<<4444<<endl;
 	// enqueue
 	int available_id = 0;
 	if (sendQ_num < QUEUESIZE) { 
@@ -553,13 +554,13 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	}
 	delete[] fullmsg; // free buffer
 	printf("stub: msg prepared to send: %s\n",fullmsg_);
-	
+	// cout<<5555<<endl;
     if ((numbytes = sendto(sockfd_w, fullmsg_, strlen(fullmsg_), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
         perror("stub: sendto");
         return "ERROR";
     }
-	printf("stub: sent %d bytes to %s\n", numbytes, Tip);
+    if (debug)printf("stub: sent %d bytes to %s\n", numbytes, Tip);
 	
 	// receive return msg from server *ack
 	// need to compare received msg with OK, RESEND
@@ -575,6 +576,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
 		// need to check if target alive
+		// cout<<6666<<endl;
 		if (request == 1) {
 			// send only once, target host down
 			printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
@@ -605,14 +607,15 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	} else if (strcmp(buf, "RESEND") == 0) {
 		// resend, connection correct
 		// dequeue
-		printf("stub: message resent \n");
+		 if (debug)printf("stub: message resent \n");
 		sendQ_num--;
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
+		cout<<7777<<endl;
 		if (request == 0) {
 			return stub_send(Tip, Tport, fullmsg_, SENDMAX);
 		} else if (request == 1) {
-			printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
+			 if (debug)printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
 			return "ERROR";
 		} else {
 			return stub_send(Tip, Tport, fullmsg_, request - 1);
@@ -701,5 +704,6 @@ std::string decrypt(std::string msg, std::string key)
 		 origin[i] ^= key[i%key.size()];
     }   
 	
-    return origin; // lol
+    return origin; 
 }
+
