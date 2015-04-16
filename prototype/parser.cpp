@@ -79,6 +79,9 @@ void Parser::parsePara(string arr) {
 		if(this->paserdebug)  cout <<endl;
 		assert(params.size() == 4);
 		cn->deleteUser(params[2], stoi(params[3]));
+	}else if(req.compare("sendUID") == 0){
+		assert(params.size() == 3);
+		cn->sendUID(stoi(params[2]));
 	}
 
 }
