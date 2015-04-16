@@ -339,7 +339,7 @@ void ChatNode::leaderElection() {
 				nextidx = (++nextidx) % userlist.size();
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
-					to_string(userlist[nextidx].getPort()).c_str(), "00006C",
+					to_string(userlist[nextidx].getPort()).c_str(), "00013CONNECT@",
 					0);
 			cout << "in leader election get result: "<< result <<endl;
 			if (result == "ERROR")
@@ -361,7 +361,7 @@ void ChatNode::sendUID(int id) {
 	if (participant && id > me.getID()) {
 		return;
 	}
-	if (!participant || participant && id <me.getID()) {
+	if (!participant || (participant && id <me.getID())) {
 		participant = true;
 		proposeID = id > me.getID() ? me.getID() : id;
 		int nextidx = (me.getID() + 1) % userlist.size();
@@ -376,7 +376,7 @@ void ChatNode::sendUID(int id) {
 				return;
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
-					to_string(userlist[nextidx].getPort()).c_str(), "00006C",
+					to_string(userlist[nextidx].getPort()).c_str(), "00013CONNECT@",
 					3);
 			cout<<" test user "<< userlist[nextidx].getNickname() <<" result is :"<<result<<endl;
 			if (result == "ERROR"){
@@ -427,7 +427,7 @@ void ChatNode::checkAlive() {
 
 
 			result = stub_send(it->getIP().c_str(),
-					to_string(it->getPort()).c_str(), "00006C", 3);
+					to_string(it->getPort()).c_str(), "00013CONNECT@", 3);
 			cout << "leader result: " << result << endl;
 			if (result == "ERROR") {
 				userlistMutex.lock();
@@ -452,7 +452,7 @@ void ChatNode::checkAlive() {
 		}
 
 		if (ip.length() != 0 && port.length() != 0) {
-			result = stub_send(ip.c_str(), port.c_str(), "00006C", 3);
+			result = stub_send(ip.c_str(), port.c_str(), "00013CONNECT@", 3);
 			cout << "user result:" << result << endl;
 			if (result == "ERROR") {
 				leaderElection();

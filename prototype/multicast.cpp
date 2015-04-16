@@ -8,7 +8,7 @@
 
 static int sockfd; //used for listener
 bool debug = false;
-bool encrypted = true;
+bool encrypted = false;
 std::string hashkey = "happy";
 // for send msg storage
 struct msgQueue_send {
@@ -222,17 +222,22 @@ std::string stub_receive()
         return "ERROR";
     }
 	buf_[numbytes] = '\0';
-	std::cout << "stub: receive encrypt" << buf_ << std::endl;
-	// decrypt
-	if (encrypted) {
-		std::string recv_decrypt(buf_);
-		strcpy(buf,decrypt(recv_decrypt, hashkey).c_str());
-		numbytes = strlen(buf);
-	} else {
+	
+	if (strlen(buf_) == 13 && buf_[5] == 'C') {
 		strcpy(buf, buf_);
-	}
-	std::cout << "stub: receive decrypt " << buf << std::endl;
-	std::cout << "stub: receive size: " << numbytes << std::endl;
+	} else {
+		// decrypt
+		if (encrypted) {
+			std::cout << "stub: receive encrypt" << buf_ << std::endl;
+			std::string recv_decrypt(buf_);
+			strcpy(buf,decrypt(recv_decrypt, hashkey).c_str());
+			numbytes = strlen(buf);
+			std::cout << "stub: receive decrypt " << buf << std::endl;
+			std::cout << "stub: receive size: " << numbytes << std::endl;
+		} else {
+			strcpy(buf, buf_);
+		}
+	}	
 	// store source ip
 	strcpy(Sip, inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s));
     if (debug) printf("stub: got packet from %s\n", Sip);
