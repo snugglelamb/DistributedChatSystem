@@ -352,6 +352,7 @@ void ChatNode::leaderElection() {
 }
 
 void ChatNode::sendUID(int id) {
+	cout<<"sendUID called"<<endl;
 	int proposeID;
 	string result;
 	if (participant && id > me.getID()) {
@@ -396,6 +397,7 @@ void ChatNode::sendUID(int id) {
 
 }
 void ChatNode::checkAlive() {
+	cout<<"check alive called"<<endl;
 	bool change = false;
 	string result;
 	if (me.getIsLeader()) {
