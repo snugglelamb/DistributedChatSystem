@@ -283,11 +283,11 @@ void ChatNode::userExit() {
 				it++) {
 			if (it->getIP() == me.getIP() && it->getPort() == me.getPort()) {
 				userlistMutex.lock();
-					userlist.erase(it);
-					if (userlist.begin() != userlist.end()) {
-						userlist.begin()->setIsLeader(true);
-						this->multicastUserlist();
-					}
+				userlist.erase(it);
+				if (userlist.begin() != userlist.end()) {
+					userlist.begin()->setIsLeader(true);
+					this->multicastUserlist();
+				}
 				userlistMutex.unlock();
 				return;
 			}
@@ -321,43 +321,51 @@ void ChatNode::deleteUser(string Tip, int Tport) {
 	this->multicastUserlist();
 }
 
-void ChatNode::leaderElection(){
-	cout << "leader election"<<endl;
+void ChatNode::leaderElection() {
+	cout << "leader election" << endl;
 }
 
-void ChatNode::checkAlive(){
+void ChatNode::checkAlive() {
 	bool change = false;
 	string result;
-	if(me.getIsLeader()){
+	if (me.getIsLeader()) {
 
-		for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
-			if(it->getIP()==me.getIP() && it->getPort() == me.getPort()) continue;
-			result = stub_send(it->getIP().c_str(), to_string(it->getPort()).c_str(), "00006C",3 );
-			cout<<"result="<<result<<endl;
-			if(result == "ERROR"){
+		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
+				it++) {
+			if (it->getIP() == me.getIP() && it->getPort() == me.getPort())
+				continue;
+
+
+			result = stub_send(it->getIP().c_str(),
+					to_string(it->getPort()).c_str(), "00006C", 3);
+			cout << "leader result: " << result << endl;
+			if (result == "ERROR") {
 				userlistMutex.lock();
 				change = true;
 				userlist.erase(it);
 				userlistMutex.unlock();
 			}
 		}
-		if(change) multicastUserlist();
-	}else{
-		string ip;
-		string port;
-		for(User u: userlist){
-			if(u.getIsLeader()){
+		if (change)
+			multicastUserlist();
+	} else {
+		string ip = "";
+		string port = "";
+		for (User u : userlist) {
+			if (u.getIsLeader()) {
 				ip = u.getIP();
 				port = to_string(u.getPort());
 				break;
 			}
 		}
-		result = stub_send(ip.c_str(), port.c_str(), "00006C",3);
-		cout<<"result="<<result<<endl;
-		if(result == "ERROR"){
-			leaderElection();
+
+		if (ip.length() != 0 && port.length() != 0) {
+			result = stub_send(ip.c_str(), port.c_str(), "00006C", 3);
+			cout << "user result:" << result << endl;
+			if (result == "ERROR") {
+				leaderElection();
+			}
 		}
 	}
-
 
 }
