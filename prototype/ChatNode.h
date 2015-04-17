@@ -61,6 +61,7 @@ public:
 	void leaderElection();
 	void sendUID(int id);
 	void setNewLeader();
+	int getMyIdx();
 };
 
 #endif

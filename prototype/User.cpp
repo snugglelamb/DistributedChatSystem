@@ -1,64 +1,58 @@
 #include "User.h"
 
-string User::getIP()
-{
+string User::getIP() {
 	return this->IP;
 }
 
-void User::setIP(string IP)
-{
+void User::setIP(string IP) {
 	this->IP = IP;
 }
 
-string User::getNickname()
-{
+string User::getNickname() {
 	return this->nickname;
 }
 
-void User::setNickname(string nickname)
-{
+void User::setNickname(string nickname) {
 	this->nickname = nickname;
 }
 
-int User::getPort()
-{
+int User::getPort() {
 	return this->port;
 }
 
-void User::setPort(int port)
-{
+void User::setPort(int port) {
 	this->port = port;
 }
 
-int User::getID()
-{
+int User::getID() {
 	return this->ID;
 }
-void User::setID(int ID)
-{
+void User::setID(int ID) {
 	this->ID = ID;
 }
-int User::getTotal()
-{
+int User::getTotal() {
 	return this->total;
 }
-void User::setTotal(int total)
-{
+void User::setTotal(int total) {
 	this->total = total;
 }
 
-bool User::getIsLeader()
-{
+bool User::getIsLeader() {
 	return this->leader;
 }
 
-void User::setIsLeader(bool leader)
-{
+void User::setIsLeader(bool leader) {
 	this->leader = leader;
 }
 
-User::User(string IP, string nickname, int port, int ID, int total, bool leader)
-{
+void User::setNextID(int next) {
+	this->nextID = next;
+}
+int User::getNextID(){
+	return this->nextID;
+}
+User::User(string IP, string nickname, int port, int ID, int total,
+		bool leader) {
 	this->IP = IP;
 	this->nickname = nickname;
 	this->port = port;
@@ -67,14 +61,12 @@ User::User(string IP, string nickname, int port, int ID, int total, bool leader)
 	this->leader = leader;
 }
 
-User::User(string IP, string nickname, int port)
-{
+User::User(string IP, string nickname, int port) {
 	this->IP = IP;
 	this->nickname = nickname;
 	this->port = port;
 }
 
-User::User()
-{
+User::User() {
 
 }
