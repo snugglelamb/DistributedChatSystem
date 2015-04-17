@@ -273,6 +273,16 @@ void ChatNode::multicastMsg(string message) {
 }
 
 void ChatNode::recMsg(string name, int total, string msg) {
+	for(User u : userlist){
+		if(u.getIsLeader()){
+			if(u.getTotal() < total+1){
+				u.setTotal(total+1);
+				cout<<"syn leader new total:"<<u.getTotal()<<endl;
+			}
+			break;
+		}
+	}
+
 	if (total == rNum) {
 		rNum++;
 		showMsg(name, msg);
@@ -361,7 +371,7 @@ void ChatNode::leaderElection() {
 				+ "_" + to_string(me.getID());
 		int nextidx = (this->getMyIdx() + 1) % userlist.size();
 		while (true) {
-			if (userlist[nextidx].getIsLeader()) {
+			if (userlist[nextidx].getIsLeader()){
 				nextidx = (++nextidx) % userlist.size();
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
@@ -426,10 +436,20 @@ void ChatNode::setNewLeader() {
 	int total;
 	int nextID;
 	bool find = false;
+	
 	for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
 			it++) {
+		
 		if (it->getIsLeader() && it->getID() != me.getID()) {
+			string result = stub_send(it->getIP().c_str(),
+					to_string(it->getPort()).c_str(),
+					"00013CONNECT@", 3);
+			cout << " ping leader : " << it->getNickname() <<endl;
+			if (result == "SUCCESS") {
+				return;
+			} 
 			total = it->getTotal();
+			cout<<"previous leader name:"<<it->getNickname() <<"  total:"<<total<<endl;
 			nextID = it->getNextID();
 			userlist.erase(it--);
 			find = true;
@@ -437,11 +457,12 @@ void ChatNode::setNewLeader() {
 		}
 
 	}
+	
 	if(!find){
 		userlistMutex.unlock();
 		return;
 	}
-
+	userlistMutex.lock();
 	for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
 			it++) {
 		if (it->getID() == me.getID()) {
@@ -466,6 +487,7 @@ void ChatNode::checkAlive() {
 	cout << "check alive called" << endl;
 	bool change = false;
 	string result;
+	//int leaderID;
 	if (me.getIsLeader()) {
 		
 		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
@@ -492,6 +514,7 @@ void ChatNode::checkAlive() {
 		string port = "";
 		for (User u : userlist) {
 			if (u.getIsLeader()) {
+				//leaderID = u.getID();
 				ip = u.getIP();
 				port = to_string(u.getPort());
 				break;
