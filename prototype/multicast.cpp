@@ -98,7 +98,7 @@ std::string getlocalinfo()
 	        {
 	            if (s != 0)
 	            {
-	                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+	                if(debug) printf("getnameinfo() failed: %s\n", gai_strerror(s));
 	                return "GETIPERROR";
 	            }
 			sprintf(ip, "%s", host);
@@ -198,7 +198,7 @@ std::string stub_connect(const char* Tip, const char* Tport)
 	msg_.assign(stub_create());
 	if ( msg_.compare("ERROR") == 0 ) { return "ERROR"; }
 	else { 
-		std::cout << "stub: connect get message: " << msg_ << std::endl;
+		if(debug)	std::cout << "stub: connect get message: " << msg_ << std::endl;
 		return msg_; 
 	}
 }
@@ -228,12 +228,13 @@ std::string stub_receive()
 	} else {
 		// decrypt
 		if (encrypted) {
-			std::cout << "stub: receive encrypt" << buf_ << std::endl;
+			if(debug)
+				std::cout << "stub: receive encrypt" << buf_ << std::endl;
 			std::string recv_decrypt(buf_);
 			strcpy(buf,decrypt(recv_decrypt, hashkey).c_str());
 			numbytes = strlen(buf);
-			std::cout << "stub: receive decrypt " << buf << std::endl;
-			std::cout << "stub: receive size: " << numbytes << std::endl;
+			if(debug) std::cout << "stub: receive decrypt " << buf << std::endl;
+			if(debug) std::cout << "stub: receive size: " << numbytes << std::endl;
 		} else {
 			strcpy(buf, buf_);
 		}
@@ -291,7 +292,7 @@ std::string stub_receive()
 				if (debug)std::cout << "stub: monitor key received: " << key << std::endl;
 				if (debug)std::cout << "stub: monitor seq received: " << seq_num << std::endl;
 			} else {
-				printf("stub: header not intact.\n");
+				if(debug) printf("stub: header not intact.\n");
 				return "ERROR";
 			}
 		
@@ -400,7 +401,7 @@ std::string stub_receive()
 std::string stub_send(const char* Tip, const char* Tport, const char* msg, int request)
 {
 
-    std::cout << "stub: sendto Tip:Tport->" << Tip <<":" << Tport << std::endl;
+    if(debug) std::cout << "stub: sendto Tip:Tport->" << Tip <<":" << Tport << std::endl;
 	// std::cout << "stub: request no" << request << std::endl;
 	int sockfd_w;
     struct addrinfo hints, *servinfo, *p;
@@ -550,7 +551,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		if (encrypted) {
 			std::string msg_encrypted = encrypt(std::string(fullmsg), hashkey);
 			fullmsg_ = msg_encrypted.c_str();
-			std::cout << "stub: encrypted: " << fullmsg_ << std::endl;
+			if(debug) std::cout << "stub: encrypted: " << fullmsg_ << std::endl;
 		} else {
 			fullmsg_ = fullmsg;
 		}
@@ -616,7 +617,6 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		sendQ_num--;
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
-		cout<<7777<<endl;
 		if (request == 0) {
 			return stub_send(Tip, Tport, fullmsg_, SENDMAX);
 		} else if (request == 1) {

@@ -65,10 +65,10 @@ void ChatNode::showCurrentUser() {
 		int id = u.getID();
 		if (isLeader)
 			cout << name << " " << ip << ":" << port << ":" << u.getID()
-					<< " (Leader)" << endl;
+					<< ";; total= "<<u.getTotal()<< " (Leader)" << endl;
 		else
 			cout << name << " " << ip << ":" << port << ":" << u.getID()
-					<< endl;
+					<<" rNum:"<<this->rNum<< endl;
 	}
 }
 
@@ -366,7 +366,7 @@ void ChatNode::leaderElection() {
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(),
-					"00013CONNECT@", 0);
+					"00013CONNECT@", 3);
 			cout << "in leader election get result: " << result << endl;
 			if (result == "ERROR")
 				nextidx = (++nextidx) % userlist.size();
@@ -449,6 +449,7 @@ void ChatNode::setNewLeader() {
 			it->setNextID(nextID);
 			it->setIsLeader(true);
 			me.setIsLeader(true);
+			cout<<"set me total  = "<<total<<endl;
 			me.setTotal(total);
 			me.setNextID(nextID);
 			break;
