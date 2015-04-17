@@ -64,7 +64,7 @@ void ChatNode::showCurrentUser() {
 		int port = u.getPort();
 		int id = u.getID();
 		if (isLeader)
-			cout << name << " " << ip << ":" << port << ":"<< u.getID() << " (Leader)" << endl;
+			cout << name << " " << ip << ":" << port << ":"<< u.getID()<< << " (Leader)" << endl;
 		else
 			cout << name << " " << ip << ":" << port <<":"<< u.getID()<< endl;
 	}
