@@ -397,17 +397,26 @@ void ChatNode::sendUID(int id) {
 void ChatNode::setNewLeader(){
 	userlistMutex.lock();
 		int total;
+		cout<<"^^^^^^^^userlist size :"<<userlist.size()<<endl;
 		for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
 			if(it->getIsLeader()) {
 				total = it->getTotal();
+				cout<<"~~~~~~~~~~~~erase name:"<<it->getNickname()<<endl;
 				userlist.erase(it--);
-				continue;
+				break;
 			}
+			
+		}
+
+		for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
 			if(it->getID() == me.getID()){
 				it->setTotal(total);
 				it->setIsLeader(true);
+				break;
 			}
+			
 		}
+
 		userlistMutex.unlock();
 		multicastUserlist();
 }
@@ -419,7 +428,7 @@ void ChatNode::checkAlive() {
 	bool change = false;
 	string result;
 	if (me.getIsLeader()) {
-
+		
 		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
 				it++) {
 			if (it->getIP() == me.getIP() && it->getPort() == me.getPort())
@@ -433,6 +442,7 @@ void ChatNode::checkAlive() {
 				userlistMutex.lock();
 				cout << "!!!!!inlock!!!!" << endl;
 				change = true;
+				
 				userlist.erase(it--);
 				userlistMutex.unlock();
 				cout << "!!! out of lock !!!" << endl;
