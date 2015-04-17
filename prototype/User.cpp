@@ -65,6 +65,7 @@ User::User(string IP, string nickname, int port) {
 	this->IP = IP;
 	this->nickname = nickname;
 	this->port = port;
+
 }
 
 User::User() {
