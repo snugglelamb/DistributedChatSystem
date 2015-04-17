@@ -40,7 +40,7 @@ void Parser::parsePara(string arr) {
 
 	} else if (req.compare("updateUserlist") == 0) {
 		if(this->paserdebug)cout<<"update user list"<<endl;
-		//string IP, string nickname, int port, int ID, inttotal, int nextid, bool isleader
+		//string IP, string nickname, int port, int ID, int total, int nextid, bool isleader
 		assert(params.size() % 7 == 2);
 		vector<User> tmp;
 		for (int i = 2; i < params.size(); i += 7) {

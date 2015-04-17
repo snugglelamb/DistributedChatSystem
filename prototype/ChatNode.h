@@ -18,8 +18,8 @@ private:
 	static ChatNode* node;
 	vector<User> userlist;
 	User me;
-	int rNum;
-	int pNum;
+	int rNum = -1;
+	int pNum = -1;
 	mutex userlistMutex;
 	mutex meMutex;
 	mutex rNumMutex;
