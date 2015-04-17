@@ -273,6 +273,7 @@ void ChatNode::multicastMsg(string message) {
 }
 
 void ChatNode::recMsg(string name, int total, string msg) {
+	userlistMutex.lock();
 	for(User u : userlist){
 		if(u.getIsLeader()){
 			if(u.getTotal() < total+1){
@@ -282,7 +283,7 @@ void ChatNode::recMsg(string name, int total, string msg) {
 			break;
 		}
 	}
-
+	userlistMutex.unlock();
 	if (total == rNum) {
 		rNum++;
 		showMsg(name, msg);
@@ -446,12 +447,13 @@ void ChatNode::setNewLeader() {
 					"00013CONNECT@", 3);
 			cout << " ping leader : " << it->getNickname() <<endl;
 			if (result == "SUCCESS") {
+				userlistMutex.unlock();
 				return;
 			} 
 			total = it->getTotal();
 			cout<<"previous leader name:"<<it->getNickname() <<"  total:"<<total<<endl;
 			nextID = it->getNextID();
-			userlist.erase(it--);
+			userlist.erase(it);
 			find = true;
 			break;
 		}
@@ -462,7 +464,7 @@ void ChatNode::setNewLeader() {
 		userlistMutex.unlock();
 		return;
 	}
-	userlistMutex.lock();
+	
 	for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
 			it++) {
 		if (it->getID() == me.getID()) {
