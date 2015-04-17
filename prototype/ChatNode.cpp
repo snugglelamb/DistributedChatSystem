@@ -64,9 +64,9 @@ void ChatNode::showCurrentUser() {
 		int port = u.getPort();
 		int id = u.getID();
 		if (isLeader)
-			cout << name << " " << ip << ":" << port <<";;id="<<id<<" "<< " (Leader)" << endl;
+			cout << name << " " << ip << ":" << port << ":"<< u.getID() << " (Leader)" << endl;
 		else
-			cout << name << " " << ip << ":" << port <<";;id="<<id<< endl;
+			cout << name << " " << ip << ":" << port <<":"<< u.getID()<< endl;
 	}
 }
 
@@ -169,6 +169,7 @@ void ChatNode::addUser(string ip, string name, int port) {
 	cout<<"!!!!!!!!!!!!!!!newID:"<<newID<<endl;
 	me.setNextID(newID);
 	t.setIsLeader(false);
+	t.setNextID(me.getNextID());
 	t.setTotal(me.getTotal());
 	userlistMutex.lock();
 	this->userlist.push_back(t);
@@ -193,7 +194,7 @@ void ChatNode::multicastUserlist() {
 		}
 		content += u.getIP() + "_" + u.getNickname() + "_"
 				+ to_string(u.getPort()) + "_" + to_string(u.getID()) + "_"
-				+ to_string(u.getTotal()) + "_";
+				+ to_string(u.getTotal()) + "_" + to_string(u.getNextID())+"_";
 		if (u.getIsLeader())
 			content += "1_";
 		else
@@ -203,8 +204,6 @@ void ChatNode::multicastUserlist() {
 	msg = requestName + "#" + content.substr(0, content.size() - 1);
 	for (User u : this->userlist) {
 		if (u.getID() == me.getID()){
-			me = u;
-			cout<<"leader id:"<<
 			continue;
 		}
 		stub_send(u.getIP().c_str(), to_string(u.getPort()).c_str(),
@@ -343,6 +342,7 @@ int ChatNode::getMyIdx(){
 			return i;
 		}
 	}
+	cout <<"!!!!error return -1!!!!"<<endl;
 	return -1;
 }
 
@@ -433,6 +433,9 @@ void ChatNode::setNewLeader(){
 				it->setTotal(total);
 				it->setNextID(nextID);
 				it->setIsLeader(true);
+				me.setIsLeader(true);
+				me.setTotal(total);
+				me.setNextID(nextID);
 				break;
 			}
 

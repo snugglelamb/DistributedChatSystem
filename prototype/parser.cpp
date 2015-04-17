@@ -40,17 +40,18 @@ void Parser::parsePara(string arr) {
 
 	} else if (req.compare("updateUserlist") == 0) {
 		if(this->paserdebug)cout<<"update user list"<<endl;
-		//string IP, string nickname, int port, int ID, inttotal, bool isleader 
-		assert(params.size() % 6 == 2);
+		//string IP, string nickname, int port, int ID, inttotal, int nextid, bool isleader
+		assert(params.size() % 7 == 2);
 		vector<User> tmp;
-		for (int i = 2; i < params.size(); i += 6) {
+		for (int i = 2; i < params.size(); i += 7) {
 			User t;
 			t.setIP(params[i]);
 			t.setNickname(params[i + 1]);
 			t.setPort(atoi(params[i + 2].c_str()));
 			t.setID(atoi(params[i + 3].c_str()));
 			t.setTotal(atoi(params[i + 4].c_str()));
-			t.setIsLeader(params[i + 5] == "1");
+			t.setNextID(atoi(params[i+5].c_str()));
+			t.setIsLeader(params[i+6] == "1");
 			tmp.push_back(t);
 		}
 		cn->updateUserlist(tmp);
