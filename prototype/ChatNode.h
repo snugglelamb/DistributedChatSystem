@@ -59,7 +59,7 @@ public:
 	void deleteUser(string Tip, int Tport);
 	void checkAlive();
 	void leaderElection();
-	void sendUID(int id, bool first = false);
+	void sendUID(int id);
 	void setNewLeader();
 	int getMyIdx();
 };

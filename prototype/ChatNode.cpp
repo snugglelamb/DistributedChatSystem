@@ -396,7 +396,7 @@ void ChatNode::leaderElection() {
 
 }
 
-void ChatNode::sendUID(int id, bool first = false) {
+void ChatNode::sendUID(int id) {
 	cout << "sendUID called" << endl;
 	int proposeID;
 	string result;
@@ -431,7 +431,7 @@ void ChatNode::sendUID(int id, bool first = false) {
 		}
 		stub_send(userlist[nextidx].getIP().c_str(),
 				to_string(userlist[nextidx].getPort()).c_str(), cnt.c_str(), 0);
-	} else if (participant && id == me.getID() && !first) {
+	} else if (participant && id == me.getID()) {
 		setNewLeader();
 	}
 
