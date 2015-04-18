@@ -13,7 +13,16 @@ vector<string> Parser::splitstr(string ori, char deli) {
 Parser::Parser() {
 	this->cn = ChatNode::getInstance();
 }
+
 void Parser::parsePara(string arr) {
+	queue.enqueue(arr);
+}
+
+string Parser::dequeueRequest(){
+	return queue.pop();
+}
+
+void Parser::processReq(string arr) {
 	if(this->paserdebug)cout << "parser: get params:" << endl;
 	if(this->paserdebug)cout << string(arr) << endl;
 	string rawStr = string(arr);
@@ -95,5 +104,5 @@ void Parser::parsePara(string arr) {
 		//cn->sendUID(stoi(params[2]));
 		cout<<"NOTICE "<<params[2]<<"  EXIT"<<endl;
 	} 
-
 }
+

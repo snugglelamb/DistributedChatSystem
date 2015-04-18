@@ -20,8 +20,8 @@ void leaderMsgSend()
 {
 	while(1)
 	{
-		this_thread::sleep_for(chrono::seconds(5));
-		cout<<"hello"<<endl;
+		//this_thread::sleep_for(chrono::seconds(5));
+		//cout<<"hello"<<endl;
 		node->checkMsgQueue();
 	}
 }
@@ -35,6 +35,16 @@ void receive()
 		stub_receive();
 	}
 }
+
+void checkParser()
+{
+	while(1)
+	{
+		String request = Parser.dequeueRequest();
+		Parser.processReq(request);
+	}
+}
+
 
 void type()
 {
@@ -170,6 +180,7 @@ int main(int argc, char** argv)
 	std::thread main_type(type);
 	std::thread main_check(check);
 	std::thread main_leaderMsgSend(leaderMsgSend);
+	std::thread main_checkParser(checkParser);
 
 	
 	//cout << "threads started.\n";
@@ -179,6 +190,7 @@ int main(int argc, char** argv)
 	main_type.join();
 	main_check.join();
 	main_leaderMsgSend.join();
+	main_checkParser.join();
 	
 	//cout << "threads finished.\n";
 	
