@@ -84,6 +84,16 @@ void Parser::parsePara(string arr) {
 		assert(params.size() == 3);
 		if(this->paserdebug)cout<<"send uid :" << params[2] <<endl;
 		cn->sendUID(stoi(params[2]));
-	}
+	}else if(req.compare("newUser") == 0){
+		assert(params.size() == 5);
+		//if(this->paserdebug)cout<<"uid :" << params[2] <<endl;
+		//cn->sendUID(stoi(params[2]));
+		cout<<"NOTICE "<<params[2]<<" joined on "<<params[3]<<":"<<params[4]<<endl;
+	} else if(req.compare("exitNotice") == 0){
+		assert(params.size() == 3);
+		//if(this->paserdebug)cout<<"uid :" << params[2] <<endl;
+		//cn->sendUID(stoi(params[2]));
+		cout<<"NOTICE "<<params[2]<<"  EXIT"<<endl;
+	} 
 
 }

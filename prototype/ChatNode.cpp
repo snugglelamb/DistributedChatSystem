@@ -181,6 +181,25 @@ void ChatNode::addUser(string ip, string name, int port) {
 	userlistMutex.unlock();
 	//showCurrentUser();
 	cout << "NOTICE " << name << " joined on " << ip << ":" << port << endl;
+
+	for (vector<User>::iterator it=userlist.begin(); it!=userlist.end(); it++) {
+		if(it->getIsLeader())
+			continue;
+		string requestName = "newUser";
+		string msg;
+		string content = " ";
+		string ip = it->getIP();
+		int port = it->getPort();
+		string nickname =  name;
+		content = me.getIP() + "_" + to_string(me.getPort()) + "_";
+		content +=  nickname + "_" + ip + "_" + to_string(port) ;
+		msg = requestName + msg;
+		msg = requestName + "#" + content;
+		stub_send(ip.c_str(), to_string(port).c_str(),
+				msg.c_str(), 0);
+	}
+
+
 	multicastUserlist();
 }
 
@@ -349,15 +368,36 @@ void ChatNode::userExit() {
 
 void ChatNode::deleteUser(string Tip, int Tport) {
 
+	string name;
 	for (vector<User>::iterator it = this->userlist.begin();
 			it != this->userlist.end(); it++) {
 		if (it->getIP() == Tip && it->getPort() == Tport) {
+			name = it->getNickname();
+			cout<<"NOTICE "<<name<<" EXIT"<<endl;
 			userlistMutex.lock();
 			this->userlist.erase(it);
 			userlistMutex.unlock();
 			break;
 		}
 	}
+
+	for (vector<User>::iterator it=userlist.begin(); it!=userlist.end(); it++) {
+		if(it->getIsLeader())
+			continue;
+		string requestName = "exitNotice";
+		string msg;
+		string content = " ";
+		string ip = it->getIP();
+		int port = it->getPort();
+		string nickname =  name;
+		content = me.getIP() + "_" + to_string(me.getPort()) + "_";
+		content +=  nickname;
+		msg = requestName + msg;
+		msg = requestName + "#" + content;
+		stub_send(ip.c_str(), to_string(port).c_str(),
+				msg.c_str(), 0);
+	}
+
 	this->multicastUserlist();
 }
 
