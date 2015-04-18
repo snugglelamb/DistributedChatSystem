@@ -2,6 +2,7 @@
 #define PARSER_H
 #include "ChatNode.h"
 #include "User.h"
+#include "Req.h"
 #include <string>
 #include <vector>
 #include <iostream>

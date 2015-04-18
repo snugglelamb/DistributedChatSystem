@@ -14,20 +14,56 @@ Parser::Parser() {
 	this->cn = ChatNode::getInstance();
 }
 
-void Parser::parsePara(string arr) {
-	queue.enqueue(arr);
+void Parser::parsePara(string rawStr) {
+	size_t pos0 = rawStr.find("@");
+	string str = rawStr.substr(pos0 + 1);
+	size_t pos = str.find("#");
+	if (pos == string::npos) {
+		if(this->paserdebug)cout << "cannot find #"<<endl; return;
+	}
+	string req = str.substr(0, pos);
+
+	int comparator = -1;
+
+	if(req.compare("sendUID") == 0){
+		comparator = 1;
+	}else if(req.compare("multicastUserlist")==0){
+		comparator = 2;
+	}else if(req.compare("updateUserlist")==0){
+		comparator = 2;
+	}else if(req.compare("deleteUser")==0){
+		comparator = 3;
+	}else if(req.compare("addUser")==0){
+		comparator = 4;
+	}else if(req.compare("sendLeader")==0){
+		comparator = 4;
+	}else if(req.compare("connectLeader")==0){
+		comparator = 4;
+	}else if(req.compare("recMsg")==0){
+		comparator = 5;
+	}else if(req.compare("enqueueMsg")==0){
+		comparator = 5;
+	}else if(req.compare("newUser")==0){
+		comparator = 6;
+	}else if(req.compare("exitNotice")==0){
+		comparator = 6;
+	}
+	Req reqObj;
+	reqObj.comparator = comparator;
+	reqObj.request = str;
+	queue.enqueue(reqObj);
 }
 
 string Parser::dequeueRequest(){
 	return queue.pop();
 }
 
-void Parser::processReq(string arr) {
+void Parser::processReq(string str) {
 	if(this->paserdebug)cout << "parser: get params:" << endl;
 	if(this->paserdebug)cout << string(arr) << endl;
-	string rawStr = string(arr);
-	size_t pos0 = rawStr.find("@");
-	string str = rawStr.substr(pos0 + 1);
+	//string rawStr = string(arr);
+	//size_t pos0 = rawStr.find("@");
+	//string str = rawStr.substr(pos0 + 1);
 
 	size_t pos = str.find("#");
 	if (pos == string::npos) {
