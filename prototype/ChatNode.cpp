@@ -534,6 +534,7 @@ void ChatNode::checkAlive() {
 			result = stub_send(ip.c_str(), port.c_str(), "00013CONNECT@", 3);
 		//	cout << "user result:" << result << endl;
 			if (result == "ERROR") {
+				cout<<"Leader is down, please wait..."<<endl;
 				leaderElection();
 			}
 		}
