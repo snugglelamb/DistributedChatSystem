@@ -18,8 +18,10 @@ class ChatNode;
 class Parser{
 private:
 		bool paserdebug = false;
-		ChatNode  *cn;
-		vector<string> splitstr(string ori, char deli);
+
+		static ChatNode  *cn;
+		static vector<string> splitstr(string ori, char deli);
+
 		static Block_PQ queue;
 public:
 		Parser();
