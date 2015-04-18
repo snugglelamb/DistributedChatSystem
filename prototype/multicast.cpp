@@ -192,7 +192,7 @@ std::string stub_connect(const char* Tip, const char* Tport)
 {
 
 	const char* msg = "00013CONNECT@";	
-	printf("%s\n",msg);
+	//printf("%s\n",msg);
 	if ( stub_send(Tip, Tport, msg, 1).compare("ERROR") == 0 ) return "ERROR";
 	
 	std::string msg_;
@@ -423,7 +423,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	
 	// set timeout val
 	struct timeval tv;
-	tv.tv_sec = 5;  /* 5 Secs Timeout */
+	tv.tv_sec = 1;  /* 5 Secs Timeout */
 	tv.tv_usec = 0;  // Not init'ing this can cause strange errors
 	
     memset(&hints, 0, sizeof hints);

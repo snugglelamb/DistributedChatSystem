@@ -121,15 +121,18 @@ int main(int argc, char** argv)
 		std::cout << name << " attempts to join chat at "<< addr << endl;
 		
 		string handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
-		cout<<"handle:"<<handle<<endl;
+		//cout<<"handle:"<<handle<<endl;
 		if ( handle.compare("ERROR") == 0 ) 
 		{
-			//std::cout << "Sorry, no chat is active on "<<string(tip)<<":"<<string(tport)<<", try again later"<<endl;
+			std::cout << "Sorry, no chat is active on "<<addr<<", try again later"<<endl;
 			exit(1);
 		}
 		while(handle.compare("CREATEERROR") == 0)
 		{
+
 			handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
+			if(handle == "ERROR")
+				exit(1);
 		}
 		size_t posTarget = handle.find(":");
 		if (pos == string::npos)
@@ -147,8 +150,9 @@ int main(int argc, char** argv)
 		node->setMe(user);
 
 		//cout<<name<<" joining a new chat on "<<string(tip)<<":"<<string(tport)<<", listening on"<<endl;
-		cout<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<endl;
-		cout<<name<<" joining a new chat on "<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<", listening on"<<endl;
+	//	cout<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<endl;
+		cout<<name<<" joining a new chat on "<<addr<<", listening on \n"
+			<<handle.substr(0, posTarget)<<":"<<handle.substr(posTarget+1, -1)<<endl;
 		//cout<<handle.substr(0, posTarget).c_str()<<":"<<handle.substr(posTarget+1, -1).c_str()<<endl;
 
 		cout<<"Succeeded, current users:"<<endl;
