@@ -258,7 +258,7 @@ std::string stub_receive()
 		if (debug) printf("stub: received size correct.\n");
 		// packet intact
 	    buf[numbytes] = '\0';
-	    printf("stub: packet contains \"%s\"\n", buf);
+	  //  printf("stub: packet contains \"%s\"\n", buf);
 		
 		// send ack back
 		strcpy(str_, "OK");
@@ -465,7 +465,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		strcpy(sendQ[available_id].message, msg);
 		sendQ_num ++;
 	} else {
-		printf("stub: msgQue full.\n");
+	//	printf("stub: msgQue full.\n");
 		return "MSGQUEUEFULL";
 	}
 	// request >= 1 ==> resend msg	
@@ -586,7 +586,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		// cout<<6666<<endl;
 		if (request == 1) {
 			// send only once, target host down
-			printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
+		//	printf("STUB: RESEND FAILURE AFTER %d ADDITIONAL TRIALS.\n", SENDMAX);
 			return "ERROR";
 		} else if (request == 0) {
 			// resend three times
@@ -603,7 +603,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 
     if (debug) printf("stub: packet is %d bytes long\n", numbytes);
     buf[numbytes] = '\0';
-    printf("stub: ack received contains: %s\n", buf);
+ //   printf("stub: ack received contains: %s\n", buf);
 	
 	if ( strcmp(buf, "OK") == 0 ) {
 		// dequeue

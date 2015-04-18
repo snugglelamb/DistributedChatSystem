@@ -196,7 +196,7 @@ void ChatNode::multicastUserlist() {
 		if (it->getIsLeader()) {
 			it->setTotal(me.getTotal());
 			it->setNextID(me.getNextID());
-			assert(it->getID() == me.getID());
+			//assert(it->getID() == me.getID());
 		}
 		content += it->getIP() + "_" + it->getNickname() + "_"
 				+ to_string(it->getPort()) + "_" + to_string(it->getID()) + "_"
