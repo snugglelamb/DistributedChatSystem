@@ -10,11 +10,13 @@
     }
 
     int nt = rand()%queue_.size();
+    cout<<"nt:"<<nt<<endl;
     auto it = next(queue_.begin() , nt);
+    string cnt = *it;
     queue_.erase(it);
 //    auto val = queue_.front();
 //    queue_.pop_front();
-    return *it;
+    return cnt;
   }
 
   void Queue::pop(string& item)

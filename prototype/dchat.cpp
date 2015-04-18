@@ -21,6 +21,7 @@ void leaderMsgSend()
 	while(1)
 	{
 		this_thread::sleep_for(chrono::seconds(5));
+		cout<<"hello"<<endl;
 		node->checkMsgQueue();
 	}
 }
