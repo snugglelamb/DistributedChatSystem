@@ -21,6 +21,7 @@
       cond_.wait(mlock);
     }
     item = queue_.front();
+    
     queue_.pop_front();
   }
 //  void showqueue(){
