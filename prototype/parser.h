@@ -22,7 +22,8 @@ private:
 public:
 		Parser();
 		void parsePara(string arr );
-
+		static string dequeueRequest();
+		static void processReq();
 };
 
 #endif
