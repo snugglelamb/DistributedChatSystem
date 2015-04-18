@@ -62,12 +62,13 @@ void ChatNode::showCurrentUser() {
 		string ip = u.getIP();
 		string name = u.getNickname();
 		int port = u.getPort();
+		int id = u.getID();
 		if (isLeader)
 			cout << name << " " << ip << ":" << port << ":" << u.getID()
-					<< " (Leader)" << endl;
+					<< ";; total= " << u.getTotal() << " (Leader)" << endl;
 		else
 			cout << name << " " << ip << ":" << port << ":" << u.getID()
-					<< endl;
+					<< " rNum:" << this->rNum << endl;
 	}
 }
 
@@ -191,17 +192,17 @@ void ChatNode::multicastUserlist() {
 	string content = "";
 	//string IP, string nickname, int port, int ID, int total, bool isleader
 	content = me.getIP() + "_" + to_string(me.getPort()) + "_";
-	for (User u : this->userlist) {
-		if (u.getIsLeader()) {
-			u.setTotal(me.getTotal());
-			u.setNextID(me.getNextID());
-			assert(u.getID() == me.getID());
+	for (vector<User>::iterator it=userlist.begin(); it!=userlist.end(); it++) {
+		if (it->getIsLeader()) {
+			it->setTotal(me.getTotal());
+			it->setNextID(me.getNextID());
+			assert(it->getID() == me.getID());
 		}
-		content += u.getIP() + "_" + u.getNickname() + "_"
-				+ to_string(u.getPort()) + "_" + to_string(u.getID()) + "_"
-				+ to_string(u.getTotal()) + "_" + to_string(u.getNextID())
+		content += it->getIP() + "_" + it->getNickname() + "_"
+				+ to_string(it->getPort()) + "_" + to_string(it->getID()) + "_"
+				+ to_string(it->getTotal()) + "_" + to_string(it->getNextID())
 				+ "_";
-		if (u.getIsLeader())
+		if (it->getIsLeader())
 			content += "1_";
 		else
 			content += "0_";
@@ -272,14 +273,22 @@ void ChatNode::multicastMsg(string message) {
 }
 
 void ChatNode::recMsg(string name, int total, string msg) {
-	for(User u : userlist){
-		if(u.getIsLeader()){
-			if(u.getTotal() < total+1){
-				u.setTotal(total+1);
+
+	userlistMutex.lock();
+
+	for (vector<User>::iterator it = userlist.begin(); it != userlist.end();it++) {
+		if (it->getIsLeader()) {
+			if (it->getTotal() < total + 1) {
+				it->setTotal(total + 1);
+				//me.setTotal(total+1);
+				cout << "syn leader new total:" << it->getTotal() << endl;
 			}
 			break;
 		}
 	}
+
+	userlistMutex.unlock();
+
 	if (total == rNum) {
 		rNum++;
 		showMsg(name, msg);
@@ -433,18 +442,30 @@ void ChatNode::setNewLeader() {
 	int total;
 	int nextID;
 	bool find = false;
+
 	for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
 			it++) {
+
 		if (it->getIsLeader() && it->getID() != me.getID()) {
+			string result = stub_send(it->getIP().c_str(),
+					to_string(it->getPort()).c_str(), "00013CONNECT@", 3);
+			cout << " ping leader : " << it->getNickname() << endl;
+			if (result == "SUCCESS") {
+				userlistMutex.unlock();
+				return;
+			}
 			total = it->getTotal();
+			cout << "previous leader name:" << it->getNickname() << "  total:"
+					<< total << endl;
 			nextID = it->getNextID();
-			userlist.erase(it--);
+			userlist.erase(it);
 			find = true;
 			break;
 		}
 
 	}
-	if(!find){
+
+	if (!find) {
 		userlistMutex.unlock();
 		return;
 	}
@@ -456,6 +477,7 @@ void ChatNode::setNewLeader() {
 			it->setNextID(nextID);
 			it->setIsLeader(true);
 			me.setIsLeader(true);
+			cout << "set me total  = " << total << endl;
 			me.setTotal(total);
 			me.setNextID(nextID);
 			break;
@@ -471,6 +493,7 @@ void ChatNode::checkAlive() {
 	cout << "check alive called" << endl;
 	bool change = false;
 	string result;
+	//int leaderID;
 	if (me.getIsLeader()) {
 
 		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
@@ -484,6 +507,7 @@ void ChatNode::checkAlive() {
 				userlistMutex.lock();
 				cout << "!!!!!inlock!!!!" << endl;
 				change = true;
+
 				userlist.erase(it--);
 				userlistMutex.unlock();
 				cout << "!!! out of lock !!!" << endl;
@@ -496,6 +520,7 @@ void ChatNode::checkAlive() {
 		string port = "";
 		for (User u : userlist) {
 			if (u.getIsLeader()) {
+				//leaderID = u.getID();
 				ip = u.getIP();
 				port = to_string(u.getPort());
 				break;
