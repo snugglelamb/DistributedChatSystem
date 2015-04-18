@@ -20,6 +20,7 @@ private:
 		bool paserdebug = false;
 		ChatNode  *cn;
 		vector<string> splitstr(string ori, char deli);
+		Block_PQ queue;
 public:
 		Parser();
 		void parsePara(string arr );

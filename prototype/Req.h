@@ -9,6 +9,8 @@ public:
 	int comparator;
 	string request;
 
+
 };
 
 #endif
+
