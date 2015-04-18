@@ -219,7 +219,7 @@ std::string stub_receive()
 	
     if ((numbytes = recvfrom(sockfd, buf_, MAXBUFLEN-1 , 0,
         (struct sockaddr *)&their_addr, &addr_len)) == -1) {
-        perror("recvfrom error");
+       // perror("recvfrom error");
         return "ERROR";
     }
 	buf_[numbytes] = '\0';
@@ -575,7 +575,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	
     if ((numbytes = recvfrom(sockfd_w, buf, MAXBUFLEN-1 , 0,
         (struct sockaddr *)&their_addr, &addr_len)) == -1) {
-        perror("stub: recvfrom");
+       // perror("stub: recvfrom");
 		// not getting ack within 5 sec; time out
         // return "ERROR";
 		// dequeue

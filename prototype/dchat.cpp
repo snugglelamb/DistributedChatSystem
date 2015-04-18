@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 			exit(1);
 		} 
 		
-		//std::cout << name << " attempts to join chat at "<< addr << endl;
+		std::cout << name << " attempts to join chat at "<< addr << endl;
 		
 		string handle = stub_connect(addr.substr(0, pos).c_str(), addr.substr(pos+1, -1).c_str());
 		cout<<"handle:"<<handle<<endl;
@@ -167,7 +167,7 @@ int main(int argc, char** argv)
 	std::thread main_leaderMsgSend(leaderMsgSend);
 
 	
-	cout << "threads started.\n";
+	//cout << "threads started.\n";
 
 	
 	main_receive.join();
@@ -175,7 +175,7 @@ int main(int argc, char** argv)
 	main_check.join();
 	main_leaderMsgSend.join();
 	
-	cout << "threads finished.\n";
+	//cout << "threads finished.\n";
 	
 	return 0;
 		
