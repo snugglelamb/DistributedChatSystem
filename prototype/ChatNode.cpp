@@ -272,6 +272,14 @@ void ChatNode::multicastMsg(string message) {
 }
 
 void ChatNode::recMsg(string name, int total, string msg) {
+	for(User u : userlist){
+		if(u.getIsLeader()){
+			if(u.getTotal() < total+1){
+				u.setTotal(total+1);
+			}
+			break;
+		}
+	}
 	if (total == rNum) {
 		rNum++;
 		showMsg(name, msg);
@@ -365,7 +373,7 @@ void ChatNode::leaderElection() {
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(),
-					"00013CONNECT@", 0);
+					"00013CONNECT@", 3);
 			cout << "in leader election get result: " << result << endl;
 			if (result == "ERROR")
 				nextidx = (++nextidx) % userlist.size();
@@ -379,7 +387,7 @@ void ChatNode::leaderElection() {
 
 }
 
-void ChatNode::sendUID(int id) {
+void ChatNode::sendUID(int id, bool first = false) {
 	cout << "sendUID called" << endl;
 	int proposeID;
 	string result;
@@ -414,7 +422,7 @@ void ChatNode::sendUID(int id) {
 		}
 		stub_send(userlist[nextidx].getIP().c_str(),
 				to_string(userlist[nextidx].getPort()).c_str(), cnt.c_str(), 0);
-	} else if (participant && id == me.getID()) {
+	} else if (participant && id == me.getID() && !first) {
 		setNewLeader();
 	}
 
