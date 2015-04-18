@@ -192,6 +192,7 @@ std::string stub_connect(const char* Tip, const char* Tport)
 {
 
 	const char* msg = "00013CONNECT@";	
+	printf("%s\n",msg);
 	if ( stub_send(Tip, Tport, msg, 1).compare("ERROR") == 0 ) return "ERROR";
 	
 	std::string msg_;

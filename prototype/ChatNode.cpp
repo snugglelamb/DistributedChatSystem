@@ -87,7 +87,7 @@ void ChatNode::reqLeader(string Tip, int Tport) {
 	string SIP = me.getIP();
 	string mePortArr = to_string(me.getPort());
 	content = SIP + "_" + mePortArr;
-	cout << "content" << content << endl;
+	//cout << "content" << content << endl;
 	msg = requestName + "#" + content;
 	stub_send(Tip.c_str(), to_string(Tport).c_str(), msg.c_str(), 0);
 }
@@ -138,7 +138,7 @@ void ChatNode::connectLeader(string Tip, int Tport) {
 
 //update userlist
 void ChatNode::updateUserlist(vector<User> newuserlist) {
-	//cout<<"in update userlist"<<endl;
+//	cout<<"!!!!!!!in update userlist!!!!!!"<<endl;
 	participant = false;
 	userlistMutex.lock();
 	this->userlist = newuserlist;
@@ -155,7 +155,7 @@ void ChatNode::updateUserlist(vector<User> newuserlist) {
 	if (rNum == -1 && pNum == -1) {
 		for (User u : this->userlist) {
 			if (u.getIsLeader()) {
-				//	cout<<"is leader"<<endl;
+			//	cout<<u.getNickname() << "is leader"<<"total " << u.getTotal() <<endl;
 				rNum = u.getTotal();
 				pNum = u.getTotal();
 			}
@@ -186,7 +186,7 @@ void ChatNode::addUser(string ip, string name, int port) {
 
 //multicast new userlist to other clients
 void ChatNode::multicastUserlist() {
-	cout << "!!!! in multi cast userlist" << endl;
+//	cout << "!!!! in multi cast userlist" << endl;
 	string requestName = "updateUserlist";
 	string msg;
 	string content = "";
@@ -276,12 +276,14 @@ void ChatNode::recMsg(string name, int total, string msg) {
 
 	userlistMutex.lock();
 
+
 	for (vector<User>::iterator it = userlist.begin(); it != userlist.end();it++) {
 		if (it->getIsLeader()) {
 			if (it->getTotal() < total + 1) {
 				it->setTotal(total + 1);
 				//me.setTotal(total+1);
-				cout << "syn leader new total:" << it->getTotal() << endl;
+			//	cout << "syn leader new total:" << it->getTotal() << endl;
+
 			}
 			break;
 		}
@@ -365,12 +367,12 @@ int ChatNode::getMyIdx() {
 			return i;
 		}
 	}
-	cout << "!!!!error return -1!!!!" << endl;
+	//cout << "!!!!error return -1!!!!" << endl;
 	return -1;
 }
 
 void ChatNode::leaderElection() {
-	cout << "in leader election" << endl;
+	//cout << "in leader election" << endl;
 	string result;
 	if (!participant) {
 		string cnt = "sendUID#" + me.getIP() + "_" + to_string(me.getPort())
@@ -383,7 +385,7 @@ void ChatNode::leaderElection() {
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(),
 					"00013CONNECT@", 3);
-			cout << "in leader election get result: " << result << endl;
+		//	cout << "in leader election get result: " << result << endl;
 			if (result == "ERROR")
 				nextidx = (++nextidx) % userlist.size();
 			else
@@ -397,7 +399,7 @@ void ChatNode::leaderElection() {
 }
 
 void ChatNode::sendUID(int id) {
-	cout << "sendUID called" << endl;
+
 	int proposeID;
 	string result;
 	if (participant && id > me.getID()) {
@@ -413,8 +415,8 @@ void ChatNode::sendUID(int id) {
 			if (userlist[nextidx].getIsLeader()) {
 				nextidx = (++nextidx) % userlist.size();
 			}
-			cout << "#######nextid: " << nextidx << " name"
-					<< userlist[nextidx].getNickname() << endl;
+		//	cout << "#######nextid: " << nextidx << " name"
+		//			<< userlist[nextidx].getNickname() << endl;
 			if (userlist[nextidx].getID() == me.getID()) {
 				setNewLeader();
 				return;
@@ -422,8 +424,8 @@ void ChatNode::sendUID(int id) {
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(),
 					"00013CONNECT@", 3);
-			cout << " test user " << userlist[nextidx].getNickname()
-					<< " result is :" << result << endl;
+		//	cout << " test user " << userlist[nextidx].getNickname()
+		//			<< " result is :" << result << endl;
 			if (result == "ERROR") {
 				nextidx = (++nextidx) % userlist.size();
 			} else
@@ -449,14 +451,14 @@ void ChatNode::setNewLeader() {
 		if (it->getIsLeader() && it->getID() != me.getID()) {
 			string result = stub_send(it->getIP().c_str(),
 					to_string(it->getPort()).c_str(), "00013CONNECT@", 3);
-			cout << " ping leader : " << it->getNickname() << endl;
+			//cout << " ping leader : " << it->getNickname() << endl;
 			if (result == "SUCCESS") {
 				userlistMutex.unlock();
 				return;
 			}
 			total = it->getTotal();
-			cout << "previous leader name:" << it->getNickname() << "  total:"
-					<< total << endl;
+			//cout << "previous leader name:" << it->getNickname() << "  total:"
+			//		<< total << endl;
 			nextID = it->getNextID();
 			userlist.erase(it);
 			find = true;
@@ -477,7 +479,7 @@ void ChatNode::setNewLeader() {
 			it->setNextID(nextID);
 			it->setIsLeader(true);
 			me.setIsLeader(true);
-			cout << "set me total  = " << total << endl;
+			//cout << "set me total  = " << total << endl;
 			me.setTotal(total);
 			me.setNextID(nextID);
 			break;
@@ -490,7 +492,7 @@ void ChatNode::setNewLeader() {
 }
 
 void ChatNode::checkAlive() {
-	cout << "check alive called" << endl;
+	//cout << "check alive called" << endl;
 	bool change = false;
 	string result;
 	//int leaderID;
@@ -502,15 +504,15 @@ void ChatNode::checkAlive() {
 				continue;
 			result = stub_send(it->getIP().c_str(),
 					to_string(it->getPort()).c_str(), "00013CONNECT@", 3);
-			cout << "leader result: " << result << endl;
+		//	cout << "leader result: " << result << endl;
 			if (result == "ERROR") {
 				userlistMutex.lock();
-				cout << "!!!!!inlock!!!!" << endl;
+			//	cout << "!!!!!inlock!!!!" << endl;
 				change = true;
 
 				userlist.erase(it--);
 				userlistMutex.unlock();
-				cout << "!!! out of lock !!!" << endl;
+			//	cout << "!!! out of lock !!!" << endl;
 			}
 		}
 		if (change)
@@ -521,6 +523,7 @@ void ChatNode::checkAlive() {
 		for (User u : userlist) {
 			if (u.getIsLeader()) {
 				//leaderID = u.getID();
+			//	cout<<"user check alive!! leader name:"<<u.getNickname()<<";; total" << u.getTotal()<<endl;
 				ip = u.getIP();
 				port = to_string(u.getPort());
 				break;
@@ -529,7 +532,7 @@ void ChatNode::checkAlive() {
 
 		if (ip.length() != 0 && port.length() != 0) {
 			result = stub_send(ip.c_str(), port.c_str(), "00013CONNECT@", 3);
-			cout << "user result:" << result << endl;
+		//	cout << "user result:" << result << endl;
 			if (result == "ERROR") {
 				leaderElection();
 			}
