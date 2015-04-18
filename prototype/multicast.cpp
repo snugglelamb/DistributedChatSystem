@@ -560,7 +560,7 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 		fullmsg_ = fullmsg;
 	}
 	delete[] fullmsg; // free buffer
-	printf("stub: msg prepared to send: %s\n",fullmsg_);
+	//printf("stub: msg prepared to send: %s\n",fullmsg_);
 	// cout<<5555<<endl;
     if ((numbytes = sendto(sockfd_w, fullmsg_, strlen(fullmsg_), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
