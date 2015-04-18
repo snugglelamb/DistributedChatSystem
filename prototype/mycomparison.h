@@ -1,5 +1,7 @@
 #ifndef MYCOM
 #define MYCOM
+#include "Req.h"
+
 class mycomparison
 {
 public:

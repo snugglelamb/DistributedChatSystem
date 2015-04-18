@@ -1,4 +1,4 @@
-##ifndef REQ_H
+#ifndef REQ_H
 #define REQ_H
 
 #include <string>
