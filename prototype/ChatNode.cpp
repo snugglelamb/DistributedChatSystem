@@ -439,7 +439,7 @@ void ChatNode::leaderElection() {
 }
 
 void ChatNode::sendUID(int id) {
-//	cout << "sendUID called" << endl;
+
 	int proposeID;
 	string result;
 	if (participant && id > me.getID()) {

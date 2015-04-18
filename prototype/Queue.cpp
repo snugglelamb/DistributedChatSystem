@@ -8,9 +8,13 @@
     {
       cond_.wait(mlock);
     }
-    auto val = queue_.front();
-    queue_.pop_front();
-    return val;
+
+    int nt = rand()%queue_.size();
+    auto it = next(queue_.begin() , nt);
+    queue_.erase(it);
+//    auto val = queue_.front();
+//    queue_.pop_front();
+    return *it;
   }
 
   void Queue::pop(string& item)
