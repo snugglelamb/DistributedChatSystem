@@ -51,7 +51,7 @@ void Parser::parsePara(string rawStr) {
 	Req reqObj;
 	reqObj.comparator = comparator;
 	reqObj.request = str;
-	queue.enqueue(reqObj);
+	queue.push(reqObj);
 }
 
 string Parser::dequeueRequest(){
@@ -60,7 +60,6 @@ string Parser::dequeueRequest(){
 
 void Parser::processReq(string str) {
 	if(this->paserdebug)cout << "parser: get params:" << endl;
-	if(this->paserdebug)cout << string(arr) << endl;
 	//string rawStr = string(arr);
 	//size_t pos0 = rawStr.find("@");
 	//string str = rawStr.substr(pos0 + 1);

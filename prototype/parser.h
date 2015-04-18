@@ -2,7 +2,7 @@
 #define PARSER_H
 #include "ChatNode.h"
 #include "User.h"
-#include "Req.h"
+#include "blocking_priority.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,11 +20,12 @@ private:
 		bool paserdebug = false;
 		ChatNode  *cn;
 		vector<string> splitstr(string ori, char deli);
+		Block_PQ queue;
 public:
 		Parser();
 		void parsePara(string arr );
 		static string dequeueRequest();
-		static void processReq();
+		static void processReq(string str);
 };
 
 #endif
