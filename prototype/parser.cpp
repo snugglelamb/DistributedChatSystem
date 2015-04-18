@@ -51,7 +51,7 @@ void Parser::parsePara(string rawStr) {
 	Req reqObj;
 	reqObj.comparator = comparator;
 	reqObj.request = str;
-	queue.enqueue(reqObj);
+	queue.push(reqObj);
 }
 
 string Parser::dequeueRequest(){

@@ -40,8 +40,8 @@ void checkParser()
 {
 	while(1)
 	{
-		String request = Parser.dequeueRequest();
-		Parser.processReq(request);
+		string request = Parser::dequeueRequest();
+		Parser::processReq(request);
 	}
 }
 
