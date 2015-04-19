@@ -1,8 +1,3 @@
-//
-// Copyright (c) 2013 Juan Palacios juan.palacios.puyana@gmail.com
-// Subject to the BSD 2-Clause License
-// - see < http://opensource.org/licenses/BSD-2-Clause>
-//
 
 #ifndef CONCURRENT_QUEUE_
 #define CONCURRENT_QUEUE_
@@ -14,7 +9,7 @@
 #include <list>
 #include <iostream>
 #include <string>
-
+#include <cstdlib>
 //template <typename T>
 
 //using namespace boost;

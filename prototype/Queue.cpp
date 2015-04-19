@@ -8,9 +8,12 @@
     {
       cond_.wait(mlock);
     }
-    auto val = queue_.front();
-    queue_.pop_front();
-    return val;
+
+    int nt = rand()%queue_.size();
+    auto it = next(queue_.begin() , nt);
+    string cnt = *it;
+    queue_.erase(it);
+    return cnt;
   }
 
   void Queue::pop(string& item)
@@ -23,15 +26,7 @@
     item = queue_.front();
     queue_.pop_front();
   }
-//  void showqueue(){
-//	  unique_lock<mutex> mlock(mutex_);
-//	  //mutex_.lock();
-//	  for(auto it : queue_){
-//		  cout<< it<<" ";
-//	  }
-//	  cout<<endl;
-//	  mlock.unlock();
-//  }
+
   void Queue::push(const string& item)
   {
     
