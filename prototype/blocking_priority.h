@@ -18,4 +18,4 @@ public:
   mutex mutex_;
   condition_variable cond_;
 };
-#endif BLOCK_PQ
+#endif 

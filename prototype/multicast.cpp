@@ -285,7 +285,8 @@ std::string stub_receive() {
 			// ignore first connect msg
 			// update monitor
 			int seq_num = 0;
-			Parser p; // to call parsePara function
+			//Parser p; // to call parsePara function
+			Parser* p = Parser::getInstance();
 			std::string str(buf);
 			std::size_t start = str.find("STA");
 			std::size_t end = str.find("END");
@@ -319,7 +320,7 @@ std::string stub_receive() {
 				}
 				monitor_num++;
 				// parse string received
-				p.parsePara(str);
+				p->parsePara(str);
 
 			} else {
 				// loop to find if a match
@@ -340,7 +341,7 @@ std::string stub_receive() {
 					}
 					monitor_num++;
 					// parse string received
-					p.parsePara(str);
+					p->parsePara(str);
 
 				} else {
 					// user exist 
@@ -353,7 +354,7 @@ std::string stub_receive() {
 						// correct
 						monitor[i].latest = seq_num;
 						// parse string received
-						p.parsePara(str);
+						p->parsePara(str);
 
 						while (!monitor[i].holdback.empty()) {
 							// remove seq_num + 1 one at a time
@@ -387,7 +388,7 @@ std::string stub_receive() {
 						monitor[i].holdback.push_back(seq_num);
 						// may need to enqueue msg, but just pass to parser for now
 						// parse string received
-						p.parsePara(str);
+						p->parsePara(str);
 					}
 				}
 			} // end user exist/not exist handling

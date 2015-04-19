@@ -39,8 +39,9 @@ void checkParser()
 {
 	while(1)
 	{
-		string request = Parser::dequeueRequest();
-		Parser::processReq(request);
+		Parser* parser = Parser::getInstance();
+		string request = parser->dequeueRequest();
+		parser->processReq(request);
 	}
 }
 
