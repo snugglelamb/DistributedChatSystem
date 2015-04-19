@@ -13,9 +13,16 @@ class Block_PQ{
 public:
   string pop();
   void push(const Req& item);
+  Block_PQ()=default;
+
+
  private:
   priority_queue<Req,vector<Req>,mycomparison> pq;
+  Block_PQ& operator=(const Block_PQ&) ; // disable assignment
+  Block_PQ(const Block_PQ&);            // disable copying
   mutex mutex_;
   condition_variable cond_;
 };
+
 #endif
+

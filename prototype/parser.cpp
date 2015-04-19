@@ -1,5 +1,14 @@
 #include "parser.h"
 
+Parser* Parser::parser = NULL;
+
+Parser* Parser::getInstance() {
+	cn = ChatNode::getInstance();
+	if (!parser)
+		parser = new Parser;
+	return parser;
+}
+
 vector<string> Parser::splitstr(string ori, char deli) {
 	vector<string> tmp;
 	stringstream ss(ori);
@@ -9,18 +18,15 @@ vector<string> Parser::splitstr(string ori, char deli) {
 	}
 	return tmp;
 }
-
+/*
 Parser::Parser() {
 	cn = ChatNode::getInstance();
 }
-
+*/
 void Parser::parsePara(string rawStr) {
 	size_t pos0 = rawStr.find("@");
 	string str = rawStr.substr(pos0 + 1);
 	size_t pos = str.find("#");
-	if (pos == string::npos) {
-		if(this->paserdebug)cout << "cannot find #"<<endl; return;
-	}
 	string req = str.substr(0, pos);
 
 	int comparator = -1;

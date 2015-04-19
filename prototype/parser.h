@@ -17,17 +17,23 @@ class ChatNode;
 
 class Parser{
 private:
-		bool paserdebug = false;
 
-		static ChatNode  *cn;
-		static vector<string> splitstr(string ori, char deli);
+		static Parser parser;
+		static ChatNode* cn;
+		vector<string> splitstr(string ori, char deli);
+		Block_PQ queue;
+		Parser& operator=(const Parser&) ; // disable assignment
+		Parser(const Parser&);            // disable copying
 
-		static Block_PQ queue;
 public:
-		Parser();
+		//Parser();
+		static Parser getInstance();
 		void parsePara(string arr );
-		static string dequeueRequest();
-		static void processReq(string str);
+		string dequeueRequest();
+		void processReq(string str);
+		Parser()=default;
+
+
 };
 
 #endif
