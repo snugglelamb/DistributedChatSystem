@@ -8,7 +8,7 @@
 
 static int sockfd; //used for listener
 bool debug = false;
-bool encrypted = false;
+bool encrypted = true;
 std::string hashkey = "happy";
 // for send msg storage
 struct msgQueue_send {
@@ -547,28 +547,29 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	
 	// printf("stub: msg before encryption: %s\n", fullmsg);
 
-	const char* fullmsg_;
+	char* fullmsg__ = new char[MAXBUFLEN];
 	if (request < 1) {
 		if (encrypted) {
 			std::string msg_encrypted = encrypt(std::string(fullmsg), hashkey);
-			fullmsg_ = msg_encrypted.c_str();
-			if(debug) std::cout << "stub: encrypted: " << fullmsg_ << std::endl;
+			strcpy(fullmsg__,msg_encrypted.c_str());
+			std::cout << "stub: encrypted: " << fullmsg__ << std::endl;
 		} else {
-			fullmsg_ = fullmsg;
+			strcpy(fullmsg__,fullmsg);
 		}
 	} else {
-		fullmsg_ = fullmsg;
+		strcpy(fullmsg__,fullmsg);
 	}
-	delete[] fullmsg; // free buffer
-	//printf("stub: msg prepared to send: %s\n",fullmsg_);
+	
+	const char* fullmsg_ = fullmsg__;
+	
+	if (debug) printf("stub: msg prepared to send: %s\n",fullmsg_);
 	// cout<<5555<<endl;
     if ((numbytes = sendto(sockfd_w, fullmsg_, strlen(fullmsg_), 0,
              p->ai_addr, p->ai_addrlen)) == -1) {
         perror("stub: sendto");
         return "ERROR";
     }
-    if (debug)printf("stub: sent %d bytes to %s\n", numbytes, Tip);
-	
+    if (debug) printf("stub: sent %d bytes to %s\n", numbytes, Tip);
 	// receive return msg from server *ack
 	// need to compare received msg with OK, RESEND
     addr_len = sizeof their_addr;
@@ -630,7 +631,8 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg, int r
 	}
 
     close(sockfd_w);
-	
+	delete[] fullmsg; // free buffer
+	delete[] fullmsg__;
 	return "SUCCESS";
 	
 }
