@@ -67,10 +67,12 @@ string Parser::dequeueRequest(){
 
 void Parser::processReq(string str) {
 
+
 	size_t pos = str.find("#");
 	if (pos == string::npos) {
 		//cout << "cannot find #"<<endl; return;
 	}
+
 	string req = str.substr(0, pos);
 	
 	vector<string> params = splitstr(str.substr(pos + 1), '_');
