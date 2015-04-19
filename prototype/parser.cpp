@@ -11,7 +11,7 @@ vector<string> Parser::splitstr(string ori, char deli) {
 }
 
 Parser::Parser() {
-	this->cn = ChatNode::getInstance();
+	cn = ChatNode::getInstance();
 }
 
 void Parser::parsePara(string rawStr) {
