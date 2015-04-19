@@ -34,7 +34,6 @@ public:
 
 		string dequeueRequest();
 		void processReq(string str);
-		Parser()=default;
 
 
 };
