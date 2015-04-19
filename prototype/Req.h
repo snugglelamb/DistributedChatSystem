@@ -8,7 +8,7 @@ class Req{
 public:
 	int comparator;
 	string request;
-
+	Req();
 
 };
 
