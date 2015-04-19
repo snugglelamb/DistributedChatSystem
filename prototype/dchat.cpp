@@ -3,13 +3,14 @@
 #include <vector>
 #include <sstream>
 #include <thread>
-// #include "User.h"
-// #include "ChatNode.h"
+#include "User.h"
+#include "ChatNode.h"
 #include "util.h"
 #include <string.h>
 #include <chrono>
 
 #include "multicast.h"
+#include "parser.h"
 
 
 using namespace std;

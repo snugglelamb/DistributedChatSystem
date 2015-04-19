@@ -1,6 +1,7 @@
 #include "parser.h"
 
 Parser* Parser::parser = NULL;
+ChatNode* Parser::cn = NULL;
 
 Parser* Parser::getInstance() {
 	cn = ChatNode::getInstance();

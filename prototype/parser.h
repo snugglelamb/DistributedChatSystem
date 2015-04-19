@@ -18,7 +18,9 @@ class ChatNode;
 class Parser{
 private:
 
-		static Parser parser;
+		Parser(){};
+		static Parser* parser;	
+
 		static ChatNode* cn;
 		vector<string> splitstr(string ori, char deli);
 		Block_PQ queue;
@@ -26,9 +28,10 @@ private:
 		Parser(const Parser&);            // disable copying
 
 public:
-		//Parser();
-		static Parser getInstance();
-		void parsePara(string arr );
+
+		static Parser* getInstance();
+		void parsePara(string arr);
+
 		string dequeueRequest();
 		void processReq(string str);
 		Parser()=default;
