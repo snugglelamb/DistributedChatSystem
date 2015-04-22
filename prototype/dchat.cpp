@@ -42,7 +42,6 @@ void checkParser()
 	{
 		Parser* parser = Parser::getInstance();
 		string request = parser->dequeueRequest();
-		cout<<"request:"<<request<<endl;
 		parser->processReq(request);
 	}
 }
