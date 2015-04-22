@@ -227,8 +227,8 @@ std::string stub_receive() {
 	} else {
 		// decrypt
 		if (encrypted) {
-			if (debug)
-				std::cout << "stub: receive encrypt" << buf_ << std::endl;
+			// if (debug)
+			// 	// std::cout << "stub: receive encrypt" << buf_ << std::endl;
 			std::string recv_decrypt(buf_);
 			strcpy(buf, decrypt(recv_decrypt, hashkey).c_str());
 			numbytes = strlen(buf);
@@ -368,8 +368,8 @@ std::string stub_receive() {
 								if (*it == monitor[i].latest + 1) {
 									monitor[i].latest += 1;
 									monitor[i].holdback.erase(it);
-									found = 1;
 									it--;
+									found = 1;
 									break;
 								}
 							}
@@ -752,3 +752,4 @@ std::string decrypt(std::string msg, std::string key) {
 
 	return origin;
 }
+
