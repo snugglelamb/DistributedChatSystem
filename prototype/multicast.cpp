@@ -111,6 +111,7 @@ std::string getlocalinfo() {
 		printf("local port: %d\n", port);
 
 	sprintf(port_, "%d", port);
+	strcpy(msg, "");
 	strcat(msg, ip);
 	strcat(msg, ":");
 	strcat(msg, port_);
