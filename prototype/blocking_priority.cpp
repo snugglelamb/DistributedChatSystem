@@ -4,6 +4,7 @@
   string Block_PQ::pop()
   {
     unique_lock<mutex> mlock(mutex_);
+    //
     while (pq.empty())
     {
       cond_.wait(mlock);
