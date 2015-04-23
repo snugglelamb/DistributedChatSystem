@@ -7,6 +7,17 @@
 #define MAXUSER 50
 
 static int sockfd; //used for listener
+
+//for rate checking to leader
+bool checkRate = true;
+struct timeval tim;
+double start;
+int checkMsgStart = 0;
+int waitSec = 1;
+bool slowDown = false;
+ChatNode* cn;
+
+
 bool debug = false;
 bool encrypted = true;
 std::string hashkey = "happy";
@@ -181,6 +192,10 @@ std::string stub_create() {
 	for (i = 0; i < QUEUESIZE; i++) {
 		sendID[i] = i;
 	}
+	
+	// set initial time
+	gettimeofday(&tim, NULL); 
+	start = tim.tv_sec+(tim.tv_usec/1000000.0);
 	return getlocalinfo();
 
 }
@@ -428,7 +443,11 @@ std::string stub_receive() {
 
 std::string stub_send(const char* Tip, const char* Tport, const char* msg,
 		int request) {
-
+	if (slowDown) {
+		// wait here if need to slow down
+		std::this_thread::sleep_for (std::chrono::seconds(waitSec));
+	}
+	
 	if (debug)
 		std::cout << "stub: sendto Tip:Tport->" << Tip << ":" << Tport
 				<< std::endl;
@@ -753,3 +772,54 @@ std::string decrypt(std::string msg, std::string key) {
 	return origin;
 }
 
+int stub_getSendMsgNum() {
+	// get leader
+	int i = 0;
+	int num = 0;
+	std::string leaderLabel = "";
+	cn = ChatNode::getInstance();
+	vector<User> userlist = cn->getUserlist();
+	for (vector<User>::iterator it=userlist.begin(); it!=userlist.end(); it++) {
+		if (it->getIsLeader()) {
+			leaderLabel += it->getIP() + ":" + to_string(it->getPort()); 
+			break;
+		}
+	}
+	
+	for (i = 0; i < clock_num; i++) {
+		if ((vclock[i].label).compare(leaderLabel) == 0) {
+			num = vclock[i].num;
+			break;
+		}
+	}
+	
+	if (checkRate) std::cout << "Check num of messages sent: " << num << std::endl;
+	
+	return num;
+
+}
+
+void stub_checkSendRate() {
+	// get current time
+	gettimeofday(&tim, NULL); 
+	double end = tim.tv_sec+(tim.tv_usec/1000000.0);
+	double duration = end - start;
+	start = end;
+	double rate;
+	int checkMsgNow = stub_getSendMsgNum();
+	if (checkRate) std::cout << "duration: " << duration << std::endl;
+	rate = (checkMsgNow - checkMsgStart) / duration;
+	checkMsgStart = checkMsgNow;
+	if (checkRate) std::cout << "sendRate: "<< rate << " per second." << std::endl;
+	
+	if (rate > 5) {
+		if (checkRate) std::cout << "sendRate over 5 msg per second." << std::endl;
+		// slow down
+		slowDown = true;
+		waitSec+= 1;
+	} else {
+		slowDown = false;
+		waitSec = 1;
+	}
+	
+}
