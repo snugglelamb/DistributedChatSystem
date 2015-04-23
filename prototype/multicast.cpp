@@ -281,7 +281,7 @@ std::string stub_receive() {
 								get_in_addr((struct sockaddr *) &their_addr), s,
 								sizeof s), str_);
 		}
-
+	//	printf("buff: %s \n ", buf);
 		if (buf[5] != 'C') {
 			// ignore first connect msg
 			// update monitor
@@ -309,7 +309,7 @@ std::string stub_receive() {
 					printf("stub: header not intact.\n");
 				return "ERROR";
 			}
-
+		
 			if (monitor_num == 0) {
 				// add in monitor
 				monitor[monitor_num].label = key;
@@ -321,6 +321,7 @@ std::string stub_receive() {
 				}
 				monitor_num++;
 				// parse string received
+
 				p->parsePara(str);
 
 			} else {
@@ -342,6 +343,7 @@ std::string stub_receive() {
 					}
 					monitor_num++;
 					// parse string received
+
 					p->parsePara(str);
 
 				} else {
@@ -355,6 +357,7 @@ std::string stub_receive() {
 						// correct
 						monitor[i].latest = seq_num;
 						// parse string received
+		
 						p->parsePara(str);
 
 						while (!monitor[i].holdback.empty()) {
@@ -387,9 +390,11 @@ std::string stub_receive() {
 
 					} else {
 						// some msg hasn't come
+			
 						monitor[i].holdback.push_back(seq_num);
 						// may need to enqueue msg, but just pass to parser for now
 						// parse string received
+			
 						p->parsePara(str);
 					}
 				}
@@ -605,6 +610,8 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg,
 	if (debug)
 		printf("stub: sent %d bytes to %s\n", numbytes, Tip);
 
+//	printf("%s\n",fullmsg_);
+
 	// receive return msg from server *ack
 	// need to compare received msg with OK, RESEND
 	addr_len = sizeof their_addr;
@@ -616,8 +623,10 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg,
 		// return "ERROR";
 		// dequeue
 		sendQ_num--;
+
 		sendID[sendQ_num] = sendQ[available_id].id;
 		sendQ[available_id] = empty_send;
+
 		// need to check if target alive
 		// cout<<6666<<endl;
 		if (request == 1) {
@@ -631,7 +640,6 @@ std::string stub_send(const char* Tip, const char* Tport, const char* msg,
 			return stub_send(Tip, Tport, fullmsg_, request - 1);
 		}
 	}
-
 	if (debug)
 		printf("stub: received packet from %s\n",
 				inet_ntop(their_addr.ss_family,

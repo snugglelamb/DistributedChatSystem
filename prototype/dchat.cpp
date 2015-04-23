@@ -65,7 +65,7 @@ void type()
 		if (strlen(msg) == 0)
 		{
 			// won't send blank message
-			cout << "Hint: blank messages won't be sent.\n";
+			//cout << "Hint: blank messages won't be sent.\n";
 
 		} else {
 

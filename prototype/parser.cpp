@@ -30,6 +30,8 @@ void Parser::parsePara(string rawStr) {
 	size_t pos = str.find("#");
 	string req = str.substr(0, pos);
 
+	//cout<<"in parser: "<< rawStr <<endl;
+
 	int comparator = -1;
 
 	if(req.compare("sendUID") == 0){

@@ -37,6 +37,7 @@ void Parser::parsePara(string rawStr) {
 	string req = str.substr(0, pos);
 
 	int comparator = -1;
+	cout<<"in parser:"<<req<<endl;
 
 	if(req.compare("sendUID") == 0){
 		comparator = 1;
