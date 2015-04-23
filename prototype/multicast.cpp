@@ -7,7 +7,7 @@
 #define MAXUSER 50
 
 static int sockfd; //used for listener
-bool debug = true;
+bool debug = false;
 bool encrypted = false;
 std::string hashkey = "happy";
 // for send msg storage

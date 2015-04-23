@@ -546,7 +546,7 @@ void ChatNode::checkAlive() {
 				continue;
 			result = stub_send(u.getIP().c_str(),
 					to_string(u.getPort()).c_str(), "00013CONNECT@", 3);
-		//	cout << "leader result: " << result << endl;
+			cout << "leader result: " << result << endl;
 			if (result == "ERROR") {
 				
 			//	cout << "!!!!!inlock!!!!" << endl;
@@ -562,6 +562,7 @@ void ChatNode::checkAlive() {
 			for (vector<int>::iterator tid = todelete.begin(); tid != todelete.end(); tid++){
 				for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
 					if(it->getID() == *tid){
+						cout << "to delete "<< it->getNickname()<<endl;
 						userlist.erase(it--);
 						break;
 					}
@@ -578,7 +579,7 @@ void ChatNode::checkAlive() {
 		for (User u : userlist) {
 			if (u.getIsLeader()) {
 				//leaderID = u.getID();
-			//	cout<<"user check alive!! leader name:"<<u.getNickname()<<";; total" << u.getTotal()<<endl;
+				cout<<"user check alive!! leader name:"<<u.getNickname()<<";; total" << u.getTotal()<<endl;
 				ip = u.getIP();
 				port = to_string(u.getPort());
 				break;
