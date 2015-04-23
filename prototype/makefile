@@ -1,6 +1,6 @@
 CC=gcc
 CXX=g++
-CXXFLAGS= -Wall -std=c++11
+CXXFLAGS= -Wall -std=c++11 -lpthread
 dchat: dchat.o User.o ChatNode.o multicast.o parser.o util.o Queue.o HoldbackQueue.o mycomparison.o blocking_priority.o Req.o 
 	$(CC) -c -o util.o util.c
 	$(CXX) $(CXXFLAGS) -c -o Req.o Req.cpp
