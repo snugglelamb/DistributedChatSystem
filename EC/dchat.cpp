@@ -80,7 +80,7 @@ void check()
 	
 	while(1){
 		this_thread::sleep_for (chrono::seconds(10));
-		std::cout << "Enter check alive." << std::endl;
+		// std::cout << "Enter check alive." << std::endl;
 		stub_checkSendRate();
 		node->checkAlive();
 
