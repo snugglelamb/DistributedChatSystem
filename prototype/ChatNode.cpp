@@ -535,35 +535,51 @@ void ChatNode::checkAlive() {
 	//cout << "check alive called" << endl;
 	bool change = false;
 	string result;
+	vector<int> todelete;
 	//int leaderID;
 	if (me.getIsLeader()) {
-
-		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
-				it++) {
-			if (it->getID() == me.getID())
+		userlistMutex.lock();
+			vector<User> tmp_userlist = userlist;
+		userlistMutex.unlock();
+		for (User u : tmp_userlist) {
+			if (u.getID() == me.getID())
 				continue;
-			result = stub_send(it->getIP().c_str(),
-					to_string(it->getPort()).c_str(), "00013CONNECT@", 3);
-		//	cout << "leader result: " << result << endl;
+			result = stub_send(u.getIP().c_str(),
+					to_string(u.getPort()).c_str(), "00013CONNECT@", 3);
+			cout << "leader result: " << result << endl;
 			if (result == "ERROR") {
-				userlistMutex.lock();
+				
 			//	cout << "!!!!!inlock!!!!" << endl;
 				change = true;
 
-				userlist.erase(it--);
-				userlistMutex.unlock();
+				todelete.push_back(u.getID());
+				
 			//	cout << "!!! out of lock !!!" << endl;
 			}
 		}
-		if (change)
+		if (change){
+			userlistMutex.lock();
+			for (vector<int>::iterator tid = todelete.begin(); tid != todelete.end(); tid++){
+				for(vector<User>::iterator it = userlist.begin(); it != userlist.end(); it++){
+					if(it->getID() == *tid){
+						cout << "to delete "<< it->getNickname()<<endl;
+						userlist.erase(it--);
+						break;
+					}
+						
+				}
+			}
+			userlistMutex.unlock();
 			multicastUserlist();
+		}
+			
 	} else {
 		string ip = "";
 		string port = "";
 		for (User u : userlist) {
 			if (u.getIsLeader()) {
 				//leaderID = u.getID();
-			//	cout<<"user check alive!! leader name:"<<u.getNickname()<<";; total" << u.getTotal()<<endl;
+				cout<<"user check alive!! leader name:"<<u.getNickname()<<";; total" << u.getTotal()<<endl;
 				ip = u.getIP();
 				port = to_string(u.getPort());
 				break;
