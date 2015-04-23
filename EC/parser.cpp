@@ -48,7 +48,7 @@ void Parser::parsePara(string rawStr) {
 	}else if(req.compare("deleteUser")==0){
 		comparator = 3;
 	}else if(req.compare("addUser")==0){
-		comparator = 3;
+		comparator = 4;
 	}else if(req.compare("sendLeader")==0){
 		comparator = 4;
 	}else if(req.compare("connectLeader")==0){
