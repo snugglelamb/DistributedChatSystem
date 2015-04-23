@@ -8,7 +8,7 @@
 
 static int sockfd; //used for listener
 bool debug = false;
-bool encrypted = false;
+bool encrypted = true;
 std::string hashkey = "happy";
 // for send msg storage
 struct msgQueue_send {

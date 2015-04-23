@@ -43,7 +43,6 @@ void checkParser()
 	//this_thread::sleep_for (chrono::seconds(10));
 		Parser* parser = Parser::getInstance();
 		string request = parser->dequeueRequest();
-		cout <<"request is: "<<request<<endl;
 		parser->processReq(request);
 	}
 }

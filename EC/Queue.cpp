@@ -8,8 +8,6 @@
       cond_.wait(mlock);
     }
 
-   // int nt = rand()%queue_.size();
-    //auto it = next(queue_.begin() , nt);
     string cnt = queue_.front();
     queue_.pop_front();
     return cnt;
