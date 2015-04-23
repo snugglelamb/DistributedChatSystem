@@ -809,6 +809,7 @@ void stub_checkSendRate() {
 	int checkMsgNow = stub_getSendMsgNum();
 	if (checkRate) std::cout << "duration: " << duration << std::endl;
 	rate = (checkMsgNow - checkMsgStart) / duration;
+	if (rate < 0) { rate = 0;} // only will be <0 when leader is changed
 	checkMsgStart = checkMsgNow;
 	if (checkRate) std::cout << "sendRate: "<< rate << " per second." << std::endl;
 	

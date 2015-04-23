@@ -40,6 +40,7 @@ void checkParser()
 {
 	while(1)
 	{
+	//this_thread::sleep_for (chrono::seconds(10));
 		Parser* parser = Parser::getInstance();
 		string request = parser->dequeueRequest();
 		parser->processReq(request);
