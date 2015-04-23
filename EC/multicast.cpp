@@ -813,8 +813,8 @@ void stub_checkSendRate() {
 	checkMsgStart = checkMsgNow;
 	if (checkRate) std::cout << "sendRate: "<< rate << " per second." << std::endl;
 	
-	if (rate > 5) {
-		if (checkRate) std::cout << "sendRate over 5 msg per second." << std::endl;
+	if (rate > 10) {
+		if (checkRate) std::cout << "sendRate over 10 msg per second." << std::endl;
 		// slow down
 		slowDown = true;
 		waitSec+= 1;
