@@ -210,7 +210,10 @@ void ChatNode::multicastUserlist() {
 	string content = "";
 	//string IP, string nickname, int port, int ID, int total, bool isleader
 	content = me.getIP() + "_" + to_string(me.getPort()) + "_";
-	for (vector<User>::iterator it=userlist.begin(); it!=userlist.end(); it++) {
+	userlistMutex.lock();
+	vector<User> copy = userlist;
+	userlistMutex.unlock();
+	for (vector<User>::iterator it=copy.begin(); it!=copy.end(); it++) {
 		if (it->getIsLeader()) {
 			it->setTotal(me.getTotal());
 			it->setNextID(me.getNextID());
@@ -227,7 +230,7 @@ void ChatNode::multicastUserlist() {
 	}
 
 	msg = requestName + "#" + content.substr(0, content.size() - 1);
-	for (User u : this->userlist) {
+	for (User u : copy) {
 		if (u.getID() == me.getID()) {
 			continue;
 		}
