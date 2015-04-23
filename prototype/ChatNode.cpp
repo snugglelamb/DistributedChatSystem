@@ -386,8 +386,7 @@ void ChatNode::deleteUser(string Tip, int Tport) {
 			break;
 		}
 	}
-	userlistMutex.unlock();
-	userlistMutex.lock();
+	
 	vector<User> copy = userlist;
 	userlistMutex.unlock();
 	for (vector<User>::iterator it=copy.begin(); it!=copy.end(); it++) {
@@ -395,7 +394,7 @@ void ChatNode::deleteUser(string Tip, int Tport) {
 			continue;
 		string requestName = "exitNotice";
 		string msg;
-		string content = " ";
+		string content = "";
 		string ip = it->getIP();
 		int port = it->getPort();
 		string nickname =  name;
@@ -435,7 +434,7 @@ void ChatNode::leaderElection() {
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(),
-					"00013CONNECT@", 3);
+					"00013CONNECT@", 2);
 		//	cout << "in leader election get result: " << result << endl;
 			if (result == "ERROR")
 				nextidx = (++nextidx) % userlist.size();
@@ -476,7 +475,7 @@ void ChatNode::sendUID(int id) {
 			}
 			result = stub_send(userlist[nextidx].getIP().c_str(),
 					to_string(userlist[nextidx].getPort()).c_str(),
-					"00013CONNECT@", 3);
+					"00013CONNECT@", 2);
 		//	cout << " test user " << userlist[nextidx].getNickname()
 		//			<< " result is :" << result << endl;
 			if (result == "ERROR") {
@@ -503,7 +502,7 @@ void ChatNode::setNewLeader() {
 
 		if (it->getIsLeader() && it->getID() != me.getID()) {
 			string result = stub_send(it->getIP().c_str(),
-					to_string(it->getPort()).c_str(), "00013CONNECT@", 3);
+					to_string(it->getPort()).c_str(), "00013CONNECT@", 2);
 			//cout << " ping leader : " << it->getNickname() << endl;
 			if (result == "SUCCESS") {
 				userlistMutex.unlock();
@@ -559,7 +558,7 @@ void ChatNode::checkAlive() {
 			if (u.getID() == me.getID())
 				continue;
 			result = stub_send(u.getIP().c_str(),
-					to_string(u.getPort()).c_str(), "00013CONNECT@", 3);
+					to_string(u.getPort()).c_str(), "00013CONNECT@", 2);
 			//cout << "leader result: " << result << endl;
 			if (result == "ERROR") {
 				
@@ -602,7 +601,7 @@ void ChatNode::checkAlive() {
 		}
 
 		if (ip.length() != 0 && port.length() != 0) {
-			result = stub_send(ip.c_str(), port.c_str(), "00013CONNECT@", 3);
+			result = stub_send(ip.c_str(), port.c_str(), "00013CONNECT@", 2);
 		//	cout << "user result:" << result << endl;
 			if (result == "ERROR") {
 				cout<<"Leader is down, please wait..."<<endl;

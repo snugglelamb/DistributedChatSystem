@@ -55,7 +55,7 @@ void Parser::parsePara(string rawStr) {
 	}else if(req.compare("newUser")==0){
 		comparator = 6;
 	}else if(req.compare("exitNotice")==0){
-		comparator = 6;
+		comparator = 3;
 	}
 	Req reqObj;
 	reqObj.comparator = comparator;
