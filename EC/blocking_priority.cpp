@@ -25,6 +25,7 @@
 	if (! vec_fairPQ[current].empty()){
 		cnt = vec_fairPQ[current].top().request;
 		vec_fairPQ[current].pop();
+		if (totalQ > 1) cout << "pop request -> " << cnt << endl;
 	} 
 	if (current != (totalQ - 1)){
 		current++;

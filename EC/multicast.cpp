@@ -10,6 +10,7 @@ static int sockfd; //used for listener
 
 //for rate checking to leader
 bool checkRate = true;
+bool ifLeader = false;
 struct timeval tim;
 double start;
 int checkMsgStart = 0;
@@ -99,7 +100,7 @@ std::string getlocalinfo() {
 				NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
 		// en0 on mac, eth0 on linuxs, em1 for speclab
-		if ((strcmp(ifa->ifa_name, "en0") == 0)
+		if ((strcmp(ifa->ifa_name, "em1") == 0)
 				&& (ifa->ifa_addr->sa_family == AF_INET)) {
 			if (s != 0) {
 				if (debug)
@@ -777,6 +778,7 @@ int stub_getSendMsgNum() {
 	int i = 0;
 	int num = 0;
 	std::string leaderLabel = "";
+	std::string selfLabel = getlocalinfo();
 	cn = ChatNode::getInstance();
 	vector<User> userlist = cn->getUserlist();
 	for (vector<User>::iterator it=userlist.begin(); it!=userlist.end(); it++) {
@@ -784,6 +786,11 @@ int stub_getSendMsgNum() {
 			leaderLabel += it->getIP() + ":" + to_string(it->getPort()); 
 			break;
 		}
+	}
+	if (leaderLabel.compare(selfLabel) == 0) {
+	  ifLeader = true;
+	} else {
+	  ifLeader = false;
 	}
 	
 	for (i = 0; i < clock_num; i++) {
@@ -813,11 +820,12 @@ void stub_checkSendRate() {
 	checkMsgStart = checkMsgNow;
 	if (checkRate) std::cout << "sendRate: "<< rate << " per second." << std::endl;
 	
-	if (rate > 10) {
+	if ((rate > 10) && (ifLeader == false)) {
 		if (checkRate) std::cout << "sendRate over 10 msg per second." << std::endl;
 		// slow down
 		slowDown = true;
 		waitSec+= 1;
+		if (checkRate) std::cout << "Now wait " << waitSec << " seconds before each send." << std::endl;
 	} else {
 		slowDown = false;
 		waitSec = 1;

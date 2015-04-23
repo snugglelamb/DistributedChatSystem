@@ -37,7 +37,7 @@ void Parser::parsePara(string rawStr) {
 	string req = str.substr(0, pos);
 
 	int comparator = -1;
-	cout<<"in parser:"<<req<<endl;
+	//cout<<"in parser:"<<req<<endl;
 
 	if(req.compare("sendUID") == 0){
 		comparator = 1;
@@ -48,7 +48,7 @@ void Parser::parsePara(string rawStr) {
 	}else if(req.compare("deleteUser")==0){
 		comparator = 3;
 	}else if(req.compare("addUser")==0){
-		comparator = 4;
+		comparator = 3;
 	}else if(req.compare("sendLeader")==0){
 		comparator = 4;
 	}else if(req.compare("connectLeader")==0){
