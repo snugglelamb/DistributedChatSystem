@@ -7,6 +7,7 @@
 #define MAXUSER 50
 
 static int sockfd; //used for listener
+int yes = 1; //to solve bind addr already in use problem
 
 //for rate checking to leader
 bool checkRate = true;
@@ -170,6 +171,10 @@ std::string stub_create() {
 			perror("stub: socket");
 			continue;
 		}
+		if (setsockopt(sockfd, SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1) {
+		  perror("stub: bind");
+		  continue;
+}
 
 		if (::bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
 			close(sockfd);
