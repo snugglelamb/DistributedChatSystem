@@ -88,7 +88,7 @@ std::string getlocalinfo() {
 				NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
 		// en0 on mac, eth0 on linuxs
-		if ((strcmp(ifa->ifa_name, "en0") == 0)
+		if ((strcmp(ifa->ifa_name, "em1") == 0)
 				&& (ifa->ifa_addr->sa_family == AF_INET)) {
 			if (s != 0) {
 				if (debug)
