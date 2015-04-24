@@ -20,7 +20,7 @@ ChatNode* cn;
 
 
 bool debug = false;
-bool encrypted = false;
+bool encrypted = true;
 std::string hashkey = "happy";
 // for send msg storage
 struct msgQueue_send {
