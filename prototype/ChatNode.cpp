@@ -342,27 +342,31 @@ void ChatNode::showMsg(string name, string msg) {
 void ChatNode::userExit() {
 
 	if (me.getIsLeader()) {
-
+		userlistMutex.lock();
 		for (vector<User>::iterator it = userlist.begin(); it != userlist.end();
 				it++) {
 			if (it->getID() == me.getID()) {
-				userlistMutex.lock();
 				userlist.erase(it);
 				if (userlist.begin() != userlist.end()) {
 					userlist.begin()->setIsLeader(true);
+					userlistMutex.unlock();
 					this->multicastUserlist();
 				}
-				userlistMutex.unlock();
+				
 				return;
 			}
 		}
 
 	}
+	userlistMutex.unlock();
 	string msg = "deleteUser#" + me.getIP() + "_" + to_string(me.getPort())
 			+ "_" + me.getIP() + "_" + to_string(me.getPort());
 	string Tip;
 	int Tport;
-	for (User u : this->userlist) {
+	userlistMutex.lock();
+	vector<User> copy = userlist;
+	userlistMutex.unlock();
+	for (User u : copy) {
 		if (u.getIsLeader()) {
 			Tip = u.getIP();
 			Tport = u.getPort();
