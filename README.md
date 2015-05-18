@@ -1,4 +1,4 @@
-# CIS505
+# Distributed ChatSystem
 CIS 505 term project<br/>
 Team member: Yuanjie Chen, Siyu Qiu, Zhi Li
 
